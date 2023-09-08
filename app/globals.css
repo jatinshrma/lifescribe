@@ -1,27 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Lora&family=Playfair+Display&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+@layer base {
+	:root {
+		--dark-primary: #151515;
+		--dark-secondary: #1e1e1e;
+		--white-secondary: hsla(0, 0%, 100%, 0.69);
+		--white-primary: hsla(0, 0%, 100%, 0.83);
+	}
+	::selection {
+		background: white;
+		color: #292929;
+	}
+	body {
+		background: var(--dark-primary);
+	}
+	* {
+		scroll-behavior: smooth;
+		color: var(--white-primary);
+	}
+	input {
+		@apply bg-transparent border-none outline-none text-base;
+	}
+	::-webkit-scrollbar {
+		width: 0;
+		height: 0;
+	}
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+@layer components {
+	.nav__search {
+		@apply text-whiteSecondary ss:px-3 py-1.5 px-1.5 rounded-md overflow-hidden flex ss:gap-3 gap-2 items-center mt-0;
+	}
+	.blog__title {
+		@apply ss:text-6xl ss:leading-snug leading-snug text-4xl font-medium ss:my-12 my-5 font-playFD;
+	}
+	#blog__editor-title {
+		@apply blog__title ss:text-5xl ss:leading-snug outline-0 border-0 bg-transparent resize-none w-full ss:my-5 my-3;
+	}
+	#blog__editor-title::placeholder {
+		@apply text-whitePrimary opacity-30;
+	}
+	.blogcard_content {
+		overflow: hidden;
+		-webkit-line-clamp: 3;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+	}
+	#user-menu button {
+		@apply py-2 px-3 flex gap-3 items-center whitespace-nowrap;
+	}
+	#user-menu button svg {
+		@apply w-5 h-5;
+	}
+	.highline {
+		position: relative;
+	}
+	.highline::after {
+		content: "";
+		position: absolute;
+		background: var(--white-secondary);
+		width: 70%;
+		left: 50%;
+		translate: -50%;
+		height: 2.5px;
+		border-radius: 10px;
+		bottom: 0;
+	}
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+#editor img,
+#editor video,
+.blog img,
+.blog video {
+	@apply mx-auto my-10;
+}
+.blog h2,
+#editor .ql-editor h2 {
+	@apply ss:text-3xl ss:leading-snug leading-snug text-2xl font-medium text-whitePrimary ss:mt-10 mt-6 ss:mb-4 mb-2 font-playFD tracking-wide;
+}
+.blog p,
+#editor .ql-editor p {
+	@apply ss:text-lg text-lg leading-[1.58] ss:mb-4 mb-2 last:mb-8 text-whiteSecondary font-lora tracking-wider;
+}
+#editor .ql-snow {
+	@apply border-hidden;
+}
+#editor .ql-editor {
+	@apply px-0;
+}
+#editor .ql-toolbar {
+	@apply bg-darkSecondary sticky top-0 z-10;
+}
+#editor .ql-editor p:has(+ p > br) {
+	@apply mb-0;
+}
+#editor .ql-editor p:has(br) {
+	@apply m-0;
+}
+#editor .ql-editor pre {
+	@apply m-0 py-2 ss:text-base text-xs bg-darkSecondary;
+}
+#editor .ql-editor blockquote {
+	@apply ss:text-base text-xs my-3;
+}
+#editor .ql-editor.ql-blank::before {
+	@apply text-lg text-whitePrimary opacity-30 not-italic left-0;
 }
