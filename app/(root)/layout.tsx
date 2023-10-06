@@ -1,4 +1,4 @@
-import "./globals.css"
+import "../globals.css"
 import type { Metadata } from "next"
 import { Navbar, Footer } from "@components/index"
 import Provider from "@components/Provider"
@@ -12,10 +12,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="en">
 			<body>
-				<div className="max-w-[1440px] m-auto relative height-[100vh]">
+				<div id="app-wrapper">
 					<Provider>
 						<Navbar />
-						<div className="max-w-[720px] m-auto">{children}</div>
+						<div id="app-content">{children}</div>
 						<Footer />
 					</Provider>
 				</div>

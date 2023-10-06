@@ -29,9 +29,21 @@
 		width: 0;
 		height: 0;
 	}
+	ol {
+		@apply list-decimal list-inside;
+	}
+	ul {
+		@apply list-disc list-inside;
+	}
 }
 
 @layer components {
+	#app-wrapper {
+		@apply max-w-[1440px] m-auto relative h-[100vh];
+	}
+	#app-content {
+		@apply max-w-[720px] m-auto;
+	}
 	.nav__search {
 		@apply text-whiteSecondary ss:px-3 py-1.5 px-1.5 rounded-md overflow-hidden flex ss:gap-3 gap-2 items-center mt-0;
 	}
@@ -50,6 +62,9 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 	}
+	#user-menu {
+		@apply z-10;
+	}
 	#user-menu button {
 		@apply py-2 px-3 flex gap-3 items-center whitespace-nowrap;
 	}
@@ -60,15 +75,23 @@
 		position: relative;
 	}
 	.highline::after {
-		content: "";
-		position: absolute;
-		background: var(--white-secondary);
-		width: 70%;
-		left: 50%;
-		translate: -50%;
-		height: 2.5px;
-		border-radius: 10px;
-		bottom: 0;
+		@apply bg-whiteSecondary content-[""] absolute w-[80%] h-[2.5px] rounded-[10px] left-2/4 bottom-0 translate-x-[-50%];
+	}
+	.blog-card::before {
+		@apply first:hidden bg-whitePrimary content-[""] w-full h-px block absolute opacity-5 left-0 top-0 transition duration-300;
+	}
+	.blog-card:hover::before,
+	.blog-card:hover + .blog-card::before {
+		@apply opacity-0;
+	}
+	.blog-card button:has(svg) {
+		@apply text-2xl opacity-80 hover:scale-125 transition duration-200;
+	}
+	.prompt button {
+		@apply py-2 text-sm;
+	}
+	.prompt button.delete {
+		@apply rounded-sm px-3 border border-red-500 text-red-500;
 	}
 }
 
@@ -83,8 +106,30 @@
 	@apply ss:text-3xl ss:leading-snug leading-snug text-2xl font-medium text-whitePrimary ss:mt-10 mt-6 ss:mb-4 mb-2 font-playFD tracking-wide;
 }
 .blog p,
-#editor .ql-editor p {
+#editor .ql-editor p,
+.blog li,
+#editor .ql-editor li,
+.blog blockquote,
+#editor .ql-editor blockquote {
 	@apply ss:text-lg text-lg leading-[1.58] ss:mb-4 mb-2 last:mb-8 text-whiteSecondary font-lora tracking-wider;
+}
+.blog li,
+#editor .ql-editor li {
+	@apply ss:mb-2 mb-1 last:mb-0;
+}
+.blog ol,
+.blog ul,
+#editor .ql-editor ol,
+#editor .ql-editor ul {
+	@apply pl-0 ss:my-8 my-6;
+}
+.blog a,
+#editor .ql-editor a {
+	@apply text-whiteSecondary;
+}
+.blog li:not(.ql-direction-rtl)::before,
+#editor .ql-editor li:not(.ql-direction-rtl)::before {
+	@apply mr-[0.8em];
 }
 #editor .ql-snow {
 	@apply border-hidden;
@@ -101,11 +146,13 @@
 #editor .ql-editor p:has(br) {
 	@apply m-0;
 }
+.blog pre,
 #editor .ql-editor pre {
-	@apply m-0 py-2 ss:text-base text-xs bg-darkSecondary;
+	@apply ss:my-6 my-3 py-2 ss:text-base text-xs bg-darkSecondary;
 }
+.blog blockquote,
 #editor .ql-editor blockquote {
-	@apply ss:text-base text-xs my-3;
+	@apply italic;
 }
 #editor .ql-editor.ql-blank::before {
 	@apply text-lg text-whitePrimary opacity-30 not-italic left-0;

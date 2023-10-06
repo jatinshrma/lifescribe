@@ -1,7 +1,6 @@
 "use client"
 
 import { BlogCard } from "@components/index"
-import { tags, list } from "@utils/constants/index"
 import { IBlogCardProps } from "@utils/types"
 import axios from "axios"
 import { useEffect, useState } from "react"
@@ -36,10 +35,7 @@ export default function Home() {
 			</div> */}
 			<div>
 				{blogs?.map(blog => (
-					<div key={blog._id.toString()}>
-						<BlogCard {...blog} />
-						<hr className="opacity-[.05]" />
-					</div>
+					<BlogCard key={blog._id.toString()} {...blog} />
 				))}
 			</div>
 		</div>

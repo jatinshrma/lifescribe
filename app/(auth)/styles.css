@@ -1,0 +1,25 @@
+@tailwind components;
+
+@layer components {
+	* {
+		@apply font-lora;
+	}
+	.heading {
+		@apply ss:text-3xl ss:leading-snug leading-snug text-xl font-medium text-whitePrimary font-playFD tracking-wide;
+	}
+	.theme-input {
+		@apply bg-darkSecondary rounded-md px-4 py-3.5 placeholder:opacity-40 placeholder:text-whitePrimary w-full font-light;
+	}
+	.theme-button {
+		@apply bg-whiteSecondary py-4 text-center text-black text-opacity-75 w-full rounded-md font-semibold;
+	}
+	.theme-button.secondary {
+		@apply bg-transparent text-whiteSecondary border-solid border border-[#ffffff18] font-normal;
+	}
+	.passoword-field {
+		@apply relative;
+	}
+	.passoword-field svg {
+		@apply absolute right-4 top-1/2 -translate-y-1/2 text-lg opacity-40;
+	}
+}

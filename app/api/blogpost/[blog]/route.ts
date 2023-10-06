@@ -30,12 +30,15 @@ const updateBlogPost = async (request: NextRequest, params: IAuthReqParams) => {
 
 const deleteBlogPost = async (request: NextApiRequest, params: IAuthReqParams) => {
 	try {
-		return NextResponse.json({ done: true })
+		if (params?.error) throw Error(params?.error)
+		const blogId = params?.req_params?.params?.blog
+		await BlogPost.findByIdAndDelete(blogId)
+		return NextResponse.json({ success: true })
 	} catch (error: any) {
 		console.error(error)
 		return NextResponse.json({ message: error.message }, { status: 500 })
 	}
 }
 
-export const DELETE = (req: NextApiRequest) => useAuthRoute(req, deleteBlogPost)
+export const DELETE = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, deleteBlogPost, req_params)
 export const PUT = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, updateBlogPost, req_params)

@@ -1,6 +1,8 @@
-import { File } from "buffer"
 import { JwtPayload } from "jsonwebtoken"
 import mongoose from "mongoose"
+import { Session } from "next-auth"
+import { BuiltInProviderType } from "next-auth/providers/index"
+import { ClientSafeProvider, LiteralUnion } from "next-auth/react"
 import { Dispatch, SetStateAction } from "react"
 
 export interface IBlogPost {
@@ -16,6 +18,7 @@ export interface IBlogCardProps extends IBlogPost {
 	_id: mongoose.Schema.Types.ObjectId
 	author_image: string
 	profile_view?: boolean
+	toggleDeletePrompt?: Function
 }
 
 export interface IAuthor {
@@ -44,4 +47,20 @@ export interface IAuthReqParams {
 	tokenJson: JwtPayload
 	req_params?: IReqParams
 	error?: string
+}
+
+export interface IPromptAction {
+	handler: React.MouseEventHandler<HTMLButtonElement>
+	label: string
+	classname?: string
+}
+export interface IPromptParams {
+	warning: string
+	description: string
+	actions: IPromptAction[]
+}
+
+export interface IAuthPageProps {
+	providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null
+	session: Session | null
 }

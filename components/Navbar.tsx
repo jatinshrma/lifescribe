@@ -2,16 +2,16 @@
 
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
-import { FiSearch, FiLogOut } from "react-icons/fi"
-import { PiNotePencilThin } from "react-icons/pi"
-import { BiUser } from "react-icons/bi"
+import { FiSearch } from "react-icons/fi"
+import { PiPencilSimpleLineDuotone } from "react-icons/pi"
 import Link from "next/link"
-import { signIn, signOut, useSession, getProviders } from "next-auth/react"
+import { signIn, useSession, getProviders } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 const Navbar = () => {
+	const router = useRouter()
 	const { data: session } = useSession()
 	const [providers, setProviders]: any = useState(null)
-	const [toggleDropdown, setToggleDropdown] = useState(false)
 
 	useEffect(() => {
 		;(async () => {
@@ -20,12 +20,20 @@ const Navbar = () => {
 		})()
 	}, [])
 
-	console.log({ session })
-
-	const onClick = () => {
+	const onClick = async () => {
 		if (!providers?.google) return
-		if (session) setToggleDropdown(prev => !prev)
-		else signIn(providers?.google?.id)
+		if (session) return router.push("/profile", { scroll: false })
+		else router.push("/api/auth/signin", { scroll: false })
+		// try {
+		// 	const res = await signIn("credentials", {
+		// 		email: "some email",
+		// 		password: "some pass",
+		// 		redirect: false
+		// 	})
+		// 	console.log(res)
+		// } catch (error) {
+		// 	console.log("A request failed")
+		// }
 	}
 
 	return (
@@ -43,15 +51,15 @@ const Navbar = () => {
 			</div>
 			<div className="flex gap-4 items-center">
 				<Link href={"/editor"}>
-					<button className="flex items-center gap-2 py-2 px-5 bg-darkSecondary rounded-full opacity-70">
-						<PiNotePencilThin className="h-6 w-6" />
+					<button className="flex items-center gap-2 py-3 px-5 bg-darkSecondary rounded-full">
+						<PiPencilSimpleLineDuotone className="h-5 w-5" />
 						<span>Write</span>
 					</button>
 				</Link>
 				<div className="relative ss:mr-2">
 					<div className="rounded-full overflow-hidden">
 						<Image
-							className="object-cover sm:w-8 w-6 cursor-pointer"
+							className="object-cover sm:w-10 w-8 cursor-pointer"
 							src={
 								session?.user?.image ||
 								`https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg`
@@ -62,20 +70,18 @@ const Navbar = () => {
 							onClick={onClick}
 						/>
 					</div>
-					{toggleDropdown && (
-						<div id="user-menu" className="bg-darkSecondary overflow-hidden rounded-lg absolute right-0 mt-3">
-							<Link href={"/profile"}>
-								<button>
-									<BiUser />
-									<span>Profile</span>
-								</button>
-							</Link>
-							<button onClick={() => signOut()}>
-								<FiLogOut />
-								<span>Sign Out</span>
+					{/* <div id="user-menu" className="hidden group-hover:block bg-darkSecondary overflow-hidden rounded-lg absolute right-0 mt-3">
+						<Link href={"/profile"}>
+							<button>
+								<BiUser />
+								<span>Profile</span>
 							</button>
-						</div>
-					)}
+						</Link>
+						<button onClick={() => signOut()}>
+							<FiLogOut />
+							<span>Sign Out</span>
+						</button>
+					</div> */}
 				</div>
 			</div>
 		</nav>
