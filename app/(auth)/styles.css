@@ -11,7 +11,7 @@
 		@apply bg-darkSecondary rounded-md px-4 py-3.5 placeholder:opacity-40 placeholder:text-whitePrimary w-full font-light;
 	}
 	.theme-button {
-		@apply bg-whiteSecondary py-4 text-center text-black text-opacity-75 w-full rounded-md font-semibold;
+		@apply bg-whiteSecondary py-4 text-center text-black w-full rounded-md font-semibold overflow-hidden;
 	}
 	.theme-button.secondary {
 		@apply bg-transparent text-whiteSecondary border-solid border border-[#ffffff18] font-normal;

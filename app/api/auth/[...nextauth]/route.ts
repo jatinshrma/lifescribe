@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { PagesOptions } from "next-auth"
 import bcrypt from "bcrypt"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -6,6 +6,10 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { Author } from "@models"
 import connectToDB from "@lib/db"
 import SignToken from "@lib/signToken"
+
+interface ExtendedPagesOptions extends Partial<PagesOptions> {
+	signUp?: string
+}
 
 const { GOOGLE_CLIENT_ID: clientId = "", GOOGLE_CLIENT_SECRET: clientSecret = "" } = process.env
 const handler = NextAuth({
@@ -32,9 +36,10 @@ const handler = NextAuth({
 		GoogleProvider({ clientId, clientSecret })
 	],
 	pages: {
-		signIn: "/sign-in"
-		// newUser: "/auth/new-user"
-	},
+		signIn: "/signin",
+		signUp: "/signup"
+		// newUser: "/new-user"
+	} as ExtendedPagesOptions,
 	callbacks: {
 		async signIn({ profile, user }) {
 			try {

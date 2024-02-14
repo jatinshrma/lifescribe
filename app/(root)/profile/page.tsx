@@ -117,13 +117,18 @@ const Profile = () => {
 				</div>
 			</div>
 			<div>
-				<button className="text-lg pb-3 highline mr-8">Published</button>
+				<button className="text-lg pb-3 highline mr-8">Blogposts</button>
+				<button className="text-lg pb-3 highline mr-8">Journals</button>
 				<button className="text-lg pb-3 opacity-60">Saved</button>
-				{/* <button>Saved</button> */}
 			</div>
 			<div className="py-10">
 				{blogs?.map(blog => (
-					<BlogCard key={blog._id.toString()} {...blog} profile_view={true} toggleDeletePrompt={toggleDeletePrompt} />
+					<BlogCard
+						key={blog._id.toString()}
+						{...blog}
+						profile_view={true}
+						toggleDeletePrompt={toggleDeletePrompt}
+					/>
 				))}
 			</div>
 			{promptState && (
@@ -131,7 +136,10 @@ const Profile = () => {
 					<Prompt
 						warning="Delete Blogpost"
 						description={promptState?.description}
-						actions={[{ handler: () => setPromptState(null), label: "Cancel" }, promptState?.action as IPromptAction]}
+						actions={[
+							{ handler: () => setPromptState(null), label: "Cancel" },
+							promptState?.action as IPromptAction
+						]}
 					/>
 				</Overlay>
 			)}

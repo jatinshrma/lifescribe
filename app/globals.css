@@ -8,8 +8,9 @@
 	:root {
 		--dark-primary: #151515;
 		--dark-secondary: #1e1e1e;
-		--white-secondary: hsla(0, 0%, 100%, 0.69);
-		--white-primary: hsla(0, 0%, 100%, 0.83);
+		--white-secondary: 182 182 182;
+		--white-primary: 215 215 215;
+		--white-bright: 208 208 208;
 	}
 	::selection {
 		background: white;
@@ -20,7 +21,10 @@
 	}
 	* {
 		scroll-behavior: smooth;
-		color: var(--white-primary);
+		color: rgb(var(--white-primary));
+	}
+	*:disabled {
+		@apply cursor-wait;
 	}
 	input {
 		@apply bg-transparent border-none outline-none text-base;
@@ -93,8 +97,40 @@
 	.prompt button.delete {
 		@apply rounded-sm px-3 border border-red-500 text-red-500;
 	}
+	.spinner-wrapper.progress-bar {
+		@apply bg-whiteSecondary text-opacity-100 z-10 top-0 left-0 w-full h-full cursor-wait absolute flex items-center justify-center;
+		& .loader {
+			width: 98%;
+			height: 4.8px;
+			display: inline-block;
+			position: relative;
+			background: transparent;
+			overflow: hidden;
+			&::after {
+				content: "";
+				width: 192px;
+				height: 4.5px;
+				background: var(--dark-secondary);
+				position: absolute;
+				top: 50%;
+				left: 0;
+				translate: 0 -50%;
+				box-sizing: border-box;
+				animation: progress-bar 1.5s linear infinite;
+			}
+		}
+	}
+	@keyframes progress-bar {
+		0% {
+			left: 0;
+			transform: translateX(-100%);
+		}
+		100% {
+			left: 100%;
+			transform: translateX(0%);
+		}
+	}
 }
-
 #editor img,
 #editor video,
 .blog img,
