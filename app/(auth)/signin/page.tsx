@@ -1,17 +1,14 @@
 "use client"
 
 import { FcGoogle } from "react-icons/fc"
-import { IAuthPageProps } from "@utils/types"
-import { AiOutlineArrowRight } from "react-icons/ai"
-import { BsArrowRight } from "react-icons/bs"
-import Link from "next/link"
-import { HiOutlineEyeSlash } from "react-icons/hi2"
-import { ClientSafeProvider, LiteralUnion, getProviders, getSession } from "next-auth/react"
+import { ClientSafeProvider, LiteralUnion, getProviders, signIn, useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { BuiltInProviderType } from "next-auth/providers/index"
-import { FaApple, FaFacebook, FaFacebookF, FaLinkedin, FaLinkedinIn, FaXTwitter } from "react-icons/fa6"
+import { FaXTwitter } from "react-icons/fa6"
+import { redirect } from "next/navigation"
 
 function SignIn() {
+	const { data: session } = useSession()
 	const [providers, setProviders] = useState<Record<
 		LiteralUnion<BuiltInProviderType, string>,
 		ClientSafeProvider
@@ -26,6 +23,7 @@ function SignIn() {
 
 	const [flags, setFlags] = useState<{ loading: boolean }>()
 
+	if (session) return redirect("/")
 	return (
 		<div className="flex h-screen">
 			<div className="bg-auth w-1/2 h-screen bg-cover bg-right" />
@@ -34,59 +32,58 @@ function SignIn() {
 					<small className="text-base">Welcome.</small>
 					<h2 className="heading">Sign into your account</h2>
 					<div className="mt-12 mb-6 flex gap-3 flex-col">
-						{Object.values(providers || {})
+						{/* {Object.values(providers || {})
 							.filter(i => i.name !== "Credentials")
 							.map(provider => (
-								<div className="flex gap-3 flex-col">
-									<div key={provider.name}>
-										<button
-											className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-											disabled={flags?.loading}
-										>
-											<FcGoogle className="w-7 h-7 ml-[25%]" />
-											<span className="text-fontSecondary font-normal">Continue with {provider.name}</span>
-										</button>
-									</div>
-									{/* <div key={provider.name}>
-										<button
-											className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-											disabled={flags?.loading}
-										>
-											<FaApple className="w-7 h-7 ml-[25%] fill-darkSecondary" />
-											<span className="text-fontSecondary font-normal">Continue with Apple</span>
-										</button>
-									</div> */}
-									<div key={provider.name}>
-										<button
-											className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-											disabled={flags?.loading}
-										>
-											{/* <FaFacebook className="w-7 h-7 fill-[#3b5999] ml-[25%]" /> */}
-											{/* className="w-7 h-7 ml-[25%]" */}
-											<FacebookIcon />
-											<span className="text-fontSecondary font-normal">Continue with Facebook</span>
-										</button>
-									</div>
-									<div key={provider.name}>
-										<button
-											className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-											disabled={flags?.loading}
-										>
-											<LinkedInIcon />
-											<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
-										</button>
-									</div>
-									<div key={provider.name}>
-										<button
-											className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-											disabled={flags?.loading}
-										>
-											<FaXTwitter className="w-7 h-5 ml-[25%] text-fontSecondary" />
-											<span className="text-fontSecondary font-normal">Continue with Twitter</span>
-										</button>
-									</div>
-								</div>
-							))}
+							))} */}
+						<div className="flex gap-3 flex-col">
+							<div>
+								<button
+									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									onClick={() => signIn("google")}
+									disabled={flags?.loading}
+								>
+									<FcGoogle className="w-7 h-7 ml-[25%]" />
+									<span className="text-fontSecondary font-normal">Continue with google</span>
+								</button>
+							</div>
+							<div>
+								<button
+									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									disabled={flags?.loading}
+								>
+									<FacebookIcon />
+									<span className="text-fontSecondary font-normal">Continue with Facebook</span>
+								</button>
+							</div>
+							<div>
+								<button
+									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									disabled={flags?.loading}
+								>
+									<LinkedInIcon />
+									<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
+								</button>
+							</div>
+							<div>
+								<button
+									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									disabled={flags?.loading}
+								>
+									<GithubIcon />
+									<span className="text-fontSecondary font-normal">Continue with Github</span>
+								</button>
+							</div>
+							<div>
+								<button
+									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									disabled={flags?.loading}
+								>
+									<FaXTwitter className="w-7 h-6 ml-[25%] text-fontSecondary" />
+									<span className="text-fontSecondary font-normal">Continue with Twitter</span>
+								</button>
+							</div>
+						</div>
 					</div>
 					<div>
 						<span className="text-xs text-whitePrimary text-opacity-50">
@@ -99,6 +96,41 @@ function SignIn() {
 		</div>
 	)
 }
+
+const GithubIcon = () => (
+	<svg
+		className="w-7 h-7 ml-[25%]"
+		xmlns="http://www.w3.org/2000/svg"
+		x="0px"
+		y="0px"
+		width="100"
+		height="100"
+		viewBox="0,0,256,256"
+	>
+		<g transform="translate(-62.72,-62.72) scale(1.49,1.49)">
+			<g
+				fill="#FFFFFF"
+				fillRule="nonzero"
+				stroke="none"
+				strokeWidth="1"
+				strokeLinecap="butt"
+				strokeLinejoin="miter"
+				strokeMiterlimit="10"
+				strokeDasharray=""
+				strokeDashoffset="0"
+				fontFamily="none"
+				fontWeight="none"
+				fontSize="none"
+				textAnchor="none"
+				style={{ mixBlendMode: "normal" }}
+			>
+				<g transform="translate(0,2.10133) scale(3.55556,3.55556)">
+					<path d="M36,12c13.255,0 24,10.745 24,24c0,10.656 -6.948,19.685 -16.559,22.818c0.003,-0.009 0.007,-0.022 0.007,-0.022c0,0 -1.62,-0.759 -1.586,-2.114c0.038,-1.491 0,-4.971 0,-6.248c0,-2.193 -1.388,-3.747 -1.388,-3.747c0,0 10.884,0.122 10.884,-11.491c0,-4.481 -2.342,-6.812 -2.342,-6.812c0,0 1.23,-4.784 -0.426,-6.812c-1.856,-0.2 -5.18,1.774 -6.6,2.697c0,0 -2.25,-0.922 -5.991,-0.922c-3.742,0 -5.991,0.922 -5.991,0.922c-1.419,-0.922 -4.744,-2.897 -6.6,-2.697c-1.656,2.029 -0.426,6.812 -0.426,6.812c0,0 -2.342,2.332 -2.342,6.812c0,11.613 10.884,11.491 10.884,11.491c0,0 -1.097,1.239 -1.336,3.061c-0.76,0.258 -1.877,0.576 -2.78,0.576c-2.362,0 -4.159,-2.296 -4.817,-3.358c-0.649,-1.048 -1.98,-1.927 -3.221,-1.927c-0.817,0 -1.216,0.409 -1.216,0.876c0,0.467 1.146,0.793 1.902,1.659c1.594,1.826 1.565,5.933 7.245,5.933c0.617,0 1.876,-0.152 2.823,-0.279c-0.006,1.293 -0.007,2.657 0.013,3.454c0.034,1.355 -1.586,2.114 -1.586,2.114c0,0 0.004,0.013 0.007,0.022c-9.61,-3.133 -16.558,-12.162 -16.558,-22.818c0,-13.255 10.745,-24 24,-24z"></path>
+				</g>
+			</g>
+		</g>
+	</svg>
+)
 
 const FacebookIcon = () => (
 	<svg
@@ -119,25 +151,25 @@ const FacebookIcon = () => (
 				gradientUnits="userSpaceOnUse"
 				id="color-1_uLWV5A9vXIPu_gr1"
 			>
-				<stop offset="0" stop-color="#2aa4f4"></stop>
-				<stop offset="1" stop-color="#007ad9"></stop>
+				<stop offset="0" stopColor="#2aa4f4"></stop>
+				<stop offset="1" stopColor="#007ad9"></stop>
 			</linearGradient>
 		</defs>
 		<g transform="translate(-24.32,-24.32) scale(1.19,1.19)">
 			<g
 				fill="none"
-				fill-rule="nonzero"
+				fillRule="nonzero"
 				stroke="none"
-				stroke-width="1"
-				stroke-linecap="butt"
-				stroke-linejoin="miter"
-				stroke-miterlimit="10"
-				stroke-dasharray=""
-				stroke-dashoffset="0"
-				font-family="none"
-				font-weight="none"
-				font-size="none"
-				text-anchor="none"
+				strokeWidth="1"
+				strokeLinecap="butt"
+				strokeLinejoin="miter"
+				strokeMiterlimit="10"
+				strokeDasharray=""
+				strokeDashoffset="0"
+				fontFamily="none"
+				fontWeight="none"
+				fontSize="none"
+				textAnchor="none"
 			>
 				<g transform="scale(5.33333,5.33333)">
 					<path
@@ -167,18 +199,18 @@ const LinkedInIcon = () => (
 		<g transform="translate(-38.4,-38.4) scale(1.3,1.3)">
 			<g
 				fill="none"
-				fill-rule="nonzero"
+				fillRule="nonzero"
 				stroke="none"
-				stroke-width="1"
-				stroke-linecap="butt"
-				stroke-linejoin="miter"
-				stroke-miterlimit="10"
-				stroke-dasharray=""
-				stroke-dashoffset="0"
-				font-family="none"
-				font-weight="none"
-				font-size="none"
-				text-anchor="none"
+				strokeWidth="1"
+				strokeLinecap="butt"
+				strokeLinejoin="miter"
+				strokeMiterlimit="10"
+				strokeDasharray=""
+				strokeDashoffset="0"
+				fontFamily="none"
+				fontWeight="none"
+				fontSize="none"
+				textAnchor="none"
 				style={{ mixBlendMode: "normal" }}
 			>
 				<g transform="scale(5.33333,5.33333)">
@@ -254,7 +286,7 @@ const LinkedInIcon = () => (
 // 					{Object.values(providers || {})
 // 						.filter(i => i.name !== "Credentials")
 // 						.map(provider => (
-// 							<div key={provider.name}>
+// 							<div>
 // 								<button className="flex items-center justify-center theme-button secondary gap-3">
 // 									<FcGoogle className="w-6 h-6" />
 // 									<span>Continue with {provider.name}</span>

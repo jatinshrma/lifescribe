@@ -1,45 +1,39 @@
 import NextAuth, { PagesOptions } from "next-auth"
-import bcrypt from "bcrypt"
 import GoogleProvider from "next-auth/providers/google"
-import CredentialsProvider from "next-auth/providers/credentials"
 
 import { Author } from "@models"
 import connectToDB from "@lib/db"
 import SignToken from "@lib/signToken"
 
-interface ExtendedPagesOptions extends Partial<PagesOptions> {
-	signUp?: string
-}
-
 const { GOOGLE_CLIENT_ID: clientId = "", GOOGLE_CLIENT_SECRET: clientSecret = "" } = process.env
 const handler = NextAuth({
 	providers: [
-		CredentialsProvider({
-			type: "credentials",
-			credentials: {
-				email: { type: "email" },
-				password: { type: "password" }
-			},
-			async authorize(credentials) {
-				const author = await Author.findOne({ email: credentials?.email })
-				if (!author) return null
-				if (!bcrypt.compareSync(credentials?.password as string, author.password)) return null
-				else
-					return {
-						id: author?._id.toString(),
-						name: author.name,
-						email: author.email,
-						image: author.profile_picture || ""
-					}
-			}
-		}),
+		// CredentialsProvider({
+		// 	type: "credentials",
+		// 	credentials: {
+		// 		email: { type: "email" },
+		// 		password: { type: "password" }
+		// 	},
+		// 	async authorize(credentials) {
+		// 		const author = await Author.findOne({ email: credentials?.email })
+		// 		if (!author) return null
+		// 		if (!bcrypt.compareSync(credentials?.password as string, author.password)) return null
+		// 		else
+		// 			return {
+		// 				id: author?._id.toString(),
+		// 				name: author.name,
+		// 				email: author.email,
+		// 				image: author.profile_picture || ""
+		// 			}
+		// 	}
+		// }),
+		// Github
 		GoogleProvider({ clientId, clientSecret })
 	],
 	pages: {
 		signIn: "/signin",
-		signUp: "/signup"
-		// newUser: "/new-user"
-	} as ExtendedPagesOptions,
+		newUser: "/onboarding"
+	} as Partial<PagesOptions>,
 	callbacks: {
 		async signIn({ profile, user }) {
 			try {
@@ -69,6 +63,12 @@ const handler = NextAuth({
 		},
 		async session({ session, token }) {
 			return { ...session, session_token: token.userToken }
+		},
+		async redirect({ url, baseUrl }) {
+			console.log({ url, baseUrl })
+			if (url.startsWith("/")) return `${baseUrl}${url}`
+			else if (new URL(url).origin === baseUrl) return url
+			return baseUrl
 		}
 	}
 })

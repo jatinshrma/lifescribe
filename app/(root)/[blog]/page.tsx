@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import axios from "axios"
-import { IBlogCardProps, IBlogPost } from "@utils/types"
+import { IBlogPost } from "@utils/types"
 
 const Blog = () => {
 	const { blog } = useParams()

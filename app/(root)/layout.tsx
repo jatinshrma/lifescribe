@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<div id="app-wrapper">
 					<Provider>
 						<Navbar />
-						<div id="app-content">{children}</div>
+						<main id="app-content">{children}</main>
 						<Footer />
 					</Provider>
 				</div>
