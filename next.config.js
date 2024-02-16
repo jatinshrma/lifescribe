@@ -19,6 +19,12 @@ module.exports = {
 				hostname: "images.unsplash.com",
 				port: "",
 				pathname: "/**"
+			},
+			{
+				protocol: "https",
+				hostname: "cdn.create.vista.com",
+				port: "",
+				pathname: "/**"
 			}
 		]
 	}

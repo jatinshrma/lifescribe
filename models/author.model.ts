@@ -30,6 +30,9 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	created_at: {
 		type: Date,
 		default: Date.now
+	},
+	new_user: {
+		type: Boolean
 	}
 })
 

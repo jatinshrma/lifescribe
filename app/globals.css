@@ -42,6 +42,15 @@
 }
 
 @layer components {
+	.heading {
+		@apply ss:text-3xl ss:leading-snug leading-snug text-xl font-medium text-whitePrimary font-playFD tracking-wide;
+	}
+	.sub-heading {
+		@apply ss:text-2xl ss:leading-snug leading-snug text-lg font-medium text-whitePrimary font-playFD tracking-wide;
+	}
+	.theme-input {
+		@apply bg-darkSecondary rounded-md px-4 py-3.5 placeholder:opacity-40 placeholder:text-whitePrimary w-full font-light;
+	}
 	#app-wrapper {
 		@apply max-w-[1440px] m-auto relative h-[100vh];
 	}
@@ -117,6 +126,15 @@
 				translate: 0 -50%;
 				box-sizing: border-box;
 				animation: progress-bar 1.5s linear infinite;
+			}
+		}
+	}
+	#onboarding-progress {
+		@apply flex justify-between gap-4 my-7;
+		& div {
+			@apply h-1 rounded-lg flex-1 bg-darkSecondary;
+			&.filled {
+				@apply bg-whitePrimary text-opacity-100;
 			}
 		}
 	}

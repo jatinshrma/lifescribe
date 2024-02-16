@@ -5,13 +5,22 @@ import React, { useEffect, useState } from "react"
 import { FiSearch } from "react-icons/fi"
 import { PiPencilSimpleLineDuotone } from "react-icons/pi"
 import Link from "next/link"
-import { signIn, useSession, getProviders } from "next-auth/react"
+import { useSession, getProviders } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-const Navbar = () => {
+const Navbar = ({ minimal = false }) => {
 	const router = useRouter()
 	const { data: session } = useSession()
 	const [providers, setProviders]: any = useState(null)
+
+	switch (location.pathname) {
+		case "/onboarding":
+			minimal = true
+			break
+
+		default:
+			break
+	}
 
 	useEffect(() => {
 		;(async () => {
@@ -42,20 +51,24 @@ const Navbar = () => {
 				<Link href="/">
 					<button className="ss:text-3xl text-lg font-bold text-red-50">LifeScribe</button>
 				</Link>
-				<div className="nav__search">
-					<span>
-						<FiSearch className="ss:text-[22px] text-[1rem]" />
-					</span>
-					<input type="text" placeholder="Search Blogs" className="ss:w-60 w-32 text-sm" />
-				</div>
+				{!minimal && (
+					<div className="nav__search">
+						<span>
+							<FiSearch className="ss:text-[22px] text-[1rem]" />
+						</span>
+						<input type="text" placeholder="Search Blogs" className="ss:w-60 w-32 text-sm" />
+					</div>
+				)}
 			</div>
 			<div className="flex gap-4 items-center">
-				<Link href={"/editor"}>
-					<button className="flex items-center gap-2 py-3 px-5 bg-darkSecondary rounded-full">
-						<PiPencilSimpleLineDuotone className="h-5 w-5" />
-						<span>Write</span>
-					</button>
-				</Link>
+				{!minimal && (
+					<Link href={"/editor"}>
+						<button className="flex items-center gap-2 py-3 px-5 bg-darkSecondary rounded-full">
+							<PiPencilSimpleLineDuotone className="h-5 w-5" />
+							<span>Write</span>
+						</button>
+					</Link>
+				)}
 				<div className="relative ss:mr-2">
 					<div className="rounded-full overflow-hidden">
 						<Image

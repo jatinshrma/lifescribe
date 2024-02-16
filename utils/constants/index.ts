@@ -35,7 +35,8 @@ export const blogsList = [
 			{
 				user: "GlobeTrotter",
 				title: "Cultural Delights of Asia",
-				description: "Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
+				description:
+					"Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
 				creation_date: "5 April",
 				reading_time: "2 min",
 				tag: "Travel"
@@ -43,7 +44,8 @@ export const blogsList = [
 			{
 				user: "NomadicSoul",
 				title: "Safari Adventures in Africa",
-				description: "Join an unforgettable safari journey, encountering majestic wildlife in their natural habitat.",
+				description:
+					"Join an unforgettable safari journey, encountering majestic wildlife in their natural habitat.",
 				creation_date: "28 July",
 				reading_time: "5 min",
 				tag: "Travel"
@@ -51,7 +53,8 @@ export const blogsList = [
 			{
 				user: "RoamingFree",
 				title: "Island Hopping in Greece",
-				description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+				description:
+					"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 				creation_date: "17 February",
 				reading_time: "2 min",
 				tag: "Travel"
@@ -64,7 +67,8 @@ export const blogsList = [
 			{
 				user: "TechGuru",
 				title: "Future of AI: Transforming Industries",
-				description: "Explore how artificial intelligence is reshaping various industries, from healthcare to finance.",
+				description:
+					"Explore how artificial intelligence is reshaping various industries, from healthcare to finance.",
 				creation_date: "8 August",
 				reading_time: "5 min",
 				tag: "Technology"
@@ -80,7 +84,8 @@ export const blogsList = [
 			{
 				user: "TechWhiz",
 				title: "The Rise of 5G: Revolutionizing Communication",
-				description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+				description:
+					"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 				creation_date: "3 January",
 				reading_time: "6 min",
 				tag: "Technology"
@@ -118,7 +123,8 @@ export const blogsList = [
 			{
 				user: "HomeCookExpert",
 				title: "Cooking with Love: Recipes from Grandma",
-				description: "Discover heartwarming recipes passed down through generations, filled with love and tradition.",
+				description:
+					"Discover heartwarming recipes passed down through generations, filled with love and tradition.",
 				creation_date: "14 July",
 				reading_time: "2 min",
 				tag: "Food"
@@ -126,7 +132,8 @@ export const blogsList = [
 			{
 				user: "FoodieFusion",
 				title: "Fusion Flavors: Blending Cultures",
-				description: "Explore the delightful fusion of diverse culinary traditions, creating new taste experiences.",
+				description:
+					"Explore the delightful fusion of diverse culinary traditions, creating new taste experiences.",
 				creation_date: "19 March",
 				reading_time: "6 min",
 				tag: "Food"
@@ -142,7 +149,8 @@ export const blogsList = [
 			{
 				user: "FoodAdventurer",
 				title: "Street Food Chronicles: Global Delights",
-				description: "Taste the vibrant street food culture across the globe, celebrating local flavors and culinary artistry.",
+				description:
+					"Taste the vibrant street food culture across the globe, celebrating local flavors and culinary artistry.",
 				creation_date: "30 April",
 				reading_time: "2 min",
 				tag: "Food"
@@ -163,7 +171,8 @@ export const blogsList = [
 			{
 				user: "HealthGuru",
 				title: "Mindfulness and Meditation: Finding Inner Balance",
-				description: "Discover the power of mindfulness and meditation in achieving mental clarity and inner peace.",
+				description:
+					"Discover the power of mindfulness and meditation in achieving mental clarity and inner peace.",
 				creation_date: "11 June",
 				reading_time: "2 min",
 				tag: "Fitness"
@@ -171,7 +180,8 @@ export const blogsList = [
 			{
 				user: "FitNutritionist",
 				title: "Fueling Your Body: Nutrition Tips for Optimal Performance",
-				description: "Learn the science-backed nutrition tips to optimize your performance and lead a healthy lifestyle.",
+				description:
+					"Learn the science-backed nutrition tips to optimize your performance and lead a healthy lifestyle.",
 				creation_date: "20 August",
 				reading_time: "6 min",
 				tag: "Fitness"
@@ -200,7 +210,8 @@ export const blogsList = [
 			{
 				user: "Shutterbug",
 				title: "Capturing Nature's Beauty: Landscape Photography",
-				description: "Immerse yourself in the art of landscape photography, capturing breathtaking natural wonders.",
+				description:
+					"Immerse yourself in the art of landscape photography, capturing breathtaking natural wonders.",
 				creation_date: "16 March 2023",
 				reading_time: "4 min",
 				tag: "Photography"
@@ -216,7 +227,8 @@ export const blogsList = [
 			{
 				user: "WildlifeSnapper",
 				title: "Into the Wild: Wildlife Photography Adventures",
-				description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+				description:
+					"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 				creation_date: "4 July 2023",
 				reading_time: "6 min",
 				tag: "Photography"
@@ -224,7 +236,8 @@ export const blogsList = [
 			{
 				user: "UrbanExplorer",
 				title: "Cityscapes and Urban Marvels: Photographing the Concrete Jungle",
-				description: "Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
+				description:
+					"Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
 				creation_date: "22 October 2023",
 				reading_time: "5 min",
 				tag: "Photography"
@@ -232,7 +245,8 @@ export const blogsList = [
 			{
 				user: "AdventureShots",
 				title: "Photography on the Edge: Extreme Expeditions",
-				description: "Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
+				description:
+					"Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
 				creation_date: "9 May 2023",
 				reading_time: "2 min",
 				tag: "Photography"
@@ -277,7 +291,8 @@ export const blogsList = [
 			{
 				user: "MedievalChronicles",
 				title: "Medieval Times: Knights and Castles",
-				description: "Step into the world of knights and castles, reliving the glory and chivalry of medieval times.",
+				description:
+					"Step into the world of knights and castles, reliving the glory and chivalry of medieval times.",
 				creation_date: "7 March 2023",
 				reading_time: "2 min",
 				tag: "History"
@@ -290,7 +305,8 @@ export const blogsList = [
 			{
 				user: "SciFiGeek",
 				title: "Galactic Odyssey: Space Exploration",
-				description: "Embark on an interstellar journey, exploring distant galaxies and encountering alien worlds.",
+				description:
+					"Embark on an interstellar journey, exploring distant galaxies and encountering alien worlds.",
 				creation_date: "1 October 2023",
 				reading_time: "4 min",
 				tag: "Science Fiction"
@@ -298,7 +314,8 @@ export const blogsList = [
 			{
 				user: "FuturisticVisions",
 				title: "Dystopian Realities: A Glimpse into the Future",
-				description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+				description:
+					"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 				creation_date: "13 February 2023",
 				reading_time: "2 min",
 				tag: "Science Fiction"
@@ -322,7 +339,8 @@ export const blogsList = [
 			{
 				user: "ParallelWorlds",
 				title: "Parallel Dimensions: Multiverse Explorations",
-				description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+				description:
+					"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 				creation_date: "6 April 2023",
 				reading_time: "2 min",
 				tag: "Science Fiction"
@@ -558,7 +576,8 @@ export const list = [
 	{
 		user: "FitNutritionist",
 		title: "Fueling Your Body: Nutrition Tips for Optimal Performance",
-		description: "Learn the science-backed nutrition tips to optimize your performance and lead a healthy lifestyle.",
+		description:
+			"Learn the science-backed nutrition tips to optimize your performance and lead a healthy lifestyle.",
 		creation_date: "20 August",
 		reading_time: "2 min",
 		tag: "Fitness"
@@ -606,7 +625,8 @@ export const list = [
 	{
 		user: "GlobeTrotter",
 		title: "Cultural Delights of Asia",
-		description: "Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
+		description:
+			"Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
 		creation_date: "5 April",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -622,7 +642,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -646,7 +667,8 @@ export const list = [
 	{
 		user: "ParallelWorlds",
 		title: "Parallel Dimensions: Multiverse Explorations",
-		description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+		description:
+			"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 		creation_date: "6 April",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -702,7 +724,8 @@ export const list = [
 	{
 		user: "WildlifeSnapper",
 		title: "Into the Wild: Wildlife Photography Adventures",
-		description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+		description:
+			"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 		creation_date: "4 July",
 		reading_time: "2 min",
 		tag: "Photography"
@@ -718,7 +741,8 @@ export const list = [
 	{
 		user: "FuturisticVisions",
 		title: "Dystopian Realities: A Glimpse into the Future",
-		description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+		description:
+			"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 		creation_date: "13 February",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -726,7 +750,8 @@ export const list = [
 	{
 		user: "TechWhiz",
 		title: "The Rise of 5G: Revolutionizing Communication",
-		description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+		description:
+			"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 		creation_date: "3 January",
 		reading_time: "2 min",
 		tag: "Technology"
@@ -742,7 +767,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -766,7 +792,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -774,7 +801,8 @@ export const list = [
 	{
 		user: "AdventureShots",
 		title: "Photography on the Edge: Extreme Expeditions",
-		description: "Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
+		description:
+			"Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
 		creation_date: "9 May",
 		reading_time: "6 min",
 		tag: "Photography"
@@ -814,7 +842,8 @@ export const list = [
 	{
 		user: "UrbanExplorer",
 		title: "Cityscapes and Urban Marvels: Photographing the Concrete Jungle",
-		description: "Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
+		description:
+			"Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
 		creation_date: "22 October",
 		reading_time: "3 min",
 		tag: "Photography"
@@ -822,7 +851,8 @@ export const list = [
 	{
 		user: "GlobeTrotter",
 		title: "Cultural Delights of Asia",
-		description: "Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
+		description:
+			"Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
 		creation_date: "5 April",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -854,7 +884,8 @@ export const list = [
 	{
 		user: "AdventureSeeker",
 		title: "Adrenaline Rush: Extreme Sports",
-		description: "Experience the thrill of extreme sports, from skydiving to rock climbing and everything in between.",
+		description:
+			"Experience the thrill of extreme sports, from skydiving to rock climbing and everything in between.",
 		creation_date: "25 March",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -870,7 +901,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -886,7 +918,8 @@ export const list = [
 	{
 		user: "ParallelWorlds",
 		title: "Parallel Dimensions: Multiverse Explorations",
-		description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+		description:
+			"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 		creation_date: "6 April",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -942,7 +975,8 @@ export const list = [
 	{
 		user: "WildlifeSnapper",
 		title: "Into the Wild: Wildlife Photography Adventures",
-		description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+		description:
+			"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 		creation_date: "4 July",
 		reading_time: "2 min",
 		tag: "Photography"
@@ -958,7 +992,8 @@ export const list = [
 	{
 		user: "FuturisticVisions",
 		title: "Dystopian Realities: A Glimpse into the Future",
-		description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+		description:
+			"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 		creation_date: "13 February",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -966,7 +1001,8 @@ export const list = [
 	{
 		user: "TechWhiz",
 		title: "The Rise of 5G: Revolutionizing Communication",
-		description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+		description:
+			"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 		creation_date: "3 January",
 		reading_time: "2 min",
 		tag: "Technology"
@@ -982,7 +1018,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1006,7 +1043,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -1022,7 +1060,8 @@ export const list = [
 	{
 		user: "ParallelWorlds",
 		title: "Parallel Dimensions: Multiverse Explorations",
-		description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+		description:
+			"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 		creation_date: "6 April",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1078,7 +1117,8 @@ export const list = [
 	{
 		user: "WildlifeSnapper",
 		title: "Into the Wild: Wildlife Photography Adventures",
-		description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+		description:
+			"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 		creation_date: "4 July",
 		reading_time: "2 min",
 		tag: "Photography"
@@ -1094,7 +1134,8 @@ export const list = [
 	{
 		user: "FuturisticVisions",
 		title: "Dystopian Realities: A Glimpse into the Future",
-		description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+		description:
+			"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 		creation_date: "13 February",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1102,7 +1143,8 @@ export const list = [
 	{
 		user: "TechWhiz",
 		title: "The Rise of 5G: Revolutionizing Communication",
-		description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+		description:
+			"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 		creation_date: "3 January",
 		reading_time: "2 min",
 		tag: "Technology"
@@ -1118,7 +1160,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1142,7 +1185,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -1158,7 +1202,8 @@ export const list = [
 	{
 		user: "ParallelWorlds",
 		title: "Parallel Dimensions: Multiverse Explorations",
-		description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+		description:
+			"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 		creation_date: "6 April",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1214,7 +1259,8 @@ export const list = [
 	{
 		user: "WildlifeSnapper",
 		title: "Into the Wild: Wildlife Photography Adventures",
-		description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+		description:
+			"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 		creation_date: "4 July",
 		reading_time: "2 min",
 		tag: "Photography"
@@ -1230,7 +1276,8 @@ export const list = [
 	{
 		user: "FuturisticVisions",
 		title: "Dystopian Realities: A Glimpse into the Future",
-		description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+		description:
+			"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 		creation_date: "13 February",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1238,7 +1285,8 @@ export const list = [
 	{
 		user: "TechWhiz",
 		title: "The Rise of 5G: Revolutionizing Communication",
-		description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+		description:
+			"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 		creation_date: "3 January",
 		reading_time: "2 min",
 		tag: "Technology"
@@ -1254,7 +1302,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1278,7 +1327,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -1286,7 +1336,8 @@ export const list = [
 	{
 		user: "AdventureShots",
 		title: "Photography on the Edge: Extreme Expeditions",
-		description: "Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
+		description:
+			"Embark on adrenaline-pumping photography expeditions, capturing the thrill of extreme adventures.",
 		creation_date: "9 May",
 		reading_time: "6 min",
 		tag: "Photography"
@@ -1326,7 +1377,8 @@ export const list = [
 	{
 		user: "UrbanExplorer",
 		title: "Cityscapes and Urban Marvels: Photographing the Concrete Jungle",
-		description: "Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
+		description:
+			"Discover the art of urban photography, capturing the dynamic city life and architectural wonders.",
 		creation_date: "22 October",
 		reading_time: "3 min",
 		tag: "Photography"
@@ -1334,7 +1386,8 @@ export const list = [
 	{
 		user: "GlobeTrotter",
 		title: "Cultural Delights of Asia",
-		description: "Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
+		description:
+			"Experience the rich tapestry of cultures across Asia, from traditional festivals to modern metropolises.",
 		creation_date: "5 April",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1366,7 +1419,8 @@ export const list = [
 	{
 		user: "AdventureSeeker",
 		title: "Adrenaline Rush: Extreme Sports",
-		description: "Experience the thrill of extreme sports, from skydiving to rock climbing and everything in between.",
+		description:
+			"Experience the thrill of extreme sports, from skydiving to rock climbing and everything in between.",
 		creation_date: "25 March",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1382,7 +1436,8 @@ export const list = [
 	{
 		user: "TechExplorer",
 		title: "The Future of Virtual Reality",
-		description: "Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
+		description:
+			"Step into the immersive world of virtual reality and its transformative impact on entertainment and beyond.",
 		creation_date: "6 March",
 		reading_time: "6 min",
 		tag: "Technology"
@@ -1398,7 +1453,8 @@ export const list = [
 	{
 		user: "ParallelWorlds",
 		title: "Parallel Dimensions: Multiverse Explorations",
-		description: "Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
+		description:
+			"Unlock the mysteries of parallel dimensions and alternate realities, where anything is possible.",
 		creation_date: "6 April",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1454,7 +1510,8 @@ export const list = [
 	{
 		user: "WildlifeSnapper",
 		title: "Into the Wild: Wildlife Photography Adventures",
-		description: "Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
+		description:
+			"Embark on thrilling wildlife photography adventures, capturing elusive creatures in their habitat.",
 		creation_date: "4 July",
 		reading_time: "2 min",
 		tag: "Photography"
@@ -1470,7 +1527,8 @@ export const list = [
 	{
 		user: "FuturisticVisions",
 		title: "Dystopian Realities: A Glimpse into the Future",
-		description: "Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
+		description:
+			"Envision dystopian worlds and futuristic societies, grappling with the consequences of technology.",
 		creation_date: "13 February",
 		reading_time: "6 min",
 		tag: "Science Fiction"
@@ -1478,7 +1536,8 @@ export const list = [
 	{
 		user: "TechWhiz",
 		title: "The Rise of 5G: Revolutionizing Communication",
-		description: "Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
+		description:
+			"Learn how 5G networks are changing the way we connect and communicate in a hyper-connected world.",
 		creation_date: "3 January",
 		reading_time: "2 min",
 		tag: "Technology"
@@ -1494,7 +1553,8 @@ export const list = [
 	{
 		user: "RoamingFree",
 		title: "Island Hopping in Greece",
-		description: "Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
+		description:
+			"Discover the allure of Greek islands, adorned with picturesque villages and crystal-clear waters.",
 		creation_date: "17 February",
 		reading_time: "6 min",
 		tag: "Travel"
@@ -1519,3 +1579,56 @@ export const list = [
 // const combinedArray = list
 // shuffleArray(combinedArray)
 // console.log(combinedArray)
+
+export const interests = [
+	"Travel",
+	"Food and Cooking",
+	"Fashion",
+	"Health and Fitness",
+	"Parenting",
+	"Personal Finance",
+	"DIY and Crafts",
+	"Technology",
+	"Photography",
+	"Gaming",
+	"Books and Literature",
+	"Home Decor",
+	"Self-Improvement",
+	"Education",
+	"Fitness",
+	"Entrepreneurship",
+	"Marketing",
+	"Beauty",
+	"Pets",
+	"Politics",
+	"Environment and Sustainability",
+	"Lifestyle",
+	"Career Development",
+	"Film and Television",
+	"Mental Health",
+	"Sports",
+	"Music",
+	"Art",
+	"History",
+	"Religion and Spirituality",
+	"Gardening",
+	"Relationships",
+	"Fashion Design",
+	"Real Estate",
+	"Science",
+	"Nutrition",
+	"Travel Photography",
+	"Personal Growth",
+	"Interior Design",
+	"Adventure",
+	"Social Media",
+	"Humanitarianism",
+	"Culinary Arts",
+	"Home Improvement",
+	"Cryptocurrency",
+	"Sustainable Living",
+	"Fashion Styling",
+	"Mindfulness",
+	"Parenting Advice",
+	"Business Development"
+]

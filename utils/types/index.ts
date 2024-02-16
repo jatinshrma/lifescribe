@@ -29,6 +29,7 @@ export interface IAuthor {
 	email: string
 	password: string
 	created_at: Date
+	new_user?: boolean
 }
 
 export interface IEditorProps {
