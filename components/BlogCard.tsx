@@ -44,13 +44,13 @@ const BlogCard = (props: IBlogCardProps) => {
 
 	return (
 		<>
-			<div className={"blog-card relative ss:p-8 p-6 rounded-[2rem] hover:bg-darkSecondary transition ease duration-300"}>
+			<div className={"blog-card relative p-8 rounded-[2rem] hover:bg-darkSecondary transition ease duration-300"}>
 				<Link href={getRedirectURL(props?.profile_view ? 2 : 1)}>
 					<div className="flex ss:gap-2.5 gap-2 items-center">
 						{!props?.profile_view ? (
 							<>
 								<Image
-									className={"rounded-full object-cover sm:w-[22px] w-[18px]"}
+									className={"rounded-full object-cover w-6"}
 									src={props?.author_image}
 									alt="user"
 									width={32}
@@ -58,9 +58,9 @@ const BlogCard = (props: IBlogCardProps) => {
 								/>
 								<div className="flex justify-between w-full">
 									<div className="flex gap-2 items-center">
-										<span className="text-fontSecondary sm:text-base text-sm">{props?.author?.toString()}</span>
-										<span className="opacity-60 sm:text-sm text-xs">·</span>
-										<span className="opacity-60 sm:text-sm text-xs">{calculateAge(props?.created_at)}</span>
+										<span className="text-fontSecondary text-base">{props?.author?.toString()}</span>
+										<span className="opacity-60 text-sm">·</span>
+										<span className="opacity-60 text-sm">{calculateAge(props?.created_at)}</span>
 									</div>
 									<div className="flex gap-5 items-center">
 										<button onClick={copyLink}>
@@ -74,10 +74,10 @@ const BlogCard = (props: IBlogCardProps) => {
 							</>
 						) : (
 							<div className="flex justify-between w-full">
-								<div className="flex gap-2 items-center">
-									<span className="opacity-60 sm:text-sm text-xs">{calculateAge(props?.created_at)}</span>
-									<span className="opacity-60 sm:text-sm text-xs">·</span>
-									<span className="opacity-60 ss:text-sm text-xs">{props?.reading_time} min read</span>
+								<div className="flex gap-3 items-center">
+									<span className="opacity-60 text-sm">{calculateAge(props?.created_at)}</span>
+									<span className="opacity-60 text-sm">·</span>
+									<span className="opacity-60 text-sm">{props?.reading_time} min read</span>
 								</div>
 								<div className="flex gap-5 items-center">
 									<button onClick={copyLink}>
@@ -99,14 +99,21 @@ const BlogCard = (props: IBlogCardProps) => {
 					<div className="blogcard_content">
 						<p className="text-lg text-whiteSecondary">{props?.content?.replace(/<[^>]*(>|$)|||»|«|>/g, "")}</p>
 					</div>
-					<p className="mt-6 ss:text-base text-xs ">
-						{props?.tags?.[0] && (
-							<span>
-								#<span className="underline ss:mr-4 mr-2">{props?.tags?.join(", ")}</span>
-							</span>
-						)}
-						{!props?.profile_view && <span className="opacity-60 ss:text-sm">{props?.reading_time} min read</span>}
-					</p>
+					<div className="mt-4 flex gap-2 items-center flex-wrap">
+						<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+							Education
+						</button>
+						<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+							Fitness
+						</button>
+						<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+							Entrepreneurship
+						</button>
+						<span className="text-sm opacity-60">+3 More</span>
+					</div>
+					{!props?.profile_view && (
+						<span className="mt-4 block opacity-60 text-sm">{props?.reading_time} min read</span>
+					)}
 				</Link>
 			</div>
 		</>

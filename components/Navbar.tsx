@@ -6,14 +6,15 @@ import { FiSearch } from "react-icons/fi"
 import { PiPencilSimpleLineDuotone } from "react-icons/pi"
 import Link from "next/link"
 import { useSession, getProviders } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 const Navbar = ({ minimal = false }) => {
 	const router = useRouter()
+	const pathname = usePathname()
 	const { data: session } = useSession()
 	const [providers, setProviders]: any = useState(null)
 
-	switch (location.pathname) {
+	switch (pathname) {
 		case "/onboarding":
 			minimal = true
 			break
@@ -49,7 +50,7 @@ const Navbar = ({ minimal = false }) => {
 		<nav className="flex justify-between items-center py-3.5 px-5 ss:p-5">
 			<div className="flex items-center justify-between ss:gap-7 gap-3">
 				<Link href="/">
-					<button className="ss:text-3xl text-lg font-bold text-red-50">LifeScribe</button>
+					<button className="ss:text-3xl text-lg font-bold">LifeScribe</button>
 				</Link>
 				{!minimal && (
 					<div className="nav__search">

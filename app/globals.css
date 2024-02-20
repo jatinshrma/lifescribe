@@ -52,7 +52,7 @@
 		@apply bg-darkSecondary rounded-md px-4 py-3.5 placeholder:opacity-40 placeholder:text-whitePrimary w-full font-light;
 	}
 	#app-wrapper {
-		@apply max-w-[1440px] m-auto relative h-[100vh];
+		@apply max-w-[1440px] m-auto relative;
 	}
 	#app-content {
 		@apply max-w-[720px] m-auto;
