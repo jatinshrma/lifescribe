@@ -11,6 +11,7 @@ module.exports = {
 			colors: {
 				darkPrimary: "var(--dark-primary)",
 				darkSecondary: "var(--dark-secondary)",
+				darkHighlight: "var(--dark-highlight)",
 				whiteSecondary: "rgb(var(--white-secondary) / var(--tw-text-opacity))",
 				whitePrimary: "rgb(var(--white-primary) / var(--tw-text-opacity))",
 				whiteBright: "rgb(var(--white-bright) / var(--tw-text-opacity))"

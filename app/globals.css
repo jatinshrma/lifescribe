@@ -7,7 +7,8 @@
 @layer base {
 	:root {
 		--dark-primary: #151515;
-		--dark-secondary: #1e1e1e;
+		--dark-secondary: #1b1b1b;
+		--dark-highlight: #242424;
 		--white-secondary: 182 182 182;
 		--white-primary: 215 215 215;
 		--white-bright: 208 208 208;
