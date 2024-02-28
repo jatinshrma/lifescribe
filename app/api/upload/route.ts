@@ -19,7 +19,7 @@ export async function uploadFile(request: NextRequest, params: IAuthReqParams) {
 
 	const buffer = Buffer.from(await file.arrayBuffer())
 	const relativeUploadDir = `/uploads/${
-		type === "profile_picture" ? `profie-picture-${params.tokenJson.id}` : dateFn.format(Date.now(), "dd-MM-Y")
+		type === "profile_picture" ? `profile-picture-${params.tokenJson.id}` : dateFn.format(Date.now(), "dd-MM-Y")
 	}`
 	const uploadDir = join(process.cwd(), "public", relativeUploadDir)
 

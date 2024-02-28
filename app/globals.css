@@ -43,6 +43,10 @@
 }
 
 @layer components {
+	main#app-content:has(> #home) {
+		width: 100%;
+		max-width: 100%;
+	}
 	.heading {
 		@apply ss:text-3xl ss:leading-snug leading-snug text-xl font-medium text-whitePrimary font-playFD tracking-wide;
 	}

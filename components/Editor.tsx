@@ -55,7 +55,9 @@ const Editor = ({ blogContent, setBlogContent, title, setTitle, updateInDB }: IE
 		[]
 	)
 
-	const onChange = (e: { target: { style: { height: string }; scrollHeight: any; value: React.SetStateAction<string> } }) => {
+	const onChange = (e: {
+		target: { style: { height: string }; scrollHeight: any; value: React.SetStateAction<string> }
+	}) => {
 		e.target.style.height = "auto"
 		e.target.style.height = `${e.target.scrollHeight}px`
 		setTitle(e.target.value)
@@ -86,7 +88,7 @@ const Editor = ({ blogContent, setBlogContent, title, setTitle, updateInDB }: IE
 			/>
 			<div>
 				<button
-					className="group flex items-center bg-whiteSecondary rounded-full p-3 w-fit fixed bottom-4 right-4 hover:gap-2"
+					className="group flex items-center bg-whiteSecondary text-opacity-100 rounded-full p-3 w-fit fixed bottom-4 right-4 hover:gap-2"
 					onClick={publish}
 				>
 					<TbCloudUpload className="text-2xl stroke-darkPrimary" />

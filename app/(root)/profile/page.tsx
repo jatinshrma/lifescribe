@@ -24,8 +24,6 @@ import { IoMdTime } from "react-icons/io"
 import { IoDocumentTextOutline } from "react-icons/io5"
 import { RxLetterCaseCapitalize } from "react-icons/rx"
 import { AiOutlineDelete } from "react-icons/ai"
-import { MdOutlineSort } from "react-icons/md"
-import { TiArrowUnsorted } from "react-icons/ti"
 import { TbArrowsSort } from "react-icons/tb"
 import { IoAdd } from "react-icons/io5"
 
@@ -294,7 +292,7 @@ const Profile = () => {
 			{!state?.blogs ? (
 				<div>
 					<div
-						className="bg-darkSecondary rounded-[2rem] p-8 cursor-pointer my-5 relative"
+						className="bg-darkSecondary rounded-5xl p-8 cursor-pointer my-5 relative"
 						onClick={() => setState(prev => ({ ...prev, blogs: true }))}
 					>
 						<div className="flex items-center justify-between">

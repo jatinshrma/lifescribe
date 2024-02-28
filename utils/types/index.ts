@@ -19,6 +19,8 @@ export interface IBlogCardProps extends IBlogPost {
 	author_image: string
 	profile_view?: boolean
 	toggleDeletePrompt?: Function
+	hideTags?: boolean
+	hideHoverEffect?: boolean
 }
 
 export interface IAuthor {
