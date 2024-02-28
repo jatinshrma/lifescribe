@@ -7,6 +7,7 @@ import { PiPencilSimpleLineDuotone } from "react-icons/pi"
 import Link from "next/link"
 import { useSession, getProviders } from "next-auth/react"
 import { usePathname, useRouter } from "next/navigation"
+import { RiQuillPenLine } from "react-icons/ri"
 
 const Navbar = ({ minimal = false }) => {
 	const router = useRouter()
@@ -65,8 +66,8 @@ const Navbar = ({ minimal = false }) => {
 				{!minimal && (
 					<Link href={"/editor"}>
 						<button className="flex items-center gap-2 py-3 px-5 bg-darkSecondary rounded-full">
-							<PiPencilSimpleLineDuotone className="h-5 w-5" />
-							<span>Write</span>
+							<RiQuillPenLine className="h-5 w-5" />
+							<span>Scribe</span>
 						</button>
 					</Link>
 				)}

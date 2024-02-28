@@ -11,6 +11,10 @@ import { MdOutlineReviews } from "react-icons/md"
 import { FiBookmark, FiFilter, FiSearch } from "react-icons/fi"
 import { FaRegHeart } from "react-icons/fa"
 import { FaRegComment } from "react-icons/fa6"
+import { TiGroupOutline } from "react-icons/ti"
+import { MdOutlineGroupAdd } from "react-icons/md"
+import { RiUserAddLine } from "react-icons/ri"
+import { IoMdAdd } from "react-icons/io"
 
 export default function Home() {
 	const [blogs, setBlogs] = useState<IBlogCardProps[]>([])
@@ -29,6 +33,23 @@ export default function Home() {
 			<div className="flex w-full gap-8">
 				<LeftSidebar />
 				<div className="w-2/4 flex flex-col gap-3">
+					<div className="flex gap-3 rounded-full p-3 px-3.5 bg-darkSecondary w-full">
+						<span>
+							<FiSearch className="ss:text-[22px] text-[1rem]" />
+						</span>
+						<input
+							type="text"
+							placeholder="Search blogs, topics or authors"
+							className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
+						/>
+						<button className="flex gap-2 items-center px-4">
+							<FiFilter />
+							Filter
+						</button>
+					</div>
+					{blogs?.map(blog => (
+						<BlogCard key={blog._id.toString()} {...blog} hideTags={true} hideHoverEffect={true} />
+					))}
 					{blogs?.map(blog => (
 						<BlogCard key={blog._id.toString()} {...blog} hideTags={true} hideHoverEffect={true} />
 					))}
@@ -41,7 +62,7 @@ export default function Home() {
 
 const LeftSidebar = () => {
 	return (
-		<div className="w-1/4 h-[82vh] my-4">
+		<div className="w-1/4 h-[82vh] my-2">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-lg flex items-center gap-2 font-medium">
 					<FiBookmark />
@@ -134,17 +155,17 @@ const LeftSidebar = () => {
 
 const RightSidebar = () => {
 	return (
-		<div className="w-1/4 h-[82vh] my-4">
+		<div className="w-1/4 h-[82vh] my-2">
 			<div className="flex justify-between items-center">
 				<h2 className="text-lg flex items-center gap-2 font-medium">
-					<MdOutlineReviews />
-					Reviews
+					<MdOutlineGroupAdd />
+					Top authors
 				</h2>
 			</div>
 
-			{/* <div className="border-b border-darkSecondary pt-3 pb-4 mb-4">
-				<div className="flex justify-between w-full">
-					<div className="flex gap-3 items-center">
+			<div className="py-5 border-b border-darkHighlight last:border-none">
+				<div className="flex justify-between items-center">
+					<div className="flex items-center gap-3">
 						<Image
 							className={"rounded-full object-cover w-6"}
 							src={
@@ -154,125 +175,86 @@ const RightSidebar = () => {
 							width={32}
 							height={32}
 						/>
-						<span className="text-fontSecondary text-sm font-medium">Jatin Sharma</span>
+						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
 					</div>
+					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
+						Follow
+					</button>
 				</div>
-			</div> */}
+				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
+				<div className="flex gap-1 items-center flex-wrap">
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Education
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Fitness
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Entrepreneurship
+					</button>
+				</div>
+			</div>
 
-			<div className="flex gap-3 items-start my-5">
-				<Image
-					className={"rounded-full object-cover w-6"}
-					src={
-						"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-					}
-					alt="user"
-					width={32}
-					height={32}
-				/>
-				<div className="-mt-1">
-					<div>
-						<span className="text-fontSecondary text-sm font-medium">Jatin Sharma</span>
-						<p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, dignissimos!</p>
+			<div className="py-5 border-b border-darkHighlight last:border-none">
+				<div className="flex justify-between items-center">
+					<div className="flex items-center gap-3">
+						<Image
+							className={"rounded-full object-cover w-6"}
+							src={
+								"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
+							}
+							alt="user"
+							width={32}
+							height={32}
+						/>
+						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
 					</div>
-					<div className="mt-2 mb-1 flex gap-4">
-						<button className="flex gap-2 items-center">
-							<FaRegHeart className="text-sm" />
-							<span className="text-xs opacity-60">Like · 24M</span>
-						</button>
-						<button className="flex gap-2 items-center">
-							<FaRegComment className="text-sm" />
-							<span className="text-xs opacity-60">Reply · 53k</span>
-						</button>
-					</div>
-					<button>
-						<span className="text-xs opacity-60">View 50 comments</span>
+					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
+						Follow
+					</button>
+				</div>
+				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
+				<div className="flex gap-1 items-center flex-wrap">
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Education
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Fitness
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Entrepreneurship
 					</button>
 				</div>
 			</div>
-			<div className="flex gap-3 items-start my-5">
-				<Image
-					className={"rounded-full object-cover w-6"}
-					src={
-						"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-					}
-					alt="user"
-					width={32}
-					height={32}
-				/>
-				<div className="-mt-1">
-					<div>
-						<span className="text-fontSecondary text-sm font-medium">Jatin Sharma</span>
-						<p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, dignissimos!</p>
+
+			<div className="py-5 border-b border-darkHighlight last:border-none">
+				<div className="flex justify-between items-center">
+					<div className="flex items-center gap-3">
+						<Image
+							className={"rounded-full object-cover w-6"}
+							src={
+								"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
+							}
+							alt="user"
+							width={32}
+							height={32}
+						/>
+						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
 					</div>
-					<div className="mt-2 mb-1 flex gap-4">
-						<button className="flex gap-2 items-center">
-							<FaRegHeart className="text-sm" />
-							<span className="text-xs opacity-60">Like · 24M</span>
-						</button>
-						<button className="flex gap-2 items-center">
-							<FaRegComment className="text-sm" />
-							<span className="text-xs opacity-60">Reply · 53k</span>
-						</button>
-					</div>
-				</div>
-			</div>
-			<div className="flex gap-3 items-start my-5">
-				<Image
-					className={"rounded-full object-cover w-6"}
-					src={
-						"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-					}
-					alt="user"
-					width={32}
-					height={32}
-				/>
-				<div className="-mt-1">
-					<div>
-						<span className="text-fontSecondary text-sm font-medium">Jatin Sharma</span>
-						<p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, dignissimos!</p>
-					</div>
-					<div className="mt-2 mb-1 flex gap-4">
-						<button className="flex gap-2 items-center">
-							<FaRegHeart className="text-sm" />
-							<span className="text-xs opacity-60">Like · 24M</span>
-						</button>
-						<button className="flex gap-2 items-center">
-							<FaRegComment className="text-sm" />
-							<span className="text-xs opacity-60">Reply · 53k</span>
-						</button>
-					</div>
-					<button>
-						<span className="text-xs opacity-60">View 5 comments</span>
+					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
+						Follow
 					</button>
 				</div>
-			</div>
-			<div className="flex gap-3 items-start my-5">
-				<Image
-					className={"rounded-full object-cover w-6"}
-					src={
-						"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-					}
-					alt="user"
-					width={32}
-					height={32}
-				/>
-				<div className="-mt-1">
-					<div>
-						<span className="text-fontSecondary text-sm font-medium">Jatin Sharma</span>
-						<p className="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, dignissimos!</p>
-					</div>
-					<div className="mt-2 mb-1 flex gap-4">
-						<button className="flex gap-2 items-center">
-							<FaRegHeart className="text-sm" />
-							<span className="text-xs opacity-60">Like · 24M</span>
-						</button>
-						<button className="flex gap-2 items-center">
-							<FaRegComment className="text-sm" />
-							<span className="text-xs opacity-60">Reply · 53k</span>
-						</button>
-					</div>
-					<button>
-						<span className="text-xs opacity-60">View 50 comments</span>
+				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
+				<div className="flex gap-1 items-center flex-wrap">
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Education
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Fitness
+					</button>
+					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
+						Entrepreneurship
 					</button>
 				</div>
 			</div>
