@@ -1,6 +1,5 @@
 import "../globals.css"
 import type { Metadata } from "next"
-import { Navbar, Footer } from "@components/index"
 import Provider from "@components/Provider"
 
 export const metadata: Metadata = {
@@ -13,11 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html lang="en">
 			<body>
 				<div id="app-wrapper">
-					<Provider>
-						<Navbar />
-						<main id="app-content">{children}</main>
-						<Footer />
-					</Provider>
+					<Provider>{children}</Provider>
 				</div>
 			</body>
 		</html>

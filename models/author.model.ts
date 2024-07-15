@@ -17,6 +17,11 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	bio: {
 		type: String
 	},
+	collections: [
+		{
+			title: { type: String }
+		}
+	],
 	saved_posts: [
 		{
 			type: String

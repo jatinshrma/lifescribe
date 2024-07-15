@@ -13,24 +13,32 @@ import { TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
 import { BiBookmark, BiShare } from "react-icons/bi"
 import { AnyObject } from "mongoose"
-import { FaCaretDown } from "react-icons/fa"
-import { RiSearchLine } from "react-icons/ri"
+import { RiQuillPenLine, RiSearchLine } from "react-icons/ri"
 import { BsCollection } from "react-icons/bs"
 import { FiArrowLeft } from "react-icons/fi"
 import { BsCalendarDate } from "react-icons/bs"
 import { BsSortUp } from "react-icons/bs"
 import { BsSortDownAlt } from "react-icons/bs"
 import { IoMdTime } from "react-icons/io"
-import { IoDocumentTextOutline } from "react-icons/io5"
-import { RxLetterCaseCapitalize } from "react-icons/rx"
-import { AiOutlineDelete } from "react-icons/ai"
+import { AiOutlineDelete, AiOutlineNumber } from "react-icons/ai"
 import { TbArrowsSort } from "react-icons/tb"
 import { IoAdd } from "react-icons/io5"
+import { MdFormatColorText } from "react-icons/md"
+import Popover from "@components/Popover"
+import LayoutWrapper from "@components/LayoutWrapper"
+import Link from "next/link"
 
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
 	{ Icon: FiLock, label: "Private" },
 	{ Icon: BiBookmark, label: "Saved" }
+]
+
+const sortOptions = [
+	{ Icon: MdFormatColorText, label: "Alphabetically", value: "alphabetically" },
+	{ Icon: BsCalendarDate, label: "Date", value: "date" },
+	{ Icon: IoMdTime, label: "Last Update", value: "last_update" },
+	{ Icon: AiOutlineNumber, label: "Post Count", value: "post_count" }
 ]
 
 const Profile = () => {
@@ -111,258 +119,236 @@ const Profile = () => {
 	}
 
 	return (
-		<div>
-			{selectedImage?.active && (
-				<ImageCrop
-					src={selectedImage?.url as string}
-					close={() => setSelectedImage(prev => ({ ...prev, active: false }))}
-					uploadImage={uploadImage}
-				/>
-			)}
-			<div className="flex items-center gap-20 pt-16 pb-[72px]">
-				<Image
-					className="object-cover rounded-full aspect-square w-64 h-64 cursor-pointer"
-					src={first || session?.user?.image || ""}
-					alt="user"
-					width={256}
-					height={256}
-					onClick={() => inputRef?.current?.click()}
-				/>
-				<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
-				<div>
-					<h2 className="font-playFD text-5xl font-medium">{session?.user?.name}</h2>
-					<p className="font-lora text-whiteSecondary my-6">
-						Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis, tempora.
-					</p>
-					<div className="opacity-60">
-						<span className="pr-5 border-r border-[#7777777d]">{blogs?.length || 0} Published</span>
-						<span className="px-5 border-r border-[#7777777d]">{blogs?.length || 0} Private</span>
-						<span className="pl-5">9 Saved</span>
-					</div>
-				</div>
-			</div>
-			<div className="sticky top-0 bg-darkPrimary z-10">
-				<div className="flex border-b border-darkSecondary text-opacity-100 relative">
-					<div
-						className={`absolute w-1/3 h-0.5 bg-whitePrimary bottom-0 left-0 transition-all duration-200 ease`}
-						style={{ translate: `${(state?.currTab || 0) * 100}%` }}
+		<LayoutWrapper
+			navActions={
+				<Link href={"/editor"}>
+					<button className="theme-button primary">
+						<RiQuillPenLine className="h-5 w-5" />
+						<span>Scribe</span>
+					</button>
+				</Link>
+			}
+		>
+			<div className="max-w-[850px] mx-auto">
+				{selectedImage?.active && (
+					<ImageCrop
+						src={selectedImage?.url as string}
+						close={() => setSelectedImage(prev => ({ ...prev, active: false }))}
+						uploadImage={uploadImage}
 					/>
-					{tabs?.map((i, idx) => (
-						<button
-							onClick={() => setState(prev => ({ ...prev, currTab: idx }))}
-							className={`text-base py-5 flex gap-2 justify-center items-center w-1/3 ${
-								state?.currTab === idx ? "" : "opacity-50"
-							}`}
-						>
-							<i.Icon className="text-lg" />
-							<span>{i.label}</span>
-						</button>
-					))}
-				</div>
-				<div className="flex py-3 my-2 justify-between">
+				)}
+				<div className="flex items-center gap-20 pt-16 pb-[72px]">
+					<Image
+						className="object-cover rounded-full aspect-square w-64 h-64 cursor-pointer"
+						src={first || session?.user?.image || ""}
+						alt="user"
+						width={256}
+						height={256}
+						onClick={() => inputRef?.current?.click()}
+					/>
+					<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
 					<div>
-						{state?.blogs && (
-							<button
-								className="px-4 py-3 rounded-full flex items-center gap-2"
-								onClick={() => setState(prev => ({ ...prev, blogs: false }))}
-							>
-								<FiArrowLeft className="text-base" />
-								<span>Back</span>
-							</button>
-						)}
-					</div>
-					<div className="flex items-stretch gap-4 w-full justify-end">
-						<div className="bg-darkSecondary pl-4 py-2 pr-2 rounded-full flex items-center gap-4">
-							<input type="text" placeholder="Search" className="w-full" />
-							<button className="h-full aspect-square flex items-center justify-center rounded-full text-opacity-100 group hover:bg-whitePrimary transition-colors duration-300 ease">
-								<RiSearchLine className="text-lg group-hover:fill-darkPrimary" />
-							</button>
-						</div>
-						<div className="relative">
-							<button
-								className="bg-darkSecondary px-4 py-3 rounded-full flex items-center gap-4"
-								onClick={() => setState(prev => ({ ...prev, filter: prev?.filter === "sort" ? null : "sort" }))}
-							>
-								<div className="flex gap-2 items-center">
-									<TbArrowsSort className="text-lg" />
-									<span>Sort</span>
-								</div>
-								<FaCaretDown className="text-sm" />
-							</button>
-							{state?.filter === "sort" && (
-								<div
-									className="py-2 w-max rounded-xl bg-darkSecondary absolute mt-4 -right-1/3 border border-[#212121]"
-									style={{ boxShadow: "0 0 1rem 0 #121212" }}
-								>
-									<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-t border-b border-darkHighlight">
-										<div className="flex items-center gap-2 w-full">
-											<RxLetterCaseCapitalize className="text-lg" />
-											<span>Alphabetically</span>
-										</div>
-										<div className="flex gap-2.5">
-											<button className="p-2 bg-whitePrimary text-opacity-100 rounded-lg">
-												<BsSortUp className="text-xl fill-darkSecondary" />
-											</button>
-											<button className="p-2">
-												<BsSortDownAlt className="text-xl" />
-											</button>
-										</div>
-									</div>
-									<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-b border-darkHighlight">
-										<div className="flex items-center gap-2 w-full">
-											<BsCalendarDate className="text-lg" />
-											<span>Date</span>
-										</div>
-										<div className="flex gap-2.5">
-											<button className="p-2">
-												<BsSortUp className="text-xl" />
-											</button>
-											<button className="p-2">
-												<BsSortDownAlt className="text-xl" />
-											</button>
-										</div>
-									</div>
-									<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-b border-darkHighlight">
-										<div className="flex items-center gap-2 w-full">
-											<IoMdTime className="text-lg" />
-											<span>Last Update</span>
-										</div>
-										<div className="flex gap-2.5">
-											<button className="p-2">
-												<BsSortUp className="text-xl" />
-											</button>
-											<button className="p-2">
-												<BsSortDownAlt className="text-xl" />
-											</button>
-										</div>
-									</div>
-									<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-b border-darkHighlight">
-										<div className="flex items-center gap-2 w-full">
-											<IoDocumentTextOutline className="text-lg" />
-											<span>Post Count</span>
-										</div>
-										<div className="flex gap-2.5">
-											<button className="p-2">
-												<BsSortUp className="text-xl" />
-											</button>
-											<button className="p-2">
-												<BsSortDownAlt className="text-xl" />
-											</button>
-										</div>
-									</div>
-								</div>
-							)}
-						</div>
-						<div className="relative">
-							<button
-								className="bg-darkSecondary px-4 py-3 rounded-full flex items-center gap-4"
-								onClick={() => setState(prev => ({ ...prev, filter: prev?.filter === "date" ? null : "date" }))}
-							>
-								<div className="flex gap-2 items-center">
-									<BsCalendarDate className="text-lg" />
-									<span>Date</span>
-								</div>
-								<FaCaretDown className="text-sm" />
-							</button>
-							{state?.filter === "date" && (
-								<div
-									className="p-5 rounded-xl bg-darkSecondary w-fit absolute mt-4 -right-1/3 border border-[#212121]"
-									style={{ boxShadow: "0 0 1rem 0 #121212" }}
-								>
-									<span className="text-sm opacity-60">From Date</span>
-									<input type="date" className="theme-input bg-darkHighlight mb-3" />
-									<span className="text-sm opacity-60">Till Date</span>
-									<input type="date" className="theme-input bg-darkHighlight" />
-
-									<div className="flex justify-between mt-8 gap-10">
-										<div className="flex gap-6">
-											<button>Today</button>
-										</div>
-										<div className="flex gap-3">
-											<button className="px-4 py-2.5 rounded-full bg-darkHighlight">Cancel</button>
-											<button className="px-4 py-2.5 rounded-full bg-darkHighlight">Search</button>
-										</div>
-									</div>
-								</div>
-							)}
-						</div>
-					</div>
-				</div>
-			</div>
-			{!state?.blogs ? (
-				<div>
-					<div
-						className="bg-darkSecondary rounded-5xl p-8 cursor-pointer my-5 relative"
-						onClick={() => setState(prev => ({ ...prev, blogs: true }))}
-					>
-						<div className="flex items-center justify-between">
-							<div className="flex items-center gap-4">
-								<BsCollection className="text-2xl" />
-								<span className="text-sm opacity-60">March 23 2024</span>
-							</div>
-							<div className="flex gap-5 items-center w-max">
-								<button>
-									<BiShare className="text-[22px] hover:fill-blue-500 hover:scale-125 transition-transform duration-200 ease" />
-								</button>
-								<button>
-									<AiOutlineDelete className="text-[22px] hover:fill-red-500 hover:scale-125 transition-transform duration-200 ease" />
-								</button>
-							</div>
-						</div>
-						<p className="my-5 text-3xl">
-							Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias, nobis!
+						<h2 className="font-playFD text-5xl font-medium">{session?.user?.name}</h2>
+						<p className="font-lora text-whiteSecondary my-6">
+							Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis, tempora.
 						</p>
-						<div className="my-5 flex gap-2 items-center flex-wrap">
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Education
-							</button>
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Fitness
-							</button>
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Entrepreneurship
-							</button>
-							<span className="text-sm opacity-60">+3 More</span>
+						<div className="opacity-60">
+							<span className="pr-5 border-r border-[#7777777d]">{blogs?.length || 0} Published</span>
+							<span className="px-5 border-r border-[#7777777d]">{blogs?.length || 0} Private</span>
+							<span className="pl-5">9 Saved</span>
 						</div>
-						<div className="text-sm opacity-60 flex gap-3">
-							<span>3 Posts</span>
-							<span>·</span>
-							<span>Last updated 19 April 2024</span>
-						</div>
-						<button className="p-3 rounded-full bg-whitePrimary text-opacity-100 absolute right-8 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
-							<IoAdd className="text-xl stroke-darkSecondary" />
-						</button>
 					</div>
 				</div>
-			) : (
-				<div className="my-8">
-					<h1 className="mb-14 text-4xl font-semibold">
-						Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, fugiat.
-					</h1>
-					{blogs?.map(blog => (
-						<BlogCard
-							key={blog._id.toString()}
-							{...blog}
-							profile_view={true}
-							toggleDeletePrompt={toggleDeletePrompt}
+				<div className="sticky top-0 bg-darkPrimary z-10">
+					<div className="flex border-b border-darkSecondary text-opacity-100 relative">
+						<div
+							className={`absolute w-1/3 h-0.5 bg-whitePrimary bottom-0 left-0 transition-all duration-200 ease`}
+							style={{ translate: `${(state?.currTab || 0) * 100}%` }}
 						/>
-					))}
-				</div>
-			)}
+						{tabs?.map((i, idx) => (
+							<button
+								onClick={() => setState(prev => ({ ...prev, currTab: idx }))}
+								className={`text-base py-5 flex gap-2 justify-center items-center w-1/3 ${
+									state?.currTab === idx ? "" : "opacity-50"
+								}`}
+							>
+								<i.Icon className="text-lg" />
+								<span>{i.label}</span>
+							</button>
+						))}
+					</div>
+					<div className="flex py-3 my-2 justify-between">
+						<div>
+							{state?.blogs && (
+								<button
+									className="px-4 py-3 rounded-full flex items-center gap-2"
+									onClick={() => setState(prev => ({ ...prev, blogs: false }))}
+								>
+									<FiArrowLeft className="text-base" />
+									<span>Back</span>
+								</button>
+							)}
+						</div>
+						<div className="flex items-stretch gap-4 w-full justify-end">
+							<div className="bg-darkSecondary pl-4 py-2 pr-2 rounded-full flex items-center gap-4">
+								<input type="text" placeholder="Search" className="w-full" />
+								<button className="h-full aspect-square flex items-center justify-center rounded-full text-opacity-100 group hover:bg-whitePrimary transition-colors duration-300 ease">
+									<RiSearchLine className="text-lg group-hover:fill-darkPrimary" />
+								</button>
+							</div>
+							<Popover
+								Icon={TbArrowsSort}
+								label={"Sort"}
+								Component={() => (
+									<div className="py-1.5">
+										{sortOptions.map(i => (
+											<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-b border-darkHighlight">
+												<div className="flex items-center gap-2 w-full">
+													<i.Icon className="text-lg" />
+													<span>{i.label}</span>
+												</div>
+												<div className="flex gap-2.5">
+													<button
+														onClick={() =>
+															setState(prev => ({
+																...prev,
+																sort: {
+																	[i.value]: 1
+																}
+															}))
+														}
+														className={
+															"p-2 text-opacity-100 rounded-lg " +
+															(state?.sort?.[i.value] === 1 ? "bg-whitePrimary" : "hover:bg-darkHighlight")
+														}
+													>
+														<BsSortUp
+															className={"text-xl " + (state?.sort?.[i.value] === 1 ? "fill-darkSecondary" : "")}
+														/>
+													</button>
+													<button
+														onClick={() =>
+															setState(prev => ({
+																...prev,
+																sort: {
+																	[i.value]: -1
+																}
+															}))
+														}
+														className={
+															"p-2 text-opacity-100 rounded-lg " +
+															(state?.sort?.[i.value] === -1 ? "bg-whitePrimary" : "hover:bg-darkHighlight")
+														}
+													>
+														<BsSortDownAlt
+															className={"text-xl " + (state?.sort?.[i.value] === -1 ? "fill-darkSecondary" : "")}
+														/>
+													</button>
+												</div>
+											</div>
+										))}
+									</div>
+								)}
+							/>
+							<Popover
+								Icon={BsCalendarDate}
+								label={"Date"}
+								Component={() => (
+									<div className="px-5 py-4">
+										<span className="text-sm opacity-60 mb-1 block">From Date</span>
+										<input type="date" className="theme-input bg-darkHighlight dark:[color-scheme:dark] mb-3" />
+										<span className="text-sm opacity-60 mb-1 block">Till Date</span>
+										<input type="date" className="theme-input bg-darkHighlight dark:[color-scheme:dark]" />
 
-			{promptState && (
-				<Overlay>
-					<Prompt
-						warning="Delete Blogpost"
-						description={promptState?.description}
-						actions={[
-							{ handler: () => setPromptState(null), label: "Cancel" },
-							promptState?.action as IPromptAction
-						]}
-					/>
-				</Overlay>
-			)}
-		</div>
+										<div className="flex justify-between mt-8 gap-16">
+											<button className="theme-button bg-darkHighlight">Today</button>
+
+											<div className="flex gap-3">
+												<button className="theme-button bg-darkHighlight">Cancel</button>
+												<button className="theme-button bg-darkHighlight">Search</button>
+											</div>
+										</div>
+									</div>
+								)}
+							/>
+						</div>
+					</div>
+				</div>
+				{!state?.blogs ? (
+					<div>
+						<div
+							className="bg-darkSecondary rounded-5xl p-8 cursor-pointer my-5 relative first:mt-0"
+							onClick={() => setState(prev => ({ ...prev, blogs: true }))}
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-4">
+									<BsCollection className="text-2xl" />
+									<span className="text-sm opacity-60">March 23 2024</span>
+								</div>
+								<div className="flex gap-5 items-center w-max">
+									<button>
+										<BiShare className="text-[22px] hover:fill-blue-500 hover:scale-125 transition-transform duration-200 ease" />
+									</button>
+									<button>
+										<AiOutlineDelete className="text-[22px] hover:fill-red-500 hover:scale-125 transition-transform duration-200 ease" />
+									</button>
+								</div>
+							</div>
+							<p className="my-5 text-3xl">
+								Lorem ipsum dolor sit amet consectetur, adipisicing elit. Alias, nobis!
+							</p>
+							<div className="my-5 flex gap-2 items-center flex-wrap">
+								<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+									Education
+								</button>
+								<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+									Fitness
+								</button>
+								<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
+									Entrepreneurship
+								</button>
+								<span className="text-sm opacity-60">+3 More</span>
+							</div>
+							<div className="text-sm opacity-60 flex gap-3">
+								<span>3 Posts</span>
+								<span>·</span>
+								<span>Last updated 19 April 2024</span>
+							</div>
+							<button className="p-3 rounded-full bg-whitePrimary text-opacity-100 absolute right-8 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
+								<IoAdd className="text-xl stroke-darkSecondary" />
+							</button>
+						</div>
+					</div>
+				) : (
+					<div className="my-8">
+						<h1 className="mb-14 text-4xl font-semibold">
+							Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid, fugiat.
+						</h1>
+						{blogs?.map(blog => (
+							<BlogCard
+								key={blog._id.toString()}
+								{...blog}
+								profile_view={true}
+								toggleDeletePrompt={toggleDeletePrompt}
+							/>
+						))}
+					</div>
+				)}
+
+				{promptState && (
+					<Overlay>
+						<Prompt
+							warning="Delete Blogpost"
+							description={promptState?.description}
+							actions={[
+								{ handler: () => setPromptState(null), label: "Cancel" },
+								promptState?.action as IPromptAction
+							]}
+						/>
+					</Overlay>
+				)}
+			</div>
+		</LayoutWrapper>
 	)
 }
 

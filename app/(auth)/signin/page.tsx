@@ -39,7 +39,7 @@ function SignIn() {
 						<div className="flex gap-3 flex-col">
 							<div>
 								<button
-									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
+									className="flex items-center auth-button dark gap-3"
 									onClick={() => signIn("google")}
 									disabled={flags?.loading}
 								>
@@ -48,37 +48,25 @@ function SignIn() {
 								</button>
 							</div>
 							<div>
-								<button
-									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-									disabled={flags?.loading}
-								>
+								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
 									<FacebookIcon />
 									<span className="text-fontSecondary font-normal">Continue with Facebook</span>
 								</button>
 							</div>
 							<div>
-								<button
-									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-									disabled={flags?.loading}
-								>
+								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
 									<LinkedInIcon />
 									<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
 								</button>
 							</div>
 							<div>
-								<button
-									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-									disabled={flags?.loading}
-								>
+								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
 									<GithubIcon />
 									<span className="text-fontSecondary font-normal">Continue with Github</span>
 								</button>
 							</div>
 							<div>
-								<button
-									className="flex items-center theme-button bg-[var(--dark-secondary)!important] gap-3"
-									disabled={flags?.loading}
-								>
+								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
 									<FaXTwitter className="w-7 h-6 ml-[25%] text-fontSecondary" />
 									<span className="text-fontSecondary font-normal">Continue with Twitter</span>
 								</button>

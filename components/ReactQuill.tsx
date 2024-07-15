@@ -3,14 +3,15 @@ import { Dispatch, LegacyRef, SetStateAction } from "react"
 import RQType from "react-quill"
 
 interface QuillAttributes {
-	forwardedRef: LegacyRef<RQType>
+	forwardedRef?: LegacyRef<RQType>
 	id: string
 	className: string
 	theme: string
 	value: string
-	onChange: Dispatch<SetStateAction<string>>
-	placeholder: string
-	modules: {
+	onChange?: Dispatch<SetStateAction<string>>
+	placeholder?: string
+	readOnly?: boolean
+	modules?: {
 		toolbar: {
 			container: any[][]
 			handlers: {

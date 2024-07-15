@@ -1,6 +1,5 @@
 import { Model, Schema } from "mongoose"
 import createModel from "@lib/createModel"
-import { getRandomString } from "@utils"
 import { IBlogPost } from "@utils/types"
 
 type BlogPostModel = Model<IBlogPost>
@@ -16,8 +15,12 @@ const BlogPostSchema = new Schema<IBlogPost, BlogPostModel>({
 	},
 	author: {
 		type: Schema.Types.ObjectId,
-		ref: "BlogPost",
+		ref: "authors",
 		required: true
+	},
+	author_collection: {
+		type: Schema.Types.ObjectId,
+		ref: "authors"
 	},
 	tags: [
 		{

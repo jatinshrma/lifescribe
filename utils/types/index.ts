@@ -9,6 +9,7 @@ export interface IBlogPost {
 	title: string
 	content: string
 	author: mongoose.Schema.Types.ObjectId
+	author_collection: mongoose.Schema.Types.ObjectId
 	tags: string[]
 	created_at: Date
 	reading_time: number
@@ -27,6 +28,7 @@ export interface IAuthor {
 	profile_picture: string
 	name: string
 	bio: string
+	collections: string[]
 	saved_posts: string[]
 	email: string
 	password: string

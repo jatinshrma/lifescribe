@@ -64,9 +64,10 @@ const Onboarding = () => {
 				<div className="my-6 flex gap-3 flex-wrap">
 					{interests?.map(i => (
 						<button
-							className={`py-1.5 px-4 border border-whitePrimary rounded-full text-opacity-100 ${
-								selectedInterests.includes(i) ? "bg-whitePrimary text-darkPrimary" : "bg-transparent"
-							}`}
+							className={
+								"theme-button medium rounded-full text-opacity-100 border " +
+								(selectedInterests.includes(i) ? "bg-whitePrimary text-darkPrimary" : "outlined")
+							}
 							onClick={() =>
 								selectedInterests.includes(i)
 									? setSelectedInterests(prev => prev.filter(_i => _i !== i))
@@ -100,7 +101,7 @@ const Onboarding = () => {
 						</label>
 						<label>
 							<span className="text-sm opacity-60">DOB</span>
-							<input type="date" className="theme-input" required />
+							<input type="date" className="theme-input dark:[color-scheme:dark]" required />
 						</label>
 						<label>
 							<span className="text-sm opacity-60">Gender</span>

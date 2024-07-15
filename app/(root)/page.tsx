@@ -5,16 +5,12 @@ import { IBlogCardProps } from "@utils/types"
 import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { BiBookmark } from "react-icons/bi"
-import { GoBookmark, GoBookmarkSlash } from "react-icons/go"
-import { MdOutlineReviews } from "react-icons/md"
+import { GoBookmarkSlash } from "react-icons/go"
 import { FiBookmark, FiFilter, FiSearch } from "react-icons/fi"
-import { FaRegHeart } from "react-icons/fa"
-import { FaRegComment } from "react-icons/fa6"
-import { TiGroupOutline } from "react-icons/ti"
 import { MdOutlineGroupAdd } from "react-icons/md"
-import { RiUserAddLine } from "react-icons/ri"
-import { IoMdAdd } from "react-icons/io"
+import LayoutWrapper from "@components/LayoutWrapper"
+import { RiQuillPenLine } from "react-icons/ri"
+import Link from "next/link"
 
 export default function Home() {
 	const [blogs, setBlogs] = useState<IBlogCardProps[]>([])
@@ -29,13 +25,21 @@ export default function Home() {
 	}, [])
 
 	return (
-		<div id="home" className="mx-5">
-			<div className="flex w-full gap-8">
-				<LeftSidebar />
-				<div className="w-2/4 flex flex-col gap-3">
-					<div className="flex gap-3 rounded-full p-3 px-3.5 bg-darkSecondary w-full">
+		<LayoutWrapper
+			navActions={
+				<Link href={"/editor"}>
+					<button className="theme-button primary">
+						<RiQuillPenLine className="h-5 w-5" />
+						<span>Scribe</span>
+					</button>
+				</Link>
+			}
+		>
+			<div className="flex gap-16 mx-16">
+				<div className="w-3/4 flex flex-col gap-3">
+					<div className="flex items-center gap-3 rounded-full p-4 px-5 bg-darkSecondary w-full">
 						<span>
-							<FiSearch className="ss:text-[22px] text-[1rem]" />
+							<FiSearch className="ss:text-[1.1rem] text-[1rem]" />
 						</span>
 						<input
 							type="text"
@@ -56,13 +60,13 @@ export default function Home() {
 				</div>
 				<RightSidebar />
 			</div>
-		</div>
+		</LayoutWrapper>
 	)
 }
 
-const LeftSidebar = () => {
+const ReadingList = () => {
 	return (
-		<div className="w-1/4 h-[82vh] my-2">
+		<>
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-lg flex items-center gap-2 font-medium">
 					<FiBookmark />
@@ -77,8 +81,10 @@ const LeftSidebar = () => {
 					</button>
 				</div>
 			</div>
-			<span className="opacity-60 text-sm">Today</span>
-			<div className="my-5">
+			<div className="mt-6 mb-2 flex items-center gap-3 opacity-50">
+				<span className="text-sm whitespace-nowrap">Today</span>
+			</div>
+			<div>
 				<div className="border-b border-darkSecondary py-3 last:border-none">
 					<div className="flex justify-between w-full">
 						<div className="flex gap-2 items-center">
@@ -99,7 +105,7 @@ const LeftSidebar = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="text-base mt-1.5">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
 				</div>
 				<div className="border-b border-darkSecondary py-3 last:border-none">
 					<div className="flex justify-between w-full">
@@ -121,11 +127,13 @@ const LeftSidebar = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="text-base mt-1.5">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
 				</div>
 			</div>
-			<span className="opacity-60 text-sm">16 Jan 2024</span>
-			<div className="my-5">
+			<div className="mt-6 mb-2 flex items-center gap-3 opacity-50">
+				<span className="text-sm whitespace-nowrap">16 Jan 2024</span>
+			</div>
+			<div>
 				<div className="border-b border-darkSecondary py-3 last:border-none">
 					<div className="flex justify-between w-full">
 						<div className="flex gap-2 items-center">
@@ -146,116 +154,53 @@ const LeftSidebar = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="text-base mt-1.5">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 
 const RightSidebar = () => {
 	return (
 		<div className="w-1/4 h-[82vh] my-2">
-			<div className="flex justify-between items-center">
-				<h2 className="text-lg flex items-center gap-2 font-medium">
-					<MdOutlineGroupAdd />
-					Top authors
-				</h2>
-			</div>
-
-			<div className="py-5 border-b border-darkHighlight last:border-none">
+			<ReadingList />
+			<div className="mt-10 pb-6 space-y-6">
 				<div className="flex justify-between items-center">
-					<div className="flex items-center gap-3">
-						<Image
-							className={"rounded-full object-cover w-6"}
-							src={
-								"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-							}
-							alt="user"
-							width={32}
-							height={32}
-						/>
-						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
-					</div>
-					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
-						Follow
-					</button>
+					<h2 className="text-lg flex items-center gap-2 font-medium">
+						<MdOutlineGroupAdd />
+						Top authors
+					</h2>
 				</div>
-				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
-				<div className="flex gap-1 items-center flex-wrap">
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Education
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Fitness
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Entrepreneurship
-					</button>
-				</div>
-			</div>
 
-			<div className="py-5 border-b border-darkHighlight last:border-none">
-				<div className="flex justify-between items-center">
-					<div className="flex items-center gap-3">
-						<Image
-							className={"rounded-full object-cover w-6"}
-							src={
-								"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-							}
-							alt="user"
-							width={32}
-							height={32}
-						/>
-						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
+				<div className="border-b border-darkHighlight last:border-none">
+					<div className="flex justify-between items-center">
+						<div className="flex items-center gap-3">
+							<Image
+								className={"rounded-full object-cover w-6"}
+								src={
+									"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
+								}
+								alt="user"
+								width={32}
+								height={32}
+							/>
+							<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
+						</div>
+						<button className="theme-button outlined small font-medium hover:bg-whitePrimary hover:text-black hover:border-whitePrimary">
+							Follow
+						</button>
 					</div>
-					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
-						Follow
-					</button>
-				</div>
-				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
-				<div className="flex gap-1 items-center flex-wrap">
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Education
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Fitness
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Entrepreneurship
-					</button>
-				</div>
-			</div>
-
-			<div className="py-5 border-b border-darkHighlight last:border-none">
-				<div className="flex justify-between items-center">
-					<div className="flex items-center gap-3">
-						<Image
-							className={"rounded-full object-cover w-6"}
-							src={
-								"/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-							}
-							alt="user"
-							width={32}
-							height={32}
-						/>
-						<span className="text-fontSecondary text-base font-medium">Jatin Sharma</span>
+					<p className="text-sm my-5 line-clamp-2">
+						Helping you strenthen your will power and understand brain functioning. Helping you strenthen your will
+						power and understand brain functioning.
+					</p>
+					<div className="flex gap-1 items-center flex-nowrap max-w-[20vw] overflow-auto">
+						<button className="theme-button small outlined text-opacity-20">Education</button>
+						<button className="theme-button small outlined text-opacity-20">Education</button>
+						<button className="theme-button small outlined text-opacity-20">Fitness</button>
+						<button className="theme-button small outlined text-opacity-20">Entrepreneurship</button>
 					</div>
-					<button className="items-center border border-whiteSecondary text-[14px] rounded-full px-2.5 py-1 text-opacity-80">
-						Follow
-					</button>
-				</div>
-				<p className="text-sm my-2">Helping you strenthen your will power and understand brain functioning.</p>
-				<div className="flex gap-1 items-center flex-wrap">
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Education
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Fitness
-					</button>
-					<button className="text-xs border border-whitePrimary text-opacity-20 px-2.5 py-1.5 rounded-full">
-						Entrepreneurship
-					</button>
 				</div>
 			</div>
 		</div>

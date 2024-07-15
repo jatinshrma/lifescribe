@@ -6,7 +6,6 @@ import { IBlogCardProps } from "@utils/types/index"
 import Link from "next/link"
 import { AiOutlineDelete } from "react-icons/ai"
 import { BiShare } from "react-icons/bi"
-import { GoBookmark } from "react-icons/go"
 import { BsEye } from "react-icons/bs"
 import { FiBookmark } from "react-icons/fi"
 
@@ -103,15 +102,9 @@ const BlogCard = (props: IBlogCardProps) => {
 					</div>
 					{!props?.hideTags && (
 						<div className="mt-4 flex gap-2 items-center flex-wrap">
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Education
-							</button>
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Fitness
-							</button>
-							<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-								Entrepreneurship
-							</button>
+							<button className="theme-button outlined medium text-sm text-opacity-20">Education</button>
+							<button className="theme-button outlined medium text-sm text-opacity-20">Fitness</button>
+							<button className="theme-button outlined medium text-sm text-opacity-20">Entrepreneurship</button>
 							<span className="text-sm opacity-60">+3 More</span>
 						</div>
 					)}
