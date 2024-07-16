@@ -51,8 +51,8 @@ const BlogCard = (props: IBlogCardProps) => {
 							<>
 								<Image
 									className={"rounded-full object-cover w-6"}
-									src="/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
-									// src={props?.author_image}
+									// src="/_next/image?url=https%3A%2F%2Flh3.googleusercontent.com%2Fa%2FACg8ocIscoeg1atIm2RbbjLewqrfOU22BFNrB0VFD3iIdz_LL4c%3Ds96-c&w=64&q=75"
+									src={props?.author_image}
 									alt="user"
 									width={32}
 									height={32}
@@ -102,10 +102,9 @@ const BlogCard = (props: IBlogCardProps) => {
 					</div>
 					{!props?.hideTags && (
 						<div className="mt-4 flex gap-2 items-center flex-wrap">
-							<button className="theme-button outlined medium text-sm text-opacity-20">Education</button>
-							<button className="theme-button outlined medium text-sm text-opacity-20">Fitness</button>
-							<button className="theme-button outlined medium text-sm text-opacity-20">Entrepreneurship</button>
-							<span className="text-sm opacity-60">+3 More</span>
+							{props?.tags?.map(tag => (
+								<button className="theme-button outlined medium text-sm text-opacity-20">{tag}</button>
+							))}
 						</div>
 					)}
 					{!props?.profile_view && (

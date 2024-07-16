@@ -1,4 +1,4 @@
-import { Author, BlogPost } from "@models"
+import { BlogPost } from "@models"
 import { NextApiRequest } from "next/types"
 import { NextResponse, NextRequest } from "next/server"
 import useAuthRoute from "@lib/useAuthRoute"
@@ -16,7 +16,7 @@ export const GET = async (request: NextApiRequest, { params }: IReqParams) => {
 	}
 }
 
-const updateBlogPost = async (request: NextRequest, params: IAuthReqParams) => {
+const updateRequest = async (request: NextRequest, params: IAuthReqParams) => {
 	try {
 		if (params?.error) throw Error(params?.error)
 		const blogId = params?.req_params?.params?.blog
@@ -28,7 +28,7 @@ const updateBlogPost = async (request: NextRequest, params: IAuthReqParams) => {
 	}
 }
 
-const deleteBlogPost = async (request: NextApiRequest, params: IAuthReqParams) => {
+const deleteRequest = async (request: NextApiRequest, params: IAuthReqParams) => {
 	try {
 		if (params?.error) throw Error(params?.error)
 		const blogId = params?.req_params?.params?.blog
@@ -40,5 +40,5 @@ const deleteBlogPost = async (request: NextApiRequest, params: IAuthReqParams) =
 	}
 }
 
-export const DELETE = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, deleteBlogPost, req_params)
-export const PUT = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, updateBlogPost, req_params)
+export const DELETE = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, deleteRequest, req_params)
+export const PUT = (req: NextApiRequest, req_params: IReqParams) => useAuthRoute(req, updateRequest, req_params)

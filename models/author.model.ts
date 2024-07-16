@@ -19,7 +19,9 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	},
 	collections: [
 		{
-			title: { type: String }
+			name: { type: String },
+			visibility: { type: Number },
+			created_at: { type: Date, default: () => new Date() }
 		}
 	],
 	saved_posts: [

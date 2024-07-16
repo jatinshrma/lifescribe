@@ -4,11 +4,10 @@ import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { useSession, getProviders } from "next-auth/react"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
-	const pathname = usePathname()
 	const { data: session } = useSession()
 	const [providers, setProviders]: any = useState(null)
 

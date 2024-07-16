@@ -1,32 +1,429 @@
 "use client"
 
-import axios from "axios"
-import React, { useState } from "react"
 import { useSession } from "next-auth/react"
-import Editor from "@components/Editor"
+import { useSearchParams } from "next/navigation"
 
-const Create = () => {
+import axios from "axios"
+import React, { useState, useEffect, useMemo, useRef, MutableRefObject } from "react"
+import { TbUpload } from "react-icons/tb"
+import ReactQuill from "@components/ReactQuill"
+import RQType from "react-quill"
+import "react-quill/dist/quill.snow.css"
+import { IBlogPostSubmitParams, INewCollection } from "@utils/types"
+
+import {
+	Combobox,
+	ComboboxButton,
+	ComboboxInput,
+	ComboboxOption,
+	ComboboxOptions,
+	Description,
+	Field,
+	Label
+} from "@headlessui/react"
+import { FaChevronDown } from "react-icons/fa6"
+import { BiCheck, BiX } from "react-icons/bi"
+
+import { Radio, RadioGroup } from "@headlessui/react"
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { BsCheckCircleFill } from "react-icons/bs"
+import { FiArrowLeft } from "react-icons/fi"
+import { CgClose } from "react-icons/cg"
+import { IoAdd, IoSearchOutline } from "react-icons/io5"
+import { collections, tagsList, visibilityOptions } from "@utils/constants"
+import LayoutWrapper from "@components/LayoutWrapper"
+import { useRouter } from "next/navigation"
+
+const Editor = () => {
+	const searchParams = useSearchParams()
 	const { data: session } = useSession()
 	const [title, setTitle] = useState("")
 	const [blogContent, setBlogContent] = useState("")
 
-	const publish = async (reading_time: number) => {
+	const router = useRouter()
+	const blogId = searchParams.get("id")
+
+	const editorRef = useRef(null) as MutableRefObject<RQType> | MutableRefObject<null>
+	const [state, setState] = useState({ state: 0 })
+
+	useEffect(() => {
+		if (blogId)
+			(async () => {
+				const response = await axios.get("/api/blogpost/" + blogId)
+				setTitle(response.data.title)
+				setBlogContent(response.data.content)
+			})()
+	}, [blogId])
+
+	const imageHandler = () => {
+		const input = document.createElement("input")
+		input.setAttribute("type", "file")
+		input.setAttribute("accept", "image/*")
+		input.click()
+		input.onchange = async () => {
+			try {
+				const file = input?.files?.[0]
+				if (!file) return
+				if (!/^image\//.test(file.type)) return console.warn("You could only upload images.")
+
+				const fd = new FormData()
+				fd.append("file", file)
+
+				const config = { headers: { "content-type": "multipart/form-data" } }
+				const response = await axios.post("/api/upload", fd, config)
+
+				if (response.status !== 200) return
+				const index = editorRef?.current?.getEditor()?.getSelection()?.index || 0
+				editorRef?.current?.getEditor().insertEmbed(index, "image", response.data.file_url)
+			} catch (error) {
+				console.error("Error occurred in uploading image:", error)
+			}
+		}
+	}
+
+	const modules = useMemo(
+		() => ({
+			toolbar: {
+				container: [
+					["bold", "italic", "underline"],
+					[{ header: 2 }],
+					[{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+					[{ align: [] }],
+					["link", "image", "blockquote", "code-block"]
+				],
+				handlers: {
+					image: imageHandler
+				}
+			}
+		}),
+		[]
+	)
+
+	const onChange = (e: {
+		target: { style: { height: string }; scrollHeight: any; value: React.SetStateAction<string> }
+	}) => {
+		e.target.style.height = "auto"
+		e.target.style.height = `${e.target.scrollHeight}px`
+		setTitle(e.target.value)
+	}
+
+	const submitHandler = async (params: IBlogPostSubmitParams) => {
+		const div = document.createElement("div")
+		div.innerHTML = blogContent
+
+		const words_count = Array.from(div.children, ({ textContent }) => textContent?.trim())
+			.filter(Boolean)
+			.join(" ").length
+
 		const response = await axios({
-			method: "post",
-			url: "/api/blogpost",
+			method: blogId ? "PUT" : "POST",
+			url: "/api/blogpost" + (blogId ? `/${blogId}` : ""),
 			// @ts-ignore
-			headers: { Authorization: `Bearer ${session?.session_token}` },
+			headers: { authorization: `Bearer ${session?.session_token}` },
 			data: {
 				title: title,
 				content: blogContent,
-				reading_time
+				reading_time: Math.ceil(words_count / 200),
+				...params
 			}
 		})
+
+		if (response.data.blogId) {
+			router.push(`/${response.data.blogId || blogId}?title=${title?.replaceAll(" ", "-")}`)
+		}
 	}
 
 	return (
-		<Editor blogContent={blogContent} setBlogContent={setBlogContent} title={title} setTitle={setTitle} updateInDB={publish} />
+		<LayoutWrapper
+			navActions={
+				<button
+					className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
+					onClick={() => setState(prev => ({ state: +Boolean(!prev.state) }))}
+				>
+					<TbUpload className="stroke-darkPrimary" />
+					<span className="text-darkPrimary text-sm">Publish</span>
+				</button>
+			}
+		>
+			<div className="ss:px-0 px-4">
+				{state?.state === 0 ? (
+					<div className="max-w-screen-sm mx-auto">
+						<textarea rows={1} id="blog__editor-title" placeholder="Title" onChange={onChange} value={title} />
+						<ReactQuill
+							id="editor"
+							className="relative"
+							theme="snow"
+							value={blogContent}
+							onChange={setBlogContent}
+							placeholder="Content..."
+							modules={modules}
+							forwardedRef={editorRef}
+						/>
+					</div>
+				) : state?.state === 1 ? (
+					<AdditionalDetails goBack={() => setState({ state: 0 })} submit={submitHandler} />
+				) : null}
+			</div>
+		</LayoutWrapper>
 	)
 }
 
-export default Create
+function AdditionalDetails({
+	goBack,
+	submit
+}: {
+	goBack: () => void
+	submit: (props: IBlogPostSubmitParams) => void
+}) {
+	const [query, setQuery] = useState("")
+	const [tags, setTags] = useState<string[]>([])
+	const [collection, setCollection] = useState<string>()
+	const [visibility, setVisibility] = useState<number>(0)
+	const [newCollection, setNewCollection] = useState<INewCollection | null>(null)
+
+	const filteredCollections =
+		query === ""
+			? collections
+			: collections.filter(coll => {
+					return coll.name.toLowerCase().includes(query.toLowerCase())
+			  })
+
+	return (
+		<div className="max-w-screen-md mx-auto py-8">
+			<button className="theme-button primary small flex items-center gap-1" onClick={goBack}>
+				<FiArrowLeft />
+				<span>Back</span>
+			</button>
+
+			<div className="flex my-6 gap-6">
+				<div className="w-1/2 space-y-4">
+					<Field>
+						<Label className="text-sm font-medium mb-3 block">
+							Collection <span className="opacity-50">(optional)</span>
+						</Label>
+
+						{!newCollection ? (
+							<Combobox
+								value={collection}
+								onChange={(value: string) => setCollection(value)}
+								onClose={() => setQuery("")}
+							>
+								<div className="relative">
+									<ComboboxInput
+										className={
+											"theme-input bg-darkSecondary hover:bg-darkHighlight " +
+											"focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+										}
+										displayValue={value => collections.find(i => i._id === value)?.name as string}
+										onChange={event => setQuery(event.target.value)}
+									/>
+									<ComboboxButton className="group absolute inset-y-0 right-0 px-5">
+										<FaChevronDown className="size-4 fill-white/60 group-data-[hover]:fill-white" />
+									</ComboboxButton>
+								</div>
+
+								<ComboboxOptions
+									anchor="bottom"
+									transition
+									className={
+										"w-[var(--input-width)] rounded-xl border border-white/5 bg-darkSecondary mt-1 p-1 [--anchor-gap:var(--spacing-1)] empty:invisible " +
+										"transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
+									}
+								>
+									<ComboboxOption
+										value={"new"}
+										className="group w-full theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
+										onClick={event => {
+											event?.preventDefault()
+											setNewCollection({ visibility: visibilityOptions[0], name: "" })
+										}}
+									>
+										<IoAdd className="w-5 h-5 fill-white" />
+										<div className="text-sm/6 text-white">Add new collection</div>
+									</ComboboxOption>
+									{filteredCollections.map(coll => (
+										<ComboboxOption
+											key={coll._id as React.Key}
+											value={coll._id}
+											className="group theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
+										>
+											<BiCheck className="invisible w-5 h-5 fill-white group-data-[selected]:visible" />
+											<div className="text-sm/6 text-white">{coll.name}</div>
+										</ComboboxOption>
+									))}
+								</ComboboxOptions>
+							</Combobox>
+						) : (
+							<div className="theme-input flex">
+								<Menu>
+									<MenuButton className={"flex items-center gap-1 mr-4"}>
+										{newCollection?.visibility?.Icon && <newCollection.visibility.Icon className="w-5 h-5" />}
+										<FaChevronDown className="w-2 h-2 fill-white/40 group-data-[hover]:fill-white" />
+									</MenuButton>
+									<MenuItems
+										transition
+										anchor="bottom start"
+										className={
+											"w-52 mt-2 rounded-xl border border-darkHighlight bg-darkSecondary p-1 text-sm text-whitePrimary transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+										}
+									>
+										{visibilityOptions.map(i => (
+											<MenuItem key={"coll-op-" + i.label}>
+												<button
+													className={"theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"}
+													onClick={() => setNewCollection(prev => ({ ...prev, visibility: i }))}
+												>
+													<i.Icon className="w-4 h-4" />
+													<p className="font-semibold fill-whitePrimary">{i.label}</p>
+												</button>
+											</MenuItem>
+										))}
+									</MenuItems>
+								</Menu>
+								<input
+									type="text"
+									className="w-full theme-input p-0"
+									placeholder="New collection name"
+									value={newCollection?.name}
+									onChange={event => setNewCollection(prev => ({ ...prev, name: event.target.value }))}
+								/>
+
+								<button
+									className="rounded-md p-1.5 whitespace-nowrap flex hover:bg-darkHighlight scale-125"
+									onClick={() => setNewCollection(null)}
+								>
+									<CgClose className="w-3 h-3" />
+								</button>
+							</div>
+						)}
+					</Field>
+
+					<Field>
+						<Label className="text-sm font-medium">Visibility</Label>
+						<RadioGroup
+							value={visibility}
+							onChange={setVisibility}
+							aria-label="Visibility"
+							className="mt-3 space-y-3"
+						>
+							{visibilityOptions.map(option => (
+								<Radio
+									key={option.label}
+									value={option.value}
+									className="group relative cursor-pointer w-full theme-button primary rounded-lg focus:outline-none data-[focus]:outline-1 data-[focus]:outline-whitePrimary data-[checked]:bg-darkSecondary"
+								>
+									<div className="flex w-full items-center justify-between">
+										<div className="flex items-center gap-2 text-sm/6">
+											<option.Icon />
+											<p className="font-semibold fill-whitePrimary">{option.label}</p>
+										</div>
+										<BsCheckCircleFill className="size-6 fill-whitePrimary text-opacity-100 opacity-0 transition group-data-[checked]:opacity-100" />
+									</div>
+								</Radio>
+							))}
+						</RadioGroup>
+					</Field>
+				</div>
+				<div className="w-1/2 space-y-4">
+					<Field>
+						<Label className="text-sm font-medium">Tags</Label>
+						<Description className="text-sm text-white/50">
+							Select your content related tags in a range of minimum 2 to maximum 5.
+						</Description>
+						<TagsSelection tags={tags} setTags={setTags} />
+					</Field>
+				</div>
+			</div>
+
+			<button
+				className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
+				onClick={() => {
+					const params: IBlogPostSubmitParams = {
+						visibility,
+						tags
+					}
+
+					if (newCollection)
+						params.newCollection = {
+							name: newCollection.name || "",
+							visibility: newCollection.visibility?.value || visibilityOptions[0].value
+						}
+					else params.author_collection = collection
+
+					submit(params)
+				}}
+			>
+				<TbUpload className="stroke-darkPrimary" />
+				<span className="text-darkPrimary text-sm">Publish now</span>
+			</button>
+		</div>
+	)
+}
+
+function TagsSelection({ tags, setTags }: TagsSelectionProps) {
+	const [query, setQuery] = useState("")
+	const filteredTagsList =
+		!query || query?.length < 2
+			? []
+			: tagsList.filter(tag => tag.toLowerCase().includes(query.toLowerCase()) && !tags?.includes(tag))
+
+	return (
+		<div className="mt-3 relative w-full space-y-2">
+			<Combobox
+				onChange={(value: string) => {
+					setQuery("")
+					if (value && tags?.length <= 5) setTags((prev: string[]) => prev.concat([value]))
+				}}
+			>
+				<div className="theme-input relative hover:bg-darkHighlight rounded-md flex items-center gap-5 p-0">
+					<IoSearchOutline className="text-lg absolute left-5 w-6" />
+					<ComboboxInput
+						className="text-sm w-full pl-14 pr-5 py-3"
+						displayValue={() => query}
+						onChange={event => setQuery(event.target.value)}
+						placeholder="Search tags"
+					/>
+				</div>
+				<ComboboxOptions
+					anchor="bottom start"
+					transition={true}
+					className={
+						"w-[var(--input-width)] mt-2 rounded-xl border border-white/5 bg-darkSecondary p-1 [--anchor-gap:var(--spacing-1)] empty:invisible " +
+						"transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
+					}
+				>
+					{query?.length > 2 &&
+						filteredTagsList?.map(tag => (
+							<ComboboxOption
+								key={tag}
+								value={tag}
+								className="group theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
+							>
+								<div className="text-sm text-white">{tag}</div>
+							</ComboboxOption>
+						))}
+				</ComboboxOptions>
+			</Combobox>
+			{tags?.length > 0 && (
+				<div className="flex gap-2 flex-wrap">
+					{tags.map(tag => (
+						<div key={tag as React.Key} className="theme-button static small rounded-md bg-darkSecondary w-fit">
+							{tag}
+							<BiX
+								className="ml-1 h-5 w-5 cursor-pointer"
+								onClick={() => setTags((prev: string[]) => prev.filter((_tag: string) => _tag !== tag))}
+							/>
+						</div>
+					))}
+				</div>
+			)}
+		</div>
+	)
+}
+
+type TagsSelectionProps = {
+	tags: string[]
+	setTags: React.Dispatch<React.SetStateAction<string[]>>
+}
+
+export default Editor
