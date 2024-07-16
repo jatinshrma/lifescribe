@@ -54,7 +54,7 @@ const Profile = () => {
 	const [posts, setPosts] = useState<IBlogCardProps[]>([])
 	const [user, setUser] = useState<any>()
 	const [promptState, setPromptState] = useState<{ description: string; action: IPromptAction } | null>(null)
-	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type })
+	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
 
 	useEffect(() => {
 		// @ts-ignore
