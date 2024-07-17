@@ -1,7 +1,7 @@
 // pages/api/signup.ts
 import { NextApiRequest, NextApiResponse } from "next"
-import connectToDB from "@lib/db"
-import { Author } from "@models"
+import connectToDB from "@db/index"
+import { Author } from "@db/models"
 import bcrypt from "bcrypt"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

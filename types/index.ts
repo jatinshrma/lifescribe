@@ -6,7 +6,7 @@ import { ClientSafeProvider, LiteralUnion } from "next-auth/react"
 import { Dispatch, SetStateAction } from "react"
 import { IconType } from "react-icons"
 
-export interface IBlogPost {
+export interface IPost {
 	title: string
 	content: string
 	author: mongoose.Schema.Types.ObjectId | string
@@ -17,10 +17,11 @@ export interface IBlogPost {
 	reading_time: number
 }
 
-export interface IBlogCardProps extends IBlogPost {
+export interface IPostCardProps {
 	_id: mongoose.Schema.Types.ObjectId
-	author_image: string
-	profile_view?: boolean
+	author?: {
+		profile_picture: IAuthor["profile_picture"]
+	}
 	toggleDeletePrompt?: Function
 	hideTags?: boolean
 	hideHoverEffect?: boolean
@@ -32,6 +33,7 @@ export interface IAuthor {
 	bio: string
 	collections: ICollectionType[]
 	saved_posts: string[]
+	username: string
 	email: string
 	password: string
 	created_at: Date
@@ -39,11 +41,11 @@ export interface IAuthor {
 }
 
 export interface IEditorProps {
-	blogContent: string
-	setBlogContent: Dispatch<SetStateAction<string>>
+	postContent: string
+	setPostContent: Dispatch<SetStateAction<string>>
 	title: string
 	setTitle: Dispatch<SetStateAction<string>>
-	updateInDB: (params: IBlogPostSubmitParams & { reading_time: number }) => Promise<void>
+	updateInDB: (params: IPostSubmitParams & { reading_time: number }) => Promise<void>
 }
 
 export interface IReqParams {
@@ -72,11 +74,11 @@ export interface IAuthPageProps {
 	session: Session | null
 }
 
-export interface IBlogPostSubmitParams {
-	visibility: IBlogPost["visibility"]
-	author_collection?: IBlogPost["author_collection"]
+export interface IPostSubmitParams {
+	visibility: IPost["visibility"]
+	author_collection?: IPost["author_collection"]
 	newCollection?: ICollectionType
-	tags: IBlogPost["tags"]
+	tags: IPost["tags"]
 }
 
 export interface ICollectionType {

@@ -3,10 +3,10 @@ import { join } from "path"
 import { stat, mkdir, writeFile } from "fs/promises"
 import * as dateFn from "date-fns"
 import { NextRequest, NextResponse } from "next/server"
-import { IAuthReqParams, IReqParams } from "@utils/types"
+import { IAuthReqParams, IReqParams } from "@types"
 import { NextApiRequest } from "next"
 import useAuthRoute from "@lib/useAuthRoute"
-import { Author } from "@models"
+import { Author } from "@db/models"
 
 export async function uploadFile(request: NextRequest, params: IAuthReqParams) {
 	const formData = await request.formData()

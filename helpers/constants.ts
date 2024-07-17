@@ -1,4 +1,4 @@
-import { ICollectionType, IVisibilityOption } from "@utils/types"
+import { IVisibilityOption } from "@types"
 import { FiLock } from "react-icons/fi"
 import { TbWorld } from "react-icons/tb"
 
@@ -16,10 +16,10 @@ export const tags = [
 	"Programming"
 ]
 
-export const blogsList = [
+export const postsList = [
 	{
 		topic: "Travel",
-		blogs: [
+		posts: [
 			{
 				user: "TravelEnthusiast",
 				title: "Exploring the Serene Islands",
@@ -67,7 +67,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Technology",
-		blogs: [
+		posts: [
 			{
 				user: "TechGuru",
 				title: "Future of AI: Transforming Industries",
@@ -115,9 +115,9 @@ export const blogsList = [
 	},
 	{
 		topic: "Food",
-		blogs: [
+		posts: [
 			{
-				user: "FoodieBlogger",
+				user: "FoodiePostger",
 				title: "Gourmet Adventures: Culinary Journey",
 				description: "Embark on a gastronomic journey through exotic flavors and delightful cuisines.",
 				creation_date: "25 September",
@@ -163,7 +163,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Fitness",
-		blogs: [
+		posts: [
 			{
 				user: "FitnessFreak",
 				title: "Total Body Transformation: The Fitness Journey",
@@ -210,7 +210,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Photography",
-		blogs: [
+		posts: [
 			{
 				user: "Shutterbug",
 				title: "Capturing Nature's Beauty: Landscape Photography",
@@ -259,7 +259,7 @@ export const blogsList = [
 	},
 	{
 		topic: "History",
-		blogs: [
+		posts: [
 			{
 				user: "HistoryBuff",
 				title: "Ancient Civilizations: Unraveling the Past",
@@ -305,7 +305,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Science Fiction",
-		blogs: [
+		posts: [
 			{
 				user: "SciFiGeek",
 				title: "Galactic Odyssey: Space Exploration",
@@ -353,7 +353,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Parenting",
-		blogs: [
+		posts: [
 			{
 				user: "ParentingGuru",
 				title: "Journey to Parenthood: Navigating the New Chapter",
@@ -398,7 +398,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Health and Wellness",
-		blogs: [
+		posts: [
 			{
 				user: "WellnessJourney",
 				title: "Holistic Living: Mind, Body, and Spirit",
@@ -443,7 +443,7 @@ export const blogsList = [
 	},
 	{
 		topic: "Art and Creativity",
-		blogs: [
+		posts: [
 			{
 				user: "ArtisticSoul",
 				title: "Creative Expressions: Art in Various Mediums",
@@ -522,7 +522,7 @@ export const list = [
 		tag: "Art and Creativity"
 	},
 	{
-		user: "FoodieBlogger",
+		user: "FoodiePostger",
 		title: "Gourmet Adventures: Culinary Journey",
 		description: "Embark on a gastronomic journey through exotic flavors and delightful cuisines.",
 		creation_date: "25 September",
@@ -1637,7 +1637,6 @@ export const interests = [
 	"Business Development"
 ]
 
-export const collections: ICollectionType[] = []
 export const visibilityOptions: IVisibilityOption[] = [
 	{ Icon: TbWorld, value: 0, label: "Public" },
 	{ Icon: FiLock, value: 1, label: "Private" }
@@ -1702,7 +1701,7 @@ export const tagsList = [
 	"Digital Marketing",
 	"Data Science",
 	"Fitness",
-	"Blogging",
+	"Postging",
 	"Meditation",
 	"Programming",
 	"Photography",

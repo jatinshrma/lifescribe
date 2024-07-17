@@ -85,16 +85,16 @@
 	.nav__search {
 		@apply text-whiteSecondary ss:px-3 py-1.5 px-1.5 rounded-md overflow-hidden flex ss:gap-3 gap-2 items-center mt-0;
 	}
-	.blog__title {
+	.post__title {
 		@apply ss:text-6xl ss:leading-snug leading-snug text-4xl font-medium ss:my-12 my-5 font-playFD;
 	}
-	#blog__editor-title {
-		@apply blog__title ss:text-5xl ss:leading-snug outline-0 border-0 bg-transparent resize-none w-full ss:my-5 my-3;
+	#post__editor-title {
+		@apply post__title ss:text-5xl ss:leading-snug outline-0 border-0 bg-transparent resize-none w-full ss:my-5 my-3;
 	}
-	#blog__editor-title::placeholder {
+	#post__editor-title::placeholder {
 		@apply text-whitePrimary opacity-30;
 	}
-	.blogcard_content {
+	.postcard_content {
 		overflow: hidden;
 		-webkit-line-clamp: 3;
 		display: -webkit-box;
@@ -108,22 +108,6 @@
 	}
 	#user-menu button svg {
 		@apply w-5 h-5;
-	}
-	.highline {
-		position: relative;
-	}
-	.highline::after {
-		@apply bg-whiteSecondary content-[""] absolute w-[80%] h-[2.5px] rounded-[10px] left-2/4 bottom-0 translate-x-[-50%];
-	}
-	.blog-card::before {
-		@apply first:hidden bg-whitePrimary content-[""] w-full h-px block absolute opacity-5 left-0 top-0 transition duration-300;
-	}
-	.blog-card:hover::before,
-	.blog-card:hover + .blog-card::before {
-		@apply opacity-0;
-	}
-	.blog-card button:has(svg) {
-		@apply text-2xl opacity-80 hover:scale-125 transition duration-200;
 	}
 	.prompt button {
 		@apply py-2 text-sm;

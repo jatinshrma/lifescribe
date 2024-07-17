@@ -1,31 +1,30 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import connectToDB from "@lib/db"
-import { Author } from "@models"
-import { IAuthReqParams, IReqParams } from "@utils/types"
-import { NextResponse } from "next/server"
-import useAuthRoute from "@lib/useAuthRoute"
-import mongoose from "mongoose"
+import connectToDB from "@db/index"
+import { Author } from "@db/models"
+import { PipelineStage } from "mongoose"
+import { NextRequest, NextResponse } from "next/server"
 
-const get = async (request: NextApiRequest, { tokenJson, error }: IAuthReqParams) => {
+export const GET = async (request: NextRequest) => {
 	try {
 		await connectToDB()
+		const username = request.nextUrl.searchParams.get("username")
+
 		const author = await Author.aggregate([
 			{
 				$match: {
-					_id: new mongoose.Types.ObjectId(tokenJson?.id)
+					username
 				}
 			},
 			{
 				$unwind: {
 					path: "$collections",
-					preserveNullAndEmptyArrays: false
+					preserveNullAndEmptyArrays: true
 				}
 			},
 			{
 				$lookup: {
-					from: "blogposts",
-					localField: "collections._id",
-					foreignField: "author_collection",
+					from: "posts",
+					localField: "_id",
+					foreignField: "author",
 					pipeline: [
 						{
 							$project: {
@@ -44,12 +43,21 @@ const get = async (request: NextApiRequest, { tokenJson, error }: IAuthReqParams
 			},
 			{
 				$group: {
-					_id: "$_id",
+					_id: 0,
+					name: {
+						$first: "$name"
+					},
+					bio: {
+						$first: "$bio"
+					},
 					saved_posts: {
 						$first: "$saved_posts"
 					},
 					collections: {
 						$push: "$collections"
+					},
+					created_at: {
+						$first: "$created_at"
 					}
 				}
 			}
@@ -57,9 +65,7 @@ const get = async (request: NextApiRequest, { tokenJson, error }: IAuthReqParams
 
 		return NextResponse.json(author?.[0])
 	} catch (error: any) {
-		console.error(error)
+		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })
 	}
 }
-
-export const GET = (req: NextApiRequest) => useAuthRoute(req, get)

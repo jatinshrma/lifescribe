@@ -1,10 +1,10 @@
 import "../globals.css"
 import type { Metadata } from "next"
-import Provider from "@components/Provider"
+import AuthProvider from "@context/AuthProvider"
 
 export const metadata: Metadata = {
 	title: "LifeScribe",
-	description: "A Next.js 13 Blogging Platform For Scribers And Readers"
+	description: "A Next.js 13 Postging Platform For Scribers And Readers"
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html lang="en">
 			<body>
 				<div id="app-wrapper">
-					<Provider>{children}</Provider>
+					<AuthProvider>{children}</AuthProvider>
 				</div>
 			</body>
 		</html>

@@ -11,10 +11,11 @@ export const selectRandomIndexes = (totalCount: number, numIndexesToSelect: numb
 	return Array.from(selectedIndexes)
 }
 
-export const getRandomString = (len = 10) => [...Array(len)].map(() => (~~(Math.random() * 36)).toString(36)).join("")
+export const getRandomString = (len = 10) =>
+	[...Array(len)].map(() => (~~(Math.random() * 36)).toString(36)).join("")
 
 export const mongoAggregations = {
-	blogpost_fetch: [
+	post_fetch: [
 		{
 			$addFields: {
 				content: {
@@ -55,18 +56,64 @@ export const mongoAggregations = {
 				from: "authors",
 				localField: "author",
 				foreignField: "_id",
+				pipeline: [
+					{
+						$project: {
+							username: 1,
+							collections: 1,
+							profile_picture: 1,
+							name: 1
+						}
+					}
+				],
 				as: "_author_"
 			}
 		},
 		{
-			$unwind: {
-				path: "$_author_"
+			$set: {
+				visibility: {
+					$ifNull: [
+						"$visibility",
+						{
+							$first: {
+								$map: {
+									input: {
+										$filter: {
+											input: {
+												$first: "$_author_.collections"
+											},
+											as: "coll",
+											cond: {
+												$eq: ["$$coll._id", "$author_collection"]
+											}
+										}
+									},
+									as: "filteredColl",
+									in: "$$filteredColl.visibility"
+								}
+							}
+						}
+					]
+				},
+				author: {
+					username: {
+						$first: "$_author_.username"
+					},
+					name: {
+						$first: "$_author_.name"
+					},
+					profile_picture: {
+						$first: "$_author_.profile_picture"
+					}
+				}
 			}
 		},
 		{
-			$addFields: {
-				author: "$_author_.name",
-				author_image: "$_author_.profile_picture"
+			$unset: "_author_"
+		},
+		{
+			$sort: {
+				created_at: -1
 			}
 		}
 	]

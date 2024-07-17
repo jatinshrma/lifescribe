@@ -120,7 +120,7 @@ const Onboarding = () => {
 							<span className="text-lg font-medium">Public Profile (Author)</span>
 						</div>
 						<p className="opacity-60">
-							Public profiles are known as Authors. Authors can publich blogs which is publicly accessible, they
+							Public profiles are known as Authors. Authors can publich posts which is publicly accessible, they
 							can also maintain a record or personal writings such as their journals or other personal content.
 						</p>
 					</div>

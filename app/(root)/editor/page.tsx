@@ -9,7 +9,7 @@ import { TbUpload } from "react-icons/tb"
 import ReactQuill from "@components/ReactQuill"
 import RQType from "react-quill"
 import "react-quill/dist/quill.snow.css"
-import { IBlogPostSubmitParams, INewCollection } from "@utils/types"
+import { IPost, IPostSubmitParams, ICollectionType, INewCollection } from "@types"
 
 import {
 	Combobox,
@@ -22,7 +22,7 @@ import {
 	Label
 } from "@headlessui/react"
 import { FaChevronDown } from "react-icons/fa6"
-import { BiCheck, BiX } from "react-icons/bi"
+import { BiCheck, BiSearch, BiX } from "react-icons/bi"
 
 import { Radio, RadioGroup } from "@headlessui/react"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
@@ -30,30 +30,32 @@ import { BsCheckCircleFill } from "react-icons/bs"
 import { FiArrowLeft } from "react-icons/fi"
 import { CgClose } from "react-icons/cg"
 import { IoAdd, IoSearchOutline } from "react-icons/io5"
-import { collections, tagsList, visibilityOptions } from "@utils/constants"
+import { tagsList, visibilityOptions } from "@utils/constants"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { useRouter } from "next/navigation"
 
 const Editor = () => {
 	const searchParams = useSearchParams()
 	const { data: session } = useSession()
-	const [title, setTitle] = useState("")
-	const [blogContent, setBlogContent] = useState("")
+	const [post, setPost] = useState<IPost | null>(null)
+	const [authorCollections, setAuthorCollections] = useState<ICollectionType[]>([])
 
 	const router = useRouter()
-	const blogId = searchParams.get("id")
+	const postId = searchParams.get("id")
 
 	const editorRef = useRef(null) as MutableRefObject<RQType> | MutableRefObject<null>
 	const [state, setState] = useState({ state: 0 })
 
 	useEffect(() => {
-		if (blogId)
+		if (postId)
 			(async () => {
-				const response = await axios.get("/api/blogpost/" + blogId)
-				setTitle(response.data.title)
-				setBlogContent(response.data.content)
+				const response = await axios.get("/api/post/" + postId)
+				setPost(response.data)
+
+				const collectionsResponse = await axios.get("/api/author/collections")
+				if (collectionsResponse?.data) setAuthorCollections(collectionsResponse?.data)
 			})()
-	}, [blogId])
+	}, [postId])
 
 	const imageHandler = () => {
 		const input = document.createElement("input")
@@ -104,32 +106,30 @@ const Editor = () => {
 	}) => {
 		e.target.style.height = "auto"
 		e.target.style.height = `${e.target.scrollHeight}px`
-		setTitle(e.target.value)
+		setPost(prev => ({ ...prev, title: e.target.value } as IPost))
 	}
 
-	const submitHandler = async (params: IBlogPostSubmitParams) => {
+	const submitHandler = async (params: IPostSubmitParams) => {
 		const div = document.createElement("div")
-		div.innerHTML = blogContent
+		if (post?.content) div.innerHTML = post.content
 
 		const words_count = Array.from(div.children, ({ textContent }) => textContent?.trim())
 			.filter(Boolean)
 			.join(" ").length
 
 		const response = await axios({
-			method: blogId ? "PUT" : "POST",
-			url: "/api/blogpost" + (blogId ? `/${blogId}` : ""),
-			// @ts-ignore
-			headers: { authorization: `Bearer ${session?.session_token}` },
+			method: postId ? "PUT" : "POST",
+			url: "/api/post" + (postId ? `/${postId}` : ""),
 			data: {
-				title: title,
-				content: blogContent,
+				title: post?.title,
+				content: post?.content,
 				reading_time: Math.ceil(words_count / 200),
 				...params
 			}
 		})
 
-		if (response.data.blogId) {
-			router.push(`/${response.data.blogId || blogId}?title=${title?.replaceAll(" ", "-")}`)
+		if (response.data.postId) {
+			router.push(`/post/${response.data.postId || postId}?title=${post?.title?.replaceAll(" ", "-")}`)
 		}
 	}
 
@@ -148,20 +148,35 @@ const Editor = () => {
 			<div className="ss:px-0 px-4">
 				{state?.state === 0 ? (
 					<div className="max-w-screen-sm mx-auto">
-						<textarea rows={1} id="blog__editor-title" placeholder="Title" onChange={onChange} value={title} />
+						<textarea
+							rows={1}
+							id="post__editor-title"
+							placeholder="Title"
+							value={post?.title}
+							onChange={onChange}
+						/>
 						<ReactQuill
 							id="editor"
 							className="relative"
 							theme="snow"
-							value={blogContent}
-							onChange={setBlogContent}
+							value={post?.content || ""}
+							onChange={text => setPost(prev => ({ ...prev, content: text } as IPost))}
 							placeholder="Content..."
 							modules={modules}
 							forwardedRef={editorRef}
 						/>
 					</div>
 				) : state?.state === 1 ? (
-					<AdditionalDetails goBack={() => setState({ state: 0 })} submit={submitHandler} />
+					<AdditionalDetails
+						goBack={() =>
+							setState({
+								state: 0
+							})
+						}
+						submit={submitHandler}
+						authorCollections={authorCollections}
+						post={post}
+					/>
 				) : null}
 			</div>
 		</LayoutWrapper>
@@ -170,10 +185,14 @@ const Editor = () => {
 
 function AdditionalDetails({
 	goBack,
-	submit
+	submit,
+	post,
+	authorCollections
 }: {
 	goBack: () => void
-	submit: (props: IBlogPostSubmitParams) => void
+	submit: (props: IPostSubmitParams) => void
+	post: IPost | null
+	authorCollections: ICollectionType[]
 }) {
 	const [query, setQuery] = useState("")
 	const [tags, setTags] = useState<string[]>([])
@@ -181,12 +200,28 @@ function AdditionalDetails({
 	const [visibility, setVisibility] = useState<number>(0)
 	const [newCollection, setNewCollection] = useState<INewCollection | null>(null)
 
+	useEffect(() => {
+		if (post) {
+			setCollection(post?.author_collection?.toString() || "")
+			setVisibility(post?.visibility)
+			if (post?.tags?.length) setTags(post?.tags)
+		}
+	}, [post])
+
 	const filteredCollections =
 		query === ""
-			? collections
-			: collections.filter(coll => {
+			? authorCollections
+			: authorCollections.filter(coll => {
 					return coll.name.toLowerCase().includes(query.toLowerCase())
 			  })
+
+	const collVisibilityIcon = (className: string) => {
+		const coll = authorCollections?.find(coll => coll._id === collection)
+		if (!coll) return <IoSearchOutline className={className} />
+
+		const Icon = visibilityOptions[coll.visibility].Icon
+		return <Icon className={className} />
+	}
 
 	return (
 		<div className="max-w-screen-md mx-auto py-8">
@@ -208,13 +243,16 @@ function AdditionalDetails({
 								onChange={(value: string) => setCollection(value)}
 								onClose={() => setQuery("")}
 							>
-								<div className="relative">
+								<div className="relative flex items-center">
+									<button className="pointer-events-none absolute inset-y-0 left-0 px-5">
+										{collVisibilityIcon("size-4")}
+									</button>
 									<ComboboxInput
 										className={
-											"theme-input bg-darkSecondary hover:bg-darkHighlight " +
+											"pl-[52px] pr-12 theme-input bg-darkSecondary hover:bg-darkHighlight " +
 											"focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
 										}
-										displayValue={value => collections.find(i => i._id === value)?.name as string}
+										displayValue={value => authorCollections.find(i => i._id === value)?.name as string}
 										onChange={event => setQuery(event.target.value)}
 									/>
 									<ComboboxButton className="group absolute inset-y-0 right-0 px-5">
@@ -241,16 +279,20 @@ function AdditionalDetails({
 										<IoAdd className="w-5 h-5 fill-white" />
 										<div className="text-sm/6 text-white">Add new collection</div>
 									</ComboboxOption>
-									{filteredCollections.map(coll => (
-										<ComboboxOption
-											key={coll._id as React.Key}
-											value={coll._id}
-											className="group theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
-										>
-											<BiCheck className="invisible w-5 h-5 fill-white group-data-[selected]:visible" />
-											<div className="text-sm/6 text-white">{coll.name}</div>
-										</ComboboxOption>
-									))}
+									{filteredCollections.map(coll => {
+										const Icon = visibilityOptions[coll.visibility].Icon
+										return (
+											<ComboboxOption
+												key={coll._id as React.Key}
+												value={coll._id}
+												className="group theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
+											>
+												<Icon className="w-5 h-5" />
+												<div className="text-sm/6 w-full text-white">{coll.name}</div>
+												<BiCheck className="invisible w-5 h-5 fill-white group-data-[selected]:visible" />
+											</ComboboxOption>
+										)
+									})}
 								</ComboboxOptions>
 							</Combobox>
 						) : (
@@ -300,6 +342,10 @@ function AdditionalDetails({
 
 					<Field>
 						<Label className="text-sm font-medium">Visibility</Label>
+						<Description className="text-sm text-white/50">
+							Post's visibility is inhereted from collection. Incase of post not being included in any collection,
+							post's visibility can be set saperately.
+						</Description>
 						<RadioGroup
 							value={visibility}
 							onChange={setVisibility}
@@ -310,7 +356,8 @@ function AdditionalDetails({
 								<Radio
 									key={option.label}
 									value={option.value}
-									className="group relative cursor-pointer w-full theme-button primary rounded-lg focus:outline-none data-[focus]:outline-1 data-[focus]:outline-whitePrimary data-[checked]:bg-darkSecondary"
+									className="group relative cursor-pointer w-full theme-button primary rounded-lg focus:outline-none data-[focus]:outline-1 data-[focus]:outline-whitePrimary data-[checked]:bg-darkSecondary data-[disabled]:opacity-40 data-[disabled]:pointer-events-none"
+									disabled={Boolean(authorCollections?.find(i => i._id === collection) || newCollection?.name)}
 								>
 									<div className="flex w-full items-center justify-between">
 										<div className="flex items-center gap-2 text-sm/6">
@@ -338,7 +385,7 @@ function AdditionalDetails({
 			<button
 				className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
 				onClick={() => {
-					const params: IBlogPostSubmitParams = {
+					const params: IPostSubmitParams = {
 						visibility,
 						tags
 					}
@@ -348,7 +395,7 @@ function AdditionalDetails({
 							name: newCollection.name || "",
 							visibility: newCollection.visibility?.value || visibilityOptions[0].value
 						}
-					else params.author_collection = collection
+					else if (collection) params.author_collection = collection
 
 					submit(params)
 				}}
@@ -372,7 +419,9 @@ function TagsSelection({ tags, setTags }: TagsSelectionProps) {
 			<Combobox
 				onChange={(value: string) => {
 					setQuery("")
-					if (value && tags?.length <= 5) setTags((prev: string[]) => prev.concat([value]))
+					if (value && tags?.length <= 5) {
+						setTags((prev: string[]) => prev.concat([value]))
+					}
 				}}
 			>
 				<div className="theme-input relative hover:bg-darkHighlight rounded-md flex items-center gap-5 p-0">

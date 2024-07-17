@@ -212,7 +212,7 @@ function SignUp() {
 						<span>
 							Already have an account?{" "}
 							<Link
-								href={"/signin"}
+								href={"/sign-in"}
 								className="underline"
 								onClick={e => (flags?.loading ? null : e.preventDefault())}
 							>

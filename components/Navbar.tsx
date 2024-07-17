@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
-	const { data: session } = useSession()
+	const completeEveryting = useSession()
+	const session = completeEveryting?.data
 	const [providers, setProviders]: any = useState(null)
 
 	useEffect(() => {
@@ -20,8 +21,9 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 
 	const onClick = async () => {
 		if (!providers?.google) return
-		if (session) return router.push("/profile", { scroll: false })
-		else router.push("/api/auth/signin", { scroll: false })
+		if (session) {
+			router.push(`/author/profile`, { scroll: false })
+		} else router.push("/sign-in", { scroll: false })
 	}
 
 	return (

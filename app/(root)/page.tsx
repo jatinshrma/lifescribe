@@ -1,7 +1,7 @@
 "use client"
 
-import { BlogCard } from "@components/index"
-import { IBlogCardProps } from "@utils/types"
+import { PostCard } from "@components/index"
+import { IPostCardProps } from "@types"
 import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -13,13 +13,13 @@ import { RiQuillPenLine } from "react-icons/ri"
 import Link from "next/link"
 
 export default function Home() {
-	const [blogs, setBlogs] = useState<IBlogCardProps[]>([])
+	const [posts, setPosts] = useState<IPostCardProps[]>([])
 
 	useEffect(() => {
 		;(async () => {
-			const response = await axios.get("/api/blogpost/suggestions")
+			const response = await axios.get("/api/post/suggestions")
 			if (response.data) {
-				setBlogs(response?.data)
+				setPosts(response?.data)
 			}
 		})()
 	}, [])
@@ -43,7 +43,7 @@ export default function Home() {
 						</span>
 						<input
 							type="text"
-							placeholder="Search blogs, topics or authors"
+							placeholder="Search posts, topics or authors"
 							className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
 						/>
 						<button className="flex gap-2 items-center px-4">
@@ -51,12 +51,11 @@ export default function Home() {
 							Filter
 						</button>
 					</div>
-					{blogs?.map(blog => (
-						<BlogCard key={blog._id.toString()} {...blog} hideTags={true} hideHoverEffect={true} />
-					))}
-					{blogs?.map(blog => (
-						<BlogCard key={blog._id.toString()} {...blog} hideTags={true} hideHoverEffect={true} />
-					))}
+					<div>
+						{posts?.map(post => (
+							<PostCard key={post._id.toString()} {...post} hideTags={true} hideHoverEffect={true} />
+						))}
+					</div>
 				</div>
 				<RightSidebar />
 			</div>
@@ -105,7 +104,7 @@ const ReadingList = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a post & why you need one</p>
 				</div>
 				<div className="border-b border-darkSecondary py-3 last:border-none">
 					<div className="flex justify-between w-full">
@@ -127,7 +126,7 @@ const ReadingList = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a post & why you need one</p>
 				</div>
 			</div>
 			<div className="mt-6 mb-2 flex items-center gap-3 opacity-50">
@@ -154,7 +153,7 @@ const ReadingList = () => {
 							<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
 						</button>
 					</div>
-					<p className="mt-2.5 line-clamp-2 text-sm">What's a blog & why you need one</p>
+					<p className="mt-2.5 line-clamp-2 text-sm">What's a post & why you need one</p>
 				</div>
 			</div>
 		</>

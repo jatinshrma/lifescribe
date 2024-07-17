@@ -1,10 +1,10 @@
 import { Model, Schema } from "mongoose"
-import createModel from "@lib/createModel"
-import { IBlogPost } from "@utils/types"
+import createModel from "@helpers/createModel"
+import { IPost } from "@types"
 
-type BlogPostModel = Model<IBlogPost>
+type PostModel = Model<IPost>
 
-const BlogPostSchema = new Schema<IBlogPost, BlogPostModel>({
+const PostSchema = new Schema<IPost, PostModel>({
 	title: {
 		type: String,
 		required: true
@@ -34,4 +34,4 @@ const BlogPostSchema = new Schema<IBlogPost, BlogPostModel>({
 	reading_time: Number
 })
 
-export default createModel<IBlogPost, BlogPostModel>("BlogPost", BlogPostSchema)
+export default createModel<IPost, PostModel>("Post", PostSchema)

@@ -1,4 +1,5 @@
 import Navbar from "./Navbar"
-import BlogCard from "./BlogCard"
+import PostCard from "./PostCard"
 import Footer from "./Footer"
-export { Navbar, BlogCard, Footer }
+
+export { Navbar, PostCard, Footer }

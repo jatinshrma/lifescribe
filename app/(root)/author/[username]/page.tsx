@@ -3,9 +3,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IBlogCardProps, IPromptAction } from "@utils/types"
+import { IPostCardProps, IPromptAction } from "@types"
 import axios from "axios"
-import { BlogCard } from "@components"
+import { PostCard } from "@components"
 import Overlay from "@components/Overlay"
 import Prompt from "@components/Prompt"
 import ImageCrop from "@components/ImageCrop"
@@ -30,6 +30,7 @@ import { PiNewspaperClipping } from "react-icons/pi"
 import { Radio, RadioGroup } from "@headlessui/react"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { FaCaretDown } from "react-icons/fa6"
+import { useParams } from "next/navigation"
 
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
@@ -50,50 +51,38 @@ const viewOptions = [
 ]
 
 const Profile = () => {
+	const { username } = useParams()
 	const { data: session } = useSession()
-	const [posts, setPosts] = useState<IBlogCardProps[]>([])
+	const [posts, setPosts] = useState<IPostCardProps[]>([])
 	const [user, setUser] = useState<any>()
 	const [promptState, setPromptState] = useState<{ description: string; action: IPromptAction } | null>(null)
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
 
 	useEffect(() => {
-		// @ts-ignore
-		if (session?.session_token) {
+		if (username) {
 			;(async () => {
-				const response = await axios({
-					method: "get",
-					url: "/api/blogpost",
-					// @ts-ignore
-					headers: { authorization: `Bearer ${session?.session_token}` }
+				const response = await axios.get("/api/post", {
+					params: { username }
 				})
-
 				setPosts(response.data)
 
-				const userResponse = await axios({
-					method: "get",
-					url: "/api/author",
-					// @ts-ignore
-					headers: { authorization: `Bearer ${session?.session_token}` }
+				const userResponse = await axios.get("/api/author", {
+					params: { username }
 				})
-
 				setUser(userResponse.data)
 			})()
 		}
-	}, [session])
+	}, [username])
 
-	const deleteBlogPost = async (blog_id: string) => {
-		const response = await axios({
-			method: "delete",
-			url: `/api/blogpost/${blog_id}`,
-			// @ts-ignore
-			headers: { authorization: `Bearer ${session?.session_token}` }
-		})
+	const deletePost = async (post_id: string) => {
+		const response = await axios.delete(`/api/post/${post_id}`)
 	}
-	const toggleDeletePrompt = (e: React.MouseEvent<HTMLButtonElement>, blog_title: string, blog_id: string) => {
+
+	const toggleDeletePrompt = (e: React.MouseEvent<HTMLButtonElement>, post_title: string, post_id: string) => {
 		e.preventDefault()
 		setPromptState({
-			description: blog_title,
-			action: { handler: () => deleteBlogPost(blog_id), label: "Yes, Delete", classname: "delete" }
+			description: post_title,
+			action: { handler: () => deletePost(post_id), label: "Yes, Delete", classname: "delete" }
 		})
 	}
 
@@ -128,7 +117,6 @@ const Profile = () => {
 
 		const response = await axios.post("/api/upload", formData, {
 			headers: {
-				"Authorization": `Bearer ${session?.session_token}`,
 				"Content-Type": "multipart/form-data"
 			}
 		})
@@ -167,14 +155,16 @@ const Profile = () => {
 					/>
 					<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
 					<div>
-						<h2 className="font-playFD text-5xl font-medium">{session?.user?.name}</h2>
-						<p className="font-lora text-whiteSecondary my-6">
-							Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis, tempora.
-						</p>
+						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
+						<p className="font-lora text-whiteSecondary my-6">{user?.bio}</p>
 						<div className="opacity-60">
-							<span className="pr-5 border-r border-[#7777777d]">{posts?.length || 0} Published</span>
-							<span className="px-5 border-r border-[#7777777d]">{posts?.length || 0} Private</span>
-							<span className="pl-5">9 Saved</span>
+							<span className="pr-5 border-r border-[#7777777d]">
+								{posts?.filter(p => p.visibility === 0)?.length} Published
+							</span>
+							<span className="px-5 border-r border-[#7777777d]">
+								{posts?.filter(p => p.visibility === 1)?.length} Private
+							</span>
+							<span className="pl-5">{user?.saved_posts?.length} Saved</span>
 						</div>
 					</div>
 				</div>
@@ -382,24 +372,15 @@ const Profile = () => {
 								{user?.collections?.find(coll => coll._id === state?.currCollection)?.name}
 							</h1>
 						)}
-						{console.log(
-							posts?.filter(
-								post =>
-									user?.collections?.find(coll => coll._id === post.author_collection)?.visibility ===
-									state?.currTab
-							)
-						)}
 						<div className="space-y-5">
 							{posts
 								?.filter(post =>
 									state?.currCollection
 										? post.author_collection === state?.currCollection
-										: post.visibility === state?.currTab ||
-										  user?.collections?.find(coll => coll._id === post.author_collection)?.visibility ===
-												state?.currTab
+										: post.visibility === state?.currTab
 								)
 								?.map(post => (
-									<BlogCard
+									<PostCard
 										key={post._id.toString()}
 										{...post}
 										profile_view={true}
@@ -413,7 +394,7 @@ const Profile = () => {
 				{promptState && (
 					<Overlay>
 						<Prompt
-							warning="Delete Blogpost"
+							warning="Delete Postpost"
 							description={promptState?.description}
 							actions={[
 								{ handler: () => setPromptState(null), label: "Cancel" },
