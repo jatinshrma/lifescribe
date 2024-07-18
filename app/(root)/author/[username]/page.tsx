@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IPostCardProps, IPromptAction } from "@types"
+import { IAuthor, IPost, IPromptAction } from "@types"
 import axios from "axios"
 import { PostCard } from "@components"
 import Overlay from "@components/Overlay"
@@ -53,10 +53,12 @@ const viewOptions = [
 const Profile = () => {
 	const { username } = useParams()
 	const { data: session } = useSession()
-	const [posts, setPosts] = useState<IPostCardProps[]>([])
-	const [user, setUser] = useState<any>()
+	const [posts, setPosts] = useState<IPost[]>([])
+	const [user, setUser] = useState<IAuthor>()
 	const [promptState, setPromptState] = useState<{ description: string; action: IPromptAction } | null>(null)
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
+
+	const isAutherLoggedIn = session?.user.username && username === session?.user.username
 
 	useEffect(() => {
 		if (username) {
@@ -137,10 +139,10 @@ const Profile = () => {
 			}
 		>
 			<div className="max-w-[850px] mx-auto mb-8">
-				{selectedImage?.active && (
+				{selectedImage?.active && isAutherLoggedIn && (
 					<ImageCrop
 						src={selectedImage?.url as string}
-						close={() => setSelectedImage(prev => ({ ...prev, active: false }))}
+						close={() => setSelectedImage(null)}
 						uploadImage={uploadImage}
 					/>
 				)}
@@ -151,41 +153,48 @@ const Profile = () => {
 						alt="user"
 						width={256}
 						height={256}
-						onClick={() => inputRef?.current?.click()}
+						onClick={() => (isAutherLoggedIn ? inputRef?.current?.click() : null)}
 					/>
-					<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
+					{isAutherLoggedIn && (
+						<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
+					)}
 					<div>
 						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
 						<p className="font-lora text-whiteSecondary my-6">{user?.bio}</p>
 						<div className="opacity-60">
-							<span className="pr-5 border-r border-[#7777777d]">
-								{posts?.filter(p => p.visibility === 0)?.length} Published
-							</span>
-							<span className="px-5 border-r border-[#7777777d]">
-								{posts?.filter(p => p.visibility === 1)?.length} Private
-							</span>
-							<span className="pl-5">{user?.saved_posts?.length} Saved</span>
+							<span>{posts?.filter(p => p.visibility === 0)?.length} Published</span>
+							{isAutherLoggedIn && (
+								<>
+									<span className="ml-5 px-5 border-l border-[#7777777d]">
+										{posts?.filter(p => p.visibility === 1)?.length} Private
+									</span>
+									<span className="pl-5 border-l border-[#7777777d]">{user?.saved_posts?.length} Saved</span>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
 				<div className="sticky top-0 bg-darkPrimary z-10">
-					<div className="flex border-b border-darkSecondary text-opacity-100 relative">
-						<div
-							className={`absolute w-1/3 h-0.5 bg-whitePrimary bottom-0 left-0 transition-all duration-200 ease`}
-							style={{ translate: `${(state?.currTab || 0) * 100}%` }}
-						/>
-						{tabs?.map((i, idx) => (
-							<button
-								onClick={() => setState(prev => ({ ...prev, currTab: idx, currCollection: null }))}
-								className={`text-base py-5 flex gap-2 justify-center items-center w-1/3 ${
-									state?.currTab === idx ? "" : "opacity-50"
-								}`}
-							>
-								<i.Icon className="text-lg" />
-								<span>{i.label}</span>
-							</button>
-						))}
-					</div>
+					{isAutherLoggedIn && (
+						<div className="flex border-b border-darkSecondary text-opacity-100 relative">
+							<div
+								className={`absolute w-1/3 h-0.5 bg-whitePrimary bottom-0 left-0 transition-all duration-200 ease`}
+								style={{ translate: `${(state?.currTab || 0) * 100}%` }}
+							/>
+							{tabs.map((i, idx, tabsArr) => (
+								<button
+									onClick={() => setState(prev => ({ ...prev, currTab: idx, currCollection: null }))}
+									className={
+										"text-base py-5 flex gap-2 justify-center items-center w-1/3 " +
+										(state?.currTab === idx ? "" : " opacity-50")
+									}
+								>
+									<i.Icon className="text-lg" />
+									<span>{i.label}</span>
+								</button>
+							))}
+						</div>
+					)}
 					<div className="flex py-3 gap-4 my-2 justify-between">
 						<div>
 							{state?.currCollection ? (
@@ -236,7 +245,7 @@ const Profile = () => {
 								<PopoverPanel
 									anchor="bottom"
 									as="div"
-									className="py-2 bg-darkSecondary rounded-xl z-50 ring-1 ring-darkHighlight [--anchor-gap:8px]"
+									className="py-2 bg-darkSecondary rounded-xl z-20 ring-1 ring-darkHighlight [--anchor-gap:8px]"
 								>
 									{sortOptions.map(i => (
 										<div className="flex justify-between gap-10 px-4 py-2 bg-darkSecondary border-b border-darkHighlight">
@@ -298,7 +307,7 @@ const Profile = () => {
 								<PopoverPanel
 									anchor="bottom end"
 									as="div"
-									className="px-5 py-4 bg-darkSecondary rounded-xl z-50 ring-1 ring-darkHighlight [--anchor-gap:8px]"
+									className="px-5 py-4 bg-darkSecondary rounded-xl z-20 ring-1 ring-darkHighlight [--anchor-gap:8px]"
 								>
 									<span className="text-sm opacity-60 mb-1 block">From Date</span>
 									<input type="date" className="theme-input bg-darkHighlight dark:[color-scheme:dark] mb-3" />
@@ -331,15 +340,21 @@ const Profile = () => {
 									<div className="flex items-center justify-between">
 										<div className="flex items-center gap-4">
 											<BsCollection className="text-2xl" />
-											<span className="text-sm opacity-60">{new Date(coll.created_at)?.toDateString()}</span>
+											{coll.created_at && (
+												<span className="text-sm opacity-60">
+													{new Date(coll.created_at as any)?.toDateString()}
+												</span>
+											)}
 										</div>
 										<div className="flex gap-5 items-center w-max">
 											<button>
 												<BiShare className="text-[22px] hover:fill-blue-500 hover:scale-125 transition-transform duration-200 ease" />
 											</button>
-											<button>
-												<AiOutlineDelete className="text-[22px] hover:fill-red-500 hover:scale-125 transition-transform duration-200 ease" />
-											</button>
+											{isAutherLoggedIn && (
+												<button>
+													<AiOutlineDelete className="text-[22px] hover:fill-red-500 hover:scale-125 transition-transform duration-200 ease" />
+												</button>
+											)}
 										</div>
 									</div>
 									<p className="my-5 text-3xl">{coll.name}</p>
@@ -357,7 +372,9 @@ const Profile = () => {
 									<div className="text-sm opacity-60 flex gap-3">
 										<span>{coll.posts?.length} Post(s)</span>
 										<span>·</span>
-										<span>Last updated {new Date(coll.posts?.at(-1)?.created_at)?.toDateString()}</span>
+										{coll?.posts && (
+											<span>Last updated {new Date(coll?.posts?.at(-1)?.created_at as any)?.toDateString()}</span>
+										)}
 									</div>
 									<button className="p-3 rounded-full bg-whitePrimary text-opacity-100 absolute right-8 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
 										<IoAdd className="text-xl stroke-darkSecondary" />
@@ -381,7 +398,7 @@ const Profile = () => {
 								)
 								?.map(post => (
 									<PostCard
-										key={post._id.toString()}
+										key={post?._id}
 										{...post}
 										profile_view={true}
 										toggleDeletePrompt={toggleDeletePrompt}

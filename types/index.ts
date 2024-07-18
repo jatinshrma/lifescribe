@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from "react"
 import { IconType } from "react-icons"
 
 export interface IPost {
+	_id?: string
 	title: string
 	content: string
 	author: mongoose.Schema.Types.ObjectId | string
@@ -75,7 +76,7 @@ export interface IAuthPageProps {
 }
 
 export interface IPostSubmitParams {
-	visibility: IPost["visibility"]
+	visibility?: IPost["visibility"]
 	author_collection?: IPost["author_collection"]
 	newCollection?: ICollectionType
 	tags: IPost["tags"]
@@ -86,6 +87,7 @@ export interface ICollectionType {
 	name: string
 	visibility: number
 	created_at?: Date
+	posts?: IPost[]
 }
 
 export interface IVisibilityOption {
@@ -97,4 +99,11 @@ export interface IVisibilityOption {
 export interface INewCollection {
 	name?: string
 	visibility?: IVisibilityOption
+}
+
+export interface IProfilePictureComponent {
+	url: string | undefined
+	editFile: () => void
+	changeFile: () => void | undefined
+	deleteFile: () => Promise<void>
 }

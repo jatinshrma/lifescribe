@@ -11,18 +11,24 @@ import { MdOutlineGroupAdd } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { RiQuillPenLine } from "react-icons/ri"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 export default function Home() {
 	const [posts, setPosts] = useState<IPostCardProps[]>([])
+	const { data: session } = useSession()
 
 	useEffect(() => {
 		;(async () => {
-			const response = await axios.get("/api/post/suggestions")
+			const response = await axios.get("/api/post/suggestions", {
+				params: {
+					username: session?.user?.username
+				}
+			})
 			if (response.data) {
 				setPosts(response?.data)
 			}
 		})()
-	}, [])
+	}, [session])
 
 	return (
 		<LayoutWrapper

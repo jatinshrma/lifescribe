@@ -9,7 +9,7 @@ import { TbUpload } from "react-icons/tb"
 import ReactQuill from "@components/ReactQuill"
 import RQType from "react-quill"
 import "react-quill/dist/quill.snow.css"
-import { IPost, IPostSubmitParams, ICollectionType, INewCollection } from "@types"
+import { IPost, IPostSubmitParams, ICollectionType, INewCollection, IVisibilityOption } from "@types"
 
 import {
 	Combobox,
@@ -30,7 +30,7 @@ import { BsCheckCircleFill } from "react-icons/bs"
 import { FiArrowLeft } from "react-icons/fi"
 import { CgClose } from "react-icons/cg"
 import { IoAdd, IoSearchOutline } from "react-icons/io5"
-import { tagsList, visibilityOptions } from "@utils/constants"
+import { tagsList, visibilityOptions } from "@helpers/constants"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { useRouter } from "next/navigation"
 
@@ -309,7 +309,7 @@ function AdditionalDetails({
 											"w-52 mt-2 rounded-xl border border-darkHighlight bg-darkSecondary p-1 text-sm text-whitePrimary transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
 										}
 									>
-										{visibilityOptions.map(i => (
+										{visibilityOptions.map((i: IVisibilityOption) => (
 											<MenuItem key={"coll-op-" + i.label}>
 												<button
 													className={"theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"}
@@ -352,7 +352,7 @@ function AdditionalDetails({
 							aria-label="Visibility"
 							className="mt-3 space-y-3"
 						>
-							{visibilityOptions.map(option => (
+							{visibilityOptions.map((option: IVisibilityOption) => (
 								<Radio
 									key={option.label}
 									value={option.value}
@@ -386,16 +386,17 @@ function AdditionalDetails({
 				className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
 				onClick={() => {
 					const params: IPostSubmitParams = {
-						visibility,
 						tags
 					}
 
-					if (newCollection)
-						params.newCollection = {
-							name: newCollection.name || "",
-							visibility: newCollection.visibility?.value || visibilityOptions[0].value
-						}
-					else if (collection) params.author_collection = collection
+					if (newCollection || collection) {
+						if (newCollection)
+							params.newCollection = {
+								name: newCollection.name || "",
+								visibility: newCollection.visibility?.value || visibilityOptions[0].value
+							}
+						else if (collection) params.author_collection = collection
+					} else params.visibility = visibility
 
 					submit(params)
 				}}
@@ -412,7 +413,7 @@ function TagsSelection({ tags, setTags }: TagsSelectionProps) {
 	const filteredTagsList =
 		!query || query?.length < 2
 			? []
-			: tagsList.filter(tag => tag.toLowerCase().includes(query.toLowerCase()) && !tags?.includes(tag))
+			: tagsList.filter((tag: string) => tag.toLowerCase().includes(query.toLowerCase()) && !tags?.includes(tag))
 
 	return (
 		<div className="mt-3 relative w-full space-y-2">
@@ -442,7 +443,7 @@ function TagsSelection({ tags, setTags }: TagsSelectionProps) {
 					}
 				>
 					{query?.length > 2 &&
-						filteredTagsList?.map(tag => (
+						filteredTagsList?.map((tag: string) => (
 							<ComboboxOption
 								key={tag}
 								value={tag}

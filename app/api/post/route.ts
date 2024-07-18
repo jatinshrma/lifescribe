@@ -3,24 +3,25 @@ import { NextRequest, NextResponse } from "next/server"
 import { mongoAggregations } from "@helpers/utils"
 import connectToDB from "@db/index"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
-import { NextApiRequest } from "next"
 
 export const GET = async (request: NextRequest) => {
 	try {
 		await connectToDB()
 
 		const username = request.nextUrl.searchParams.get("username")
+		const author = await Author.findOne({ username }, { _id: true })
 		const posts = await Post.aggregate([
 			{
 				$match: {
-					username
+					author: author?._id
 				}
 			},
 			...(mongoAggregations.post_fetch as any)
 		])
+
 		return NextResponse.json(posts)
 	} catch (error: any) {
-		console.error(error)
+		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })
 	}
 }

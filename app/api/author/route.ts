@@ -1,6 +1,5 @@
 import connectToDB from "@db/index"
 import { Author } from "@db/models"
-import { PipelineStage } from "mongoose"
 import { NextRequest, NextResponse } from "next/server"
 
 export const GET = async (request: NextRequest) => {
