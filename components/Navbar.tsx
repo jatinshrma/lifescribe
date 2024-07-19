@@ -3,13 +3,20 @@
 import Image from "next/image"
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import { useSession, getProviders } from "next-auth/react"
+import { useSession, getProviders, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { Button, Dialog, DialogPanel, DialogTitle, Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
+import { BiUser } from "react-icons/bi"
+import { SlLogout } from "react-icons/sl"
+import Overlay from "./Overlay"
+import { BsArrowRight } from "react-icons/bs"
+import { LuSettings } from "react-icons/lu"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
 	const { data: session } = useSession()
 	const [providers, setProviders]: any = useState(null)
+	const [flags, setFlags] = useState<any>({})
 
 	useEffect(() => {
 		;(async () => {
@@ -18,11 +25,10 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 		})()
 	}, [])
 
-	const onClick = async () => {
-		if (!providers?.google) return
-		if (session) {
-			router.push(`/author/${session.user.username}`, { scroll: false })
-		} else router.push("/sign-in", { scroll: false })
+	const handleSignOut = async () => {
+		await signOut()
+		setFlags({})
+		router.push("/sign-in", { scroll: false })
 	}
 
 	return (
@@ -33,35 +39,89 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 				</Link>
 			</div>
 			<div className="flex gap-4 items-center">
-				{children}
-				<div className="relative ss:mr-2">
-					<div className="rounded-full overflow-hidden">
-						<Image
-							className="object-cover sm:w-11 w-8 cursor-pointer"
-							src={
-								session?.user?.image ||
-								`https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg`
-							}
-							alt="user"
-							width={40}
-							height={40}
-							onClick={onClick}
-						/>
-					</div>
-					{/* <div id="user-menu" className="hidden group-hover:block bg-darkSecondary overflow-hidden rounded-lg absolute right-0 mt-3">
-						<Link href={"/profile"}>
-							<button>
-								<BiUser />
-								<span>Profile</span>
-							</button>
-						</Link>
-						<button onClick={() => signOut()}>
-							<FiLogOut />
-							<span>Sign Out</span>
-						</button>
-					</div> */}
-				</div>
+				{!session?.user.username ? (
+					<Link
+						href={"/sign-in"}
+						className="theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
+					>
+						Sign In
+						<BsArrowRight className="text-lg w-[0px] group-hover:!w-[18px] transition-all ease-linear" />
+					</Link>
+				) : (
+					<>
+						{children}
+						<Popover className="relative">
+							<PopoverButton className="rounded-full overflow-hidden">
+								<Image
+									className="object-cover sm:w-11 w-8 pointer-events-none"
+									src={session?.user?.image || ""}
+									alt="user"
+									width={40}
+									height={40}
+								/>
+							</PopoverButton>
+							<PopoverPanel
+								anchor="bottom end"
+								className="w-52 mt-2 rounded-xl border border-darkHighlight bg-darkSecondary p-1 text-sm text-whitePrimary transition duration-100 ease-out [--anchor-gap:2px] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
+							>
+								<Link
+									href={"/author/" + session?.user?.username}
+									className="theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"
+								>
+									<BiUser className="text-xl" />
+									<span className="text-base">Profile</span>
+								</Link>
+								<Link
+									href={"/settings"}
+									className="theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"
+								>
+									<LuSettings className="text-xl" />
+									<span className="text-base">Settings</span>
+								</Link>
+								<button
+									className="theme-button primary gap-4 rounded-lg w-full"
+									onClick={() => setFlags({ signOut: true })}
+								>
+									<SlLogout className="text-xl -translate-x-1 " />
+									<span className="text-base">Sign Out</span>
+								</button>
+							</PopoverPanel>
+						</Popover>
+					</>
+				)}
 			</div>
+
+			<Dialog
+				open={Boolean(flags?.signOut)}
+				as="div"
+				className="relative z-10 focus:outline-none"
+				onClose={() => setFlags({})}
+			>
+				<Overlay>
+					<div className="flex min-h-full items-center justify-center p-4">
+						<DialogPanel
+							transition
+							className="w-full max-w-xl rounded-xl bg-darkSecondary p-6 backdrop-blur-2xl duration-200 ease-in data-[closed]:transform-[scale(85%)] data-[closed]:opacity-0"
+						>
+							<DialogTitle as="h3" className="text-lg/8 font-medium text-white">
+								Are you sure you want to sign out
+							</DialogTitle>
+							<p className="mt-3 text-base/7 text-white/50">
+								After signing out you will be redirected to sign-in page. From there you can sign back into your
+								account anytime.
+							</p>
+							<div className="mt-6 flex justify-end">
+								<Button
+									className="theme-button primary gap-2 rounded-md text-base/7 font-semibold shadow-inner focus:outline-none !bg-red-900/10 text-red-600"
+									onClick={handleSignOut}
+								>
+									Sign out now!
+								</Button>
+							</div>
+						</DialogPanel>
+					</div>
+				</Overlay>
+			</Dialog>
 		</nav>
 	)
 }

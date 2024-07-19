@@ -146,12 +146,12 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 	}
 
 	const handleUpload = async (blob: Blob) => {
-		const file = new File([blob], `profile-picture-${Date.now()}.${blob.type.split("/")[1]}`, {
+		const file = new File([blob], `image.${blob.type.split("/")[1]}`, {
 			type: blob.type
 		})
 
 		const formData = new FormData()
-		formData.append("type", "profile_picture")
+		formData.append("type", "profile-picture")
 		formData.append("file", file)
 
 		const response = await axios.post("/api/upload", formData, {
@@ -160,7 +160,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 			}
 		})
 
-		setState({ fileUrl: response.data.file_url })
+		setState({ fileUrl: response.data.filePath })
 	}
 
 	const handleDelete = async () => {}
@@ -168,7 +168,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 	return (
 		<>
 			{children({
-				url: state?.fileUrl,
+				url: state?.fileUrl || "",
 				editFile: () => (state?.fileUrl ? setState(prev => ({ ...prev, cropImage: true })) : ref.current?.click()),
 				changeFile: () => ref.current?.click(),
 				deleteFile: handleDelete
@@ -176,7 +176,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 			{state?.cropImage && (
 				<ImageCrop
 					src={state?.dataUrl || state?.fileUrl || ""}
-					close={() => setState({})}
+					close={() => setState(prev => ({ ...prev, cropImage: false }))}
 					handleUpload={handleUpload}
 				/>
 			)}

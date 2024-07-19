@@ -100,15 +100,6 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 	}
-	#user-menu {
-		@apply z-10;
-	}
-	#user-menu button {
-		@apply py-2 px-3 flex gap-3 items-center whitespace-nowrap;
-	}
-	#user-menu button svg {
-		@apply w-5 h-5;
-	}
 	.prompt button {
 		@apply py-2 text-sm;
 	}

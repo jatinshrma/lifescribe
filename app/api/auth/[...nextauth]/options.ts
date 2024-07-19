@@ -39,6 +39,9 @@ export const authOptions: NextAuthOptions = {
 		async jwt({ token }) {
 			const DBUser = token?.email ? await Author.findOne({ email: token.email }) : null
 			if (DBUser) {
+				token.isNew = Boolean(DBUser.new_user)
+				token.name = DBUser.name
+				token.picture = DBUser.profile_picture
 				token.user_id = DBUser._id?.toString()
 				token.username = DBUser.username?.toString()
 			}
@@ -47,6 +50,9 @@ export const authOptions: NextAuthOptions = {
 		},
 		async session({ session, token }) {
 			if (token.username) {
+				session.user.isNew = token.isNew
+				session.user.image = token.picture
+				session.user.name = token.name
 				session.user.username = token.username
 			}
 			return session

@@ -4,9 +4,13 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { AiOutlineDelete } from "react-icons/ai"
-import { BiShare } from "react-icons/bi"
+import { BiShare, BiShowAlt, BiTrash } from "react-icons/bi"
 import { BsEye } from "react-icons/bs"
 import { FiBookmark } from "react-icons/fi"
+import { HiOutlineEye } from "react-icons/hi2"
+import { FaRegEye } from "react-icons/fa6"
+import { MdBookmarkBorder } from "react-icons/md"
+import { LuBookmark } from "react-icons/lu"
 
 const PostCard = (props: any) => {
 	const calculateAge = (dateString: Date) => {
@@ -43,12 +47,38 @@ const PostCard = (props: any) => {
 		navigator.clipboard.writeText(location.origin + getRedirectURL())
 	}
 
+	const shareButton = (
+		<button onClick={copyLink} className="hover:scale-125 transition-transform ease-linear">
+			<BiShare className="hover:fill-blue-500 text-2xl" />
+		</button>
+	)
+	const viewButton = (
+		<button className="hover:scale-125 transition-transform ease-linear">
+			<Link href={getRedirectURL()}>
+				<FaRegEye className="hover:fill-amber-500 text-2xl" />
+			</Link>
+		</button>
+	)
+	const deleteButton = (
+		<button
+			onClick={e => props?.toggleDeletePrompt?.(e, props?.title, props?._id)}
+			className="hover:scale-125 transition-transform ease-linear"
+		>
+			<AiOutlineDelete className="hover:fill-red-500 text-2xl" />
+		</button>
+	)
+	const saveButton = (
+		<button className="hover:scale-125 transition-transform ease-linear">
+			<LuBookmark className="hover:stroke-yellow-500 text-2xl" />
+		</button>
+	)
+
 	return (
 		<div className="border-t border-darkHighlight group first:border-transparent hover:border-transparent [&:hover+div]:border-transparent">
 			<div className={`relative p-8 group-hover:bg-darkSecondary transition ease duration-300 rounded-5xl`}>
-				<Link href={getRedirectURL(props?.profile_view ? 2 : 1)}>
+				<Link href={getRedirectURL(props?.profileView && props.authorView ? 2 : 1)}>
 					<div className="flex ss:gap-2.5 gap-2 items-center">
-						{!props?.profile_view ? (
+						{!props?.profileView ? (
 							<>
 								<Image
 									className={"rounded-full object-cover w-6"}
@@ -66,12 +96,8 @@ const PostCard = (props: any) => {
 										<span className="opacity-60 text-sm">{calculateAge(props?.created_at)}</span>
 									</div>
 									<div className="flex gap-5 items-center">
-										<button onClick={copyLink} className="hover:scale-125 transition-transform ease-linear">
-											<BiShare className="text-2xl hover:fill-blue-500" style={{ transform: "rotateY(180deg)" }} />
-										</button>
-										<button className="hover:scale-125 transition-transform ease-linear">
-											<FiBookmark className="text-[22px] hover:stroke-yellow-500" />
-										</button>
+										{shareButton}
+										{saveButton}
 									</div>
 								</div>
 							</>
@@ -83,28 +109,25 @@ const PostCard = (props: any) => {
 									<span className="opacity-60 text-sm">{props?.reading_time} min read</span>
 								</div>
 								<div className="flex gap-5 items-center">
-									<button onClick={copyLink} className="hover:scale-125 transition-transform ease-linear">
-										<BiShare className="text-2xl hover:fill-blue-500" />
-									</button>
-									<button>
-										<Link href={getRedirectURL()} className="hover:scale-125 transition-transform ease-linear">
-											<BsEye className="hover:fill-amber-500" />
-										</Link>
-									</button>
-									<button
-										onClick={e => props?.toggleDeletePrompt?.(e, props?.title, props?._id)}
-										className="hover:scale-125 transition-transform ease-linear"
-									>
-										<AiOutlineDelete className="hover:fill-red-500" />
-									</button>
+									{shareButton}
+									{props?.authorView ? (
+										<>
+											{viewButton}
+											{deleteButton}
+										</>
+									) : (
+										saveButton
+									)}
 								</div>
 							</div>
 						)}
 					</div>
+
 					<h2 className="ss:text-[28px] ss:leading-9 text-xl ss:my-4 mt-3.5 mb-2.5 font-medium">{props?.title}</h2>
 					<div className="postcard_content">
 						<p className="text-lg text-whiteSecondary">{props?.content?.replace(/<[^>]*(>|$)|||»|«|>/g, "")}</p>
 					</div>
+
 					{!props?.hideTags && (
 						<div className="mt-4 flex gap-2 items-center flex-wrap">
 							{props?.tags?.map((tag: string) => (
@@ -112,7 +135,7 @@ const PostCard = (props: any) => {
 							))}
 						</div>
 					)}
-					{!props?.profile_view && (
+					{!props?.profileView && (
 						<span className="mt-4 block opacity-60 text-sm">{props?.reading_time} min read</span>
 					)}
 				</Link>

@@ -1,19 +1,19 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IAuthor, IPost, IPromptAction } from "@types"
+import { IAuthor, IPost, IProfilePictureComponent, IPromptAction } from "@types"
 import axios from "axios"
 import { PostCard } from "@components"
 import Overlay from "@components/Overlay"
 import Prompt from "@components/Prompt"
-import ImageCrop from "@components/ImageCrop"
+import { ImageCropWrapper } from "@components/ImageCrop"
 import { TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
 import { BiBookmark, BiShare } from "react-icons/bi"
 import { AnyObject } from "mongoose"
-import { RiQuillPenLine, RiSearchLine } from "react-icons/ri"
+import { RiQuillPenLine, RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
 import { BsCollection } from "react-icons/bs"
 import { FiArrowLeft } from "react-icons/fi"
 import { BsCalendarDate } from "react-icons/bs"
@@ -31,6 +31,7 @@ import { Radio, RadioGroup } from "@headlessui/react"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { FaCaretDown } from "react-icons/fa6"
 import { useParams } from "next/navigation"
+import { LuSettings } from "react-icons/lu"
 
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
@@ -88,45 +89,6 @@ const Profile = () => {
 		})
 	}
 
-	const [first, setFirst] = useState()
-	const [selectedImage, setSelectedImage] = useState<{ file?: File; active?: boolean; url?: string } | null>()
-	const inputRef = useRef<HTMLInputElement>(null)
-
-	const onFileChange: React.ChangeEventHandler<HTMLInputElement> = async e => {
-		const file = e.target.files?.[0]
-		let imageDataUrl = await new Promise(resolve => {
-			const reader = new FileReader()
-			reader.addEventListener("load", () => resolve(reader.result), false)
-			reader.readAsDataURL(file as Blob)
-		})
-
-		setSelectedImage({
-			active: true,
-			url: imageDataUrl as string,
-			file
-		})
-	}
-
-	const uploadImage = async (blob: Blob) => {
-		if (!selectedImage?.file) return
-		const file = new File([blob], selectedImage.file.name, {
-			type: selectedImage.file.type
-		})
-
-		const formData = new FormData()
-		formData.append("type", "profile_picture")
-		formData.append("file", file)
-
-		const response = await axios.post("/api/upload", formData, {
-			headers: {
-				"Content-Type": "multipart/form-data"
-			}
-		})
-
-		setSelectedImage(null)
-		setFirst(response.data.file_url)
-	}
-
 	return (
 		<LayoutWrapper
 			navActions={
@@ -139,28 +101,22 @@ const Profile = () => {
 			}
 		>
 			<div className="max-w-[850px] mx-auto mb-8">
-				{selectedImage?.active && isAutherLoggedIn && (
-					<ImageCrop
-						src={selectedImage?.url as string}
-						close={() => setSelectedImage(null)}
-						uploadImage={uploadImage}
-					/>
-				)}
 				<div className="flex items-center gap-20 pt-16 pb-[72px]">
-					<Image
-						className="object-cover rounded-full aspect-square w-64 h-64 cursor-pointer"
-						src={first || session?.user?.image || ""}
-						alt="user"
-						width={256}
-						height={256}
-						onClick={() => (isAutherLoggedIn ? inputRef?.current?.click() : null)}
-					/>
-					{isAutherLoggedIn && (
-						<input ref={inputRef} type="file" accept="image/*" onChange={onFileChange} hidden />
-					)}
-					<div>
+					<ImageCropWrapper>
+						{(props: IProfilePictureComponent) => (
+							<Image
+								className="object-cover rounded-full aspect-square w-72 h-72 cursor-pointer"
+								src={props.url}
+								alt="user"
+								width={300}
+								height={300}
+							/>
+						)}
+					</ImageCropWrapper>
+
+					<div className="space-y-6">
 						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
-						<p className="font-lora text-whiteSecondary my-6">{user?.bio}</p>
+						<p className="font-lora text-whiteSecondary">{user?.about}</p>
 						<div className="opacity-60">
 							<span>{posts?.filter(p => p.visibility === 0)?.length} Published</span>
 							{isAutherLoggedIn && (
@@ -171,6 +127,12 @@ const Profile = () => {
 									<span className="pl-5 border-l border-[#7777777d]">{user?.saved_posts?.length} Saved</span>
 								</>
 							)}
+						</div>
+						<div>
+							<Link href={"/settings"} className="theme-button primary gap-2.5 medium rounded-lg w-fit">
+								<RiUserSettingsLine className="text-lg" />
+								<span>Edit Profile</span>
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -346,16 +308,6 @@ const Profile = () => {
 												</span>
 											)}
 										</div>
-										<div className="flex gap-5 items-center w-max">
-											<button>
-												<BiShare className="text-[22px] hover:fill-blue-500 hover:scale-125 transition-transform duration-200 ease" />
-											</button>
-											{isAutherLoggedIn && (
-												<button>
-													<AiOutlineDelete className="text-[22px] hover:fill-red-500 hover:scale-125 transition-transform duration-200 ease" />
-												</button>
-											)}
-										</div>
 									</div>
 									<p className="my-5 text-3xl">{coll.name}</p>
 									<div className="my-5 flex gap-2 items-center flex-wrap">
@@ -367,7 +319,6 @@ const Profile = () => {
 													{tag}
 												</button>
 											))}
-										{/* <span className="text-sm opacity-60">+3 More</span> */}
 									</div>
 									<div className="text-sm opacity-60 flex gap-3">
 										<span>{coll.posts?.length} Post(s)</span>
@@ -376,9 +327,11 @@ const Profile = () => {
 											<span>Last updated {new Date(coll?.posts?.at(-1)?.created_at as any)?.toDateString()}</span>
 										)}
 									</div>
-									<button className="p-3 rounded-full bg-whitePrimary text-opacity-100 absolute right-8 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
-										<IoAdd className="text-xl stroke-darkSecondary" />
-									</button>
+									{isAutherLoggedIn && (
+										<button className="p-3 rounded-full bg-whitePrimary text-opacity-100 absolute right-8 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
+											<IoAdd className="text-xl stroke-darkSecondary" />
+										</button>
+									)}
 								</div>
 							))}
 					</div>
@@ -400,7 +353,8 @@ const Profile = () => {
 									<PostCard
 										key={post?._id}
 										{...post}
-										profile_view={true}
+										profileView={true}
+										authorView={isAutherLoggedIn}
 										toggleDeletePrompt={toggleDeletePrompt}
 									/>
 								))}

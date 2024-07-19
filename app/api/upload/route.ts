@@ -7,8 +7,8 @@ import { Author } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 
 export const POST = async (request: NextRequest) => {
-	const formData = await request.formData()
 	const { user_id } = getUserHeaders(request)
+	const formData = await request.formData()
 
 	const type = formData.get("type")
 	const file = formData.get("file") as Blob | null
@@ -17,17 +17,13 @@ export const POST = async (request: NextRequest) => {
 	}
 
 	const buffer = Buffer.from(await file.arrayBuffer())
-	const relativeUploadDir = `/uploads/${
-		type === "profile_picture" ? `profile-picture-${user_id}` : dateFn.format(Date.now(), "dd-MM-Y")
-	}`
-
-	const uploadDir = join(process.cwd(), "public", relativeUploadDir)
+	const userUploadDir = "public/uploads/" + user_id
 
 	try {
-		await stat(uploadDir)
+		await stat(join(process.cwd(), userUploadDir))
 	} catch (e: any) {
 		if (e.code === "ENOENT") {
-			await mkdir(uploadDir, { recursive: true })
+			await mkdir(join(process.cwd(), userUploadDir), { recursive: true })
 		} else {
 			console.error("Error while trying to create directory when uploading a file\n", e)
 			return NextResponse.json({ error: "Something went wrong." }, { status: 500 })
@@ -35,16 +31,19 @@ export const POST = async (request: NextRequest) => {
 	}
 
 	try {
-		const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
-		const filename = `${file.name.replace(/\.[^/.]+$/, "")}-${uniqueSuffix}.${mime.getExtension(file.type)}`
-		await writeFile(`${uploadDir}/${filename}`, buffer)
-		if (type === "profile_picture") {
+		const fileName = `${type}-${dateFn.format(Date.now(), "yyyy-MM-dd-HH-mm")}.${mime.getExtension(file.type)}`
+		let filePath = userUploadDir + "/" + fileName
+
+		await writeFile(join(process.cwd(), filePath), buffer)
+
+		filePath = "/" + filePath.split("/").slice(1).join("/")
+		if (type === "profile-picture") {
 			await Author.findByIdAndUpdate(user_id, {
-				profile_picture: relativeUploadDir
+				profile_picture: filePath
 			})
 		}
 
-		return NextResponse.json({ file_url: `${relativeUploadDir}/${filename}` })
+		return NextResponse.json({ filePath })
 	} catch (e) {
 		console.error("Error while trying to upload a file\n", e)
 		return NextResponse.json({ error: "Something went wrong." }, { status: 500 })

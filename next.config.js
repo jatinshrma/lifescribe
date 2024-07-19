@@ -25,6 +25,12 @@ module.exports = {
 				hostname: "cdn.create.vista.com",
 				port: "",
 				pathname: "/**"
+			},
+			{
+				protocol: "https",
+				hostname: "randomuser.me",
+				port: "",
+				pathname: "/**"
 			}
 		]
 	}

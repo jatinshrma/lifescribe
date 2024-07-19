@@ -6,22 +6,31 @@ const secret = process.env.NEXTAUTH_SECRET
 
 export async function middleware(request: NextRequest) {
 	const token = await getToken({ req: request, secret })
-	if (!token) return
-	// if (!request.nextUrl.pathname.startsWith("/sign-in"))
-	// 	return NextResponse.redirect(new URL("/sign-in", request.url))
+	const redirect = (url: string) => NextResponse.redirect(new URL(url, request.url))
+	const { pathname } = request.nextUrl
 
-	const requestHeaders = setUserHeaders(request, token)
-	const response = NextResponse.next({
-		request: {
-			headers: requestHeaders
-		}
-	})
+	if (!token && ["/api/upload", "/onboarding", "/settings"].some(pathname.startsWith)) return redirect("/sign-in")
 
-	return response
+	if ((token && pathname.startsWith("/sign-in")) || (!token?.isNew && pathname.startsWith("/onboarding")))
+		return redirect("/")
+
+	if (token?.isNew && pathname.startsWith("/author") && pathname?.split("/")?.at(-1) === token.username)
+		return redirect("/onboarding")
+
+	if (token) {
+		const requestHeaders = setUserHeaders(request, token)
+		const response = NextResponse.next({
+			request: {
+				headers: requestHeaders
+			}
+		})
+
+		return response
+	}
 }
 
 export const config = {
-	matcher: ["/api/:path*"]
+	matcher: "/:path*"
 }
 
 export { default } from "next-auth/middleware"

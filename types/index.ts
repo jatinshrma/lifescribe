@@ -31,7 +31,11 @@ export interface IPostCardProps {
 export interface IAuthor {
 	profile_picture: string
 	name: string
-	bio: string
+	about: string
+	dob?: Date
+	gender?: string
+	interests?: string[]
+	private: boolean
 	collections: ICollectionType[]
 	saved_posts: string[]
 	username: string
@@ -102,7 +106,7 @@ export interface INewCollection {
 }
 
 export interface IProfilePictureComponent {
-	url: string | undefined
+	url: string
 	editFile: () => void
 	changeFile: () => void | undefined
 	deleteFile: () => Promise<void>

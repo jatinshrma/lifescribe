@@ -14,9 +14,24 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 		required: false,
 		unique: true
 	},
-	bio: {
+	about: {
 		type: String
 	},
+	dob: {
+		type: Date
+	},
+	gender: {
+		type: String
+	},
+	private: {
+		type: Boolean,
+		default: () => false
+	},
+	interests: [
+		{
+			type: String
+		}
+	],
 	collections: [
 		{
 			name: { type: String },
