@@ -15,7 +15,7 @@ const genderOptions = [
 	{ Icon: () => <MdOutlineNotInterested className="w-5 h-5" />, type: "Prefer Not To Say" }
 ]
 
-function UserProfile({ userData, setUserData, classes }: any) {
+function UserProfileForm({ userData, setUserData, classes }: any) {
 	const GenderIcon = genderOptions.find(i => i.type === userData.gender)?.Icon
 
 	return (
@@ -150,4 +150,4 @@ function UserProfile({ userData, setUserData, classes }: any) {
 	)
 }
 
-export default UserProfile
+export default UserProfileForm

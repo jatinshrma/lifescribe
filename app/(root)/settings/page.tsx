@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { IoShieldHalfSharp } from "react-icons/io5"
 import UserInterests from "@components/UserInterests"
-import UserProfile from "@components/UserProfile"
+import UserProfileForm from "@components/UserProfileForm"
 import UserProfiltType from "@components/UserProfiltType"
 import { FaChevronRight } from "react-icons/fa6"
 
@@ -33,7 +33,7 @@ const Settings = () => {
 				}
 
 				const userResponse = await axios.get("/api/author", {
-					params: { username: session?.user.username, basic: true }
+					params: { username: session?.user.username }
 				})
 				setUserData({
 					...userResponse.data,
@@ -83,7 +83,7 @@ const Settings = () => {
 			},
 			Component: () => (
 				<div className="flex">
-					<UserProfile
+					<UserProfileForm
 						userData={userData}
 						setUserData={setUserData}
 						classes={{

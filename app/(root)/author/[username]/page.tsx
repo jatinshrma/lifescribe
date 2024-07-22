@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IAuthor, IPost, IProfilePictureComponent, IPromptAction } from "@types"
+import { IAuthor, ICollection, IPost, IProfilePictureComponent, IPromptAction, IReadingList } from "@types"
 import axios from "axios"
 import { PostCard } from "@components"
 import Overlay from "@components/Overlay"
@@ -11,7 +11,6 @@ import Prompt from "@components/Prompt"
 import { ImageCropWrapper } from "@components/ImageCrop"
 import { TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
-import { BiBookmark, BiShare } from "react-icons/bi"
 import { AnyObject } from "mongoose"
 import { RiQuillPenLine, RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
 import { BsCollection } from "react-icons/bs"
@@ -21,22 +20,20 @@ import { BsSortUp } from "react-icons/bs"
 import { BsSortDownAlt } from "react-icons/bs"
 import { IoMdTime } from "react-icons/io"
 import { AiOutlineDelete, AiOutlineNumber } from "react-icons/ai"
-import { TbArrowsSort } from "react-icons/tb"
 import { IoAdd } from "react-icons/io5"
 import { MdFormatColorText } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
 import Link from "next/link"
-import { PiNewspaperClipping } from "react-icons/pi"
+import { PiBookmarks, PiBookmarksSimpleBold, PiBookmarksSimpleLight, PiNewspaperClipping } from "react-icons/pi"
 import { Radio, RadioGroup } from "@headlessui/react"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { FaCaretDown } from "react-icons/fa6"
 import { useParams } from "next/navigation"
-import { LuSettings } from "react-icons/lu"
 
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
 	{ Icon: FiLock, label: "Private" },
-	{ Icon: BiBookmark, label: "Saved" }
+	{ Icon: () => <PiBookmarks className="text-2xl" />, label: "Reading List" }
 ]
 
 const sortOptions = [
@@ -58,21 +55,38 @@ const Profile = () => {
 	const [user, setUser] = useState<IAuthor>()
 	const [promptState, setPromptState] = useState<{ description: string; action: IPromptAction } | null>(null)
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
+	const [collections, setCollections] = useState<ICollection[]>([])
+	const [readingList, setReadingList] = useState<IReadingList>()
 
 	const isAutherLoggedIn = session?.user.username && username === session?.user.username
 
 	useEffect(() => {
 		if (username) {
 			;(async () => {
-				const response = await axios.get("/api/post", {
-					params: { username }
-				})
-				setPosts(response.data)
+				const [authorResponse, collectionsResponse, postsResponse, readingListResponse] = await Promise.all([
+					axios.get("/api/author", {
+						params: { username }
+					}),
+					axios.get("/api/collection", {
+						params: { username, attachPosts: true }
+					}),
+					axios.get("/api/post", {
+						params: { username }
+					}),
+					axios.get("/api/reading_list")
+				])
 
-				const userResponse = await axios.get("/api/author", {
-					params: { username }
-				})
-				setUser(userResponse.data)
+				setUser(authorResponse.data)
+				setCollections(collectionsResponse.data)
+				setReadingList(readingListResponse.data)
+				setPosts(
+					postsResponse.data?.map((p: IPost) => ({
+						...p,
+						private: p.author_collection
+							? collectionsResponse.data?.find((c: ICollection) => c._id === p.author_collection)?.private
+							: p.private
+					}))
+				)
 			})()
 		}
 	}, [username])
@@ -87,6 +101,22 @@ const Profile = () => {
 			description: post_title,
 			action: { handler: () => deletePost(post_id), label: "Yes, Delete", classname: "delete" }
 		})
+	}
+
+	const handleReadingList = async (post_id: string) => {
+		try {
+			const response = await axios.post("/api/reading_list", {
+				post_id
+			})
+			if (response.data.success) {
+				setReadingList(prev => ({
+					...prev,
+					posts: prev.posts.filter(p => p._id !== post_id || response.data.updatedStatus)
+				}))
+			}
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 	return (
@@ -118,13 +148,13 @@ const Profile = () => {
 						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
 						<p className="font-lora text-whiteSecondary">{user?.about}</p>
 						<div className="opacity-60">
-							<span>{posts?.filter(p => p.visibility === 0)?.length} Published</span>
+							<span>{posts?.filter(p => !p.private)?.length} Published</span>
 							{isAutherLoggedIn && (
 								<>
 									<span className="ml-5 px-5 border-l border-[#7777777d]">
-										{posts?.filter(p => p.visibility === 1)?.length} Private
+										{posts?.filter(p => p.private)?.length} Private
 									</span>
-									<span className="pl-5 border-l border-[#7777777d]">{user?.saved_posts?.length} Saved</span>
+									{/* <span className="pl-5 border-l border-[#7777777d]">{user?.saved_posts?.length} Saved</span> */}
 								</>
 							)}
 						</div>
@@ -290,10 +320,21 @@ const Profile = () => {
 					</div>
 				</div>
 
-				{state?.view === viewOptions[1].type && !state?.currCollection ? (
+				{isAutherLoggedIn && state.currTab === 2 ? (
 					<div className="space-y-5">
-						{user?.collections
-							?.filter(coll => coll.visibility === state?.currTab)
+						{readingList?.posts?.map(post => (
+							<PostCard
+								key={"reading_list:" + post?._id}
+								{...post}
+								inReadingList={true}
+								handleReadingList={handleReadingList}
+							/>
+						))}
+					</div>
+				) : state?.view === viewOptions[1].type && !state?.currCollection ? (
+					<div className="space-y-5">
+						{collections
+							?.filter(coll => coll.private === Boolean(state?.currTab))
 							?.map(coll => (
 								<div
 									className="bg-darkSecondary rounded-5xl p-8 cursor-pointer relative first:mt-0"
@@ -310,21 +351,13 @@ const Profile = () => {
 										</div>
 									</div>
 									<p className="my-5 text-3xl">{coll.name}</p>
-									<div className="my-5 flex gap-2 items-center flex-wrap">
-										{coll?.posts
-											?.map(i => i.tags)
-											?.flat()
-											?.map(tag => (
-												<button className="text-sm border border-whiteSecondary text-opacity-20 px-4 py-2 rounded-full">
-													{tag}
-												</button>
-											))}
-									</div>
 									<div className="text-sm opacity-60 flex gap-3">
-										<span>{coll.posts?.length} Post(s)</span>
+										<span>
+											{coll?.total_posts} Post{(coll?.total_posts as number) > 0 ? "s" : ""}
+										</span>
 										<span>·</span>
-										{coll?.posts && (
-											<span>Last updated {new Date(coll?.posts?.at(-1)?.created_at as any)?.toDateString()}</span>
+										{coll?.recent_post && (
+											<span>Recent post at {new Date(coll.recent_post as any).toDateString()}</span>
 										)}
 									</div>
 									{isAutherLoggedIn && (
@@ -339,7 +372,7 @@ const Profile = () => {
 					<div>
 						{state?.currCollection && (
 							<h1 className="mt-8 mb-14 text-4xl font-semibold">
-								{user?.collections?.find(coll => coll._id === state?.currCollection)?.name}
+								{collections?.find(coll => coll._id === state?.currCollection)?.name}
 							</h1>
 						)}
 						<div className="space-y-5">
@@ -347,7 +380,7 @@ const Profile = () => {
 								?.filter(post =>
 									state?.currCollection
 										? post.author_collection === state?.currCollection
-										: post.visibility === state?.currTab
+										: (+post.private || 0) === state?.currTab
 								)
 								?.map(post => (
 									<PostCard

@@ -4,37 +4,14 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { AiOutlineDelete } from "react-icons/ai"
-import { BiShare, BiShowAlt, BiTrash } from "react-icons/bi"
-import { BsEye } from "react-icons/bs"
-import { FiBookmark } from "react-icons/fi"
-import { HiOutlineEye } from "react-icons/hi2"
+import { BiShare } from "react-icons/bi"
 import { FaRegEye } from "react-icons/fa6"
-import { MdBookmarkBorder } from "react-icons/md"
-import { LuBookmark } from "react-icons/lu"
+import { GoBookmark, GoBookmarkSlash } from "react-icons/go"
+import { useRouter } from "next/navigation"
+import { calculateAge } from "@helpers/utils"
 
 const PostCard = (props: any) => {
-	const calculateAge = (dateString: Date) => {
-		const units = ["day", "hour", "minute", "second"]
-		const divisors = [86400000, 3600000, 60000, 1000]
-
-		const elapsedDate = new Date(dateString)
-		const elapsed = Date.now() - elapsedDate.getTime()
-
-		if (elapsed >= divisors[0]) {
-			const month = elapsedDate.toLocaleString("default", { month: "short" })
-			const day = elapsedDate.getDate()
-			return `${month} ${day}`
-		}
-
-		for (let i = 0; i < divisors.length; i++) {
-			let value = Math.floor(elapsed / divisors[i])
-			if (value >= 1) {
-				return `${value} ${units[i]}${value !== 1 ? "s" : ""} ago`
-			}
-		}
-
-		return "Just now"
-	}
+	const router = useRouter()
 
 	const getRedirectURL = (url_type: number = 1) => {
 		if (url_type === 1)
@@ -68,8 +45,19 @@ const PostCard = (props: any) => {
 		</button>
 	)
 	const saveButton = (
-		<button className="hover:scale-125 transition-transform ease-linear">
-			<LuBookmark className="hover:stroke-yellow-500 text-2xl" />
+		<button
+			className="hover:scale-125 transition-transform ease-linear"
+			onClick={e => {
+				e.preventDefault()
+				e.stopPropagation()
+				props.handleReadingList(props._id)
+			}}
+		>
+			{props.in_reading_list ? (
+				<GoBookmarkSlash className="fill-yellow-500 text-2xl" />
+			) : (
+				<GoBookmark className="hover:fill-yellow-500 text-2xl" />
+			)}
 		</button>
 	)
 
@@ -81,7 +69,7 @@ const PostCard = (props: any) => {
 						{!props?.profileView ? (
 							<>
 								<Image
-									className={"rounded-full object-cover w-6"}
+									className={"rounded-full object-cover w-6 aspect-square"}
 									src={props?.author?.profile_picture}
 									alt="user"
 									width={32}
@@ -89,9 +77,9 @@ const PostCard = (props: any) => {
 								/>
 								<div className="flex justify-between w-full">
 									<div className="flex gap-2 items-center">
-										<Link href={`/author/${props?.author?.username}`}>
+										<button onClick={() => router.push(`/author/${props?.author?.username}`)}>
 											<span className="text-fontSecondary text-base hover:underline">{props?.author?.name}</span>
-										</Link>
+										</button>
 										<span className="opacity-60 text-sm">·</span>
 										<span className="opacity-60 text-sm">{calculateAge(props?.created_at)}</span>
 									</div>

@@ -24,9 +24,14 @@ const PostSchema = new Schema<IPost, PostModel>({
 	},
 	tags: [
 		{
-			type: String
+			type: Schema.Types.ObjectId,
+			ref: "tags"
 		}
 	],
+	private: {
+		type: Boolean,
+		default: () => false
+	},
 	created_at: {
 		type: Date,
 		default: Date.now

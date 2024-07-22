@@ -12,14 +12,14 @@ export interface IPost {
 	content: string
 	author: mongoose.Schema.Types.ObjectId | string
 	author_collection?: mongoose.Schema.Types.ObjectId | string
-	visibility: number
-	tags: string[]
+	private: boolean
+	tags: (mongoose.Schema.Types.ObjectId | string)[]
 	created_at: Date
 	reading_time: number
 }
 
 export interface IPostCardProps {
-	_id: mongoose.Schema.Types.ObjectId
+	_id: mongoose.Schema.Types.ObjectId | string
 	author?: {
 		profile_picture: IAuthor["profile_picture"]
 	}
@@ -34,15 +34,37 @@ export interface IAuthor {
 	about: string
 	dob?: Date
 	gender?: string
-	interests?: string[]
+	interests?: (mongoose.Schema.Types.ObjectId | string)[]
 	private: boolean
-	collections: ICollectionType[]
-	saved_posts: string[]
 	username: string
 	email: string
 	password: string
 	created_at: Date
 	new_user?: boolean
+}
+
+export interface ICollection {
+	_id?: mongoose.Schema.Types.ObjectId | string
+	author?: mongoose.Schema.Types.ObjectId | string
+	name: string
+	private: boolean
+	created_at?: Date
+	posts?: IPost[]
+	recent_post?: Date
+	total_posts?: number
+}
+
+export interface IReadingList {
+	author: mongoose.Schema.Types.ObjectId | string
+	posts: {
+		post_id: mongoose.Schema.Types.ObjectId | string
+		timestamp: Date
+	}[]
+}
+
+export interface ITag {
+	name: string
+	parent: mongoose.Schema.Types.ObjectId | string
 }
 
 export interface IEditorProps {
@@ -80,29 +102,21 @@ export interface IAuthPageProps {
 }
 
 export interface IPostSubmitParams {
-	visibility?: IPost["visibility"]
+	private?: IPost["private"]
 	author_collection?: IPost["author_collection"]
-	newCollection?: ICollectionType
+	newCollection?: ICollection
 	tags: IPost["tags"]
-}
-
-export interface ICollectionType {
-	_id?: mongoose.Schema.Types.ObjectId | string
-	name: string
-	visibility: number
-	created_at?: Date
-	posts?: IPost[]
 }
 
 export interface IVisibilityOption {
 	Icon: IconType
 	label: string
-	value: number
+	value: boolean
 }
 
 export interface INewCollection {
 	name?: string
-	visibility?: IVisibilityOption
+	private?: IVisibilityOption
 }
 
 export interface IProfilePictureComponent {

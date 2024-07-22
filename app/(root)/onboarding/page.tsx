@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import UserInterests from "@components/UserInterests"
-import UserProfile from "@components/UserProfile"
+import UserProfileForm from "@components/UserProfileForm"
 import UserProfiltType from "@components/UserProfiltType"
 
 const stages = [
@@ -44,7 +44,7 @@ const Onboarding = () => {
 				}
 
 				const userResponse = await axios.get("/api/author", {
-					params: { username: session?.user.username, basic: true }
+					params: { username: session?.user.username }
 				})
 				setUserData({
 					...userResponse.data,
@@ -120,7 +120,7 @@ const Onboarding = () => {
 					</div>
 				) : stage === 1 ? (
 					<div className="flex mx-auto max-w-screen-md h-[calc(100vh-93px)] overflow-auto">
-						<UserProfile
+						<UserProfileForm
 							userData={userData}
 							setUserData={setUserData}
 							classes={{

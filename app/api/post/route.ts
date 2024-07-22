@@ -1,8 +1,31 @@
-import { Author, Post } from "@db/models"
+import { Author, CollectionModel, Post } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
-import { mongoAggregations } from "@helpers/utils"
 import connectToDB from "@db/index"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
+import { postsRegexPipeline } from "@helpers/mongoPipelines"
+
+// export const GET = async (request: NextRequest) => {
+// 	try {
+// 		await connectToDB()
+
+// 		for (const post of list) {
+// 			await Post.create({
+// 				author: new mongoose.Types.ObjectId("669d470eeef6bf3a81d31241"),
+// 				title: post.title,
+// 				content: "<p>" + post.description + "</p>",
+// 				tags: [],
+// 				created_at: new Date(post.creation_date),
+// 				reading_time: parseInt(post.reading_time?.split?.(" ")[0]),
+// 				private: false
+// 			})
+// 		}
+
+// 		return NextResponse.json({ success: true })
+// 	} catch (error: any) {
+// 		console.error(error.message)
+// 		return NextResponse.json({ message: error.message }, { status: 500 })
+// 	}
+// }
 
 export const GET = async (request: NextRequest) => {
 	try {
@@ -16,7 +39,12 @@ export const GET = async (request: NextRequest) => {
 					author: author?._id
 				}
 			},
-			...(mongoAggregations.post_fetch as any)
+			...postsRegexPipeline,
+			{
+				$sort: {
+					created_at: -1
+				}
+			}
 		])
 
 		return NextResponse.json(posts)
@@ -32,17 +60,13 @@ export const POST = async (request: Request) => {
 		data.author = getUserHeaders(request)?.user_id
 
 		if (data?.newCollection) {
-			const updated = await Author.findByIdAndUpdate(
-				data?.author,
-				{
-					$push: {
-						collections: data.newCollection
-					}
-				},
-				{ new: true }
-			)
+			const newCollection = await CollectionModel.create({
+				author: data.author,
+				name: data.newCollection.name,
+				private: data.newCollection.private
+			})
 
-			data.author_collection = updated?.collections?.at(-1)?._id
+			data.author_collection = newCollection?._id
 		}
 
 		const post = await Post.create(data)

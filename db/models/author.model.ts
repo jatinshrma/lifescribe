@@ -11,8 +11,7 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	},
 	name: {
 		type: String,
-		required: false,
-		unique: true
+		required: false
 	},
 	about: {
 		type: String
@@ -29,19 +28,8 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	},
 	interests: [
 		{
-			type: String
-		}
-	],
-	collections: [
-		{
-			name: { type: String },
-			visibility: { type: Number },
-			created_at: { type: Date, default: () => new Date() }
-		}
-	],
-	saved_posts: [
-		{
-			type: String
+			type: Schema.Types.ObjectId,
+			ref: "tag"
 		}
 	],
 	email: {

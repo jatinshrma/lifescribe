@@ -9,11 +9,10 @@ export async function middleware(request: NextRequest) {
 	const redirect = (url: string) => NextResponse.redirect(new URL(url, request.url))
 	const { pathname } = request.nextUrl
 
-	if (!token && ["/api/upload", "/onboarding", "/settings"].some(pathname.startsWith)) return redirect("/sign-in")
-
+	if (!token && ["/api/upload", "/onboarding", "/settings"].find(i => pathname.startsWith(i)))
+		return redirect("/sign-in")
 	if ((token && pathname.startsWith("/sign-in")) || (!token?.isNew && pathname.startsWith("/onboarding")))
 		return redirect("/")
-
 	if (token?.isNew && pathname.startsWith("/author") && pathname?.split("/")?.at(-1) === token.username)
 		return redirect("/onboarding")
 
@@ -24,7 +23,6 @@ export async function middleware(request: NextRequest) {
 				headers: requestHeaders
 			}
 		})
-
 		return response
 	}
 }

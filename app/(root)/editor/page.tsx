@@ -9,7 +9,7 @@ import { TbUpload } from "react-icons/tb"
 import ReactQuill from "@components/ReactQuill"
 import RQType from "react-quill"
 import "react-quill/dist/quill.snow.css"
-import { IPost, IPostSubmitParams, ICollectionType, INewCollection, IVisibilityOption } from "@types"
+import { IPost, IPostSubmitParams, ICollection, INewCollection, IVisibilityOption } from "@types"
 
 import {
 	Combobox,
@@ -22,7 +22,7 @@ import {
 	Label
 } from "@headlessui/react"
 import { FaChevronDown } from "react-icons/fa6"
-import { BiCheck, BiSearch, BiX } from "react-icons/bi"
+import { BiCheck, BiX } from "react-icons/bi"
 
 import { Radio, RadioGroup } from "@headlessui/react"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
@@ -38,7 +38,7 @@ const Editor = () => {
 	const searchParams = useSearchParams()
 	const { data: session } = useSession()
 	const [post, setPost] = useState<IPost | null>(null)
-	const [authorCollections, setAuthorCollections] = useState<ICollectionType[]>([])
+	const [authorCollections, setAuthorCollections] = useState<ICollection[]>([])
 
 	const router = useRouter()
 	const postId = searchParams.get("id")
@@ -51,11 +51,21 @@ const Editor = () => {
 			(async () => {
 				const response = await axios.get("/api/post/" + postId)
 				setPost(response.data)
-
-				const collectionsResponse = await axios.get("/api/author/collections")
-				if (collectionsResponse?.data) setAuthorCollections(collectionsResponse?.data)
 			})()
 	}, [postId])
+
+	useEffect(() => {
+		if (session?.user.username)
+			(async () => {
+				const collectionsResponse = await axios.get("/api/collection", {
+					params: {
+						username: session?.user.username
+					}
+				})
+
+				if (collectionsResponse?.data) setAuthorCollections(collectionsResponse?.data)
+			})()
+	}, [session?.user])
 
 	const imageHandler = () => {
 		const input = document.createElement("input")
@@ -192,18 +202,18 @@ function AdditionalDetails({
 	goBack: () => void
 	submit: (props: IPostSubmitParams) => void
 	post: IPost | null
-	authorCollections: ICollectionType[]
+	authorCollections: ICollection[]
 }) {
 	const [query, setQuery] = useState("")
-	const [tags, setTags] = useState<string[]>([])
+	const [tags, setTags] = useState<any>([])
 	const [collection, setCollection] = useState<string>()
-	const [visibility, setVisibility] = useState<number>(0)
+	const [isPrivate, setIsPrivate] = useState<boolean>(false)
 	const [newCollection, setNewCollection] = useState<INewCollection | null>(null)
 
 	useEffect(() => {
 		if (post) {
 			setCollection(post?.author_collection?.toString() || "")
-			setVisibility(post?.visibility)
+			setIsPrivate(post?.private)
 			if (post?.tags?.length) setTags(post?.tags)
 		}
 	}, [post])
@@ -219,7 +229,7 @@ function AdditionalDetails({
 		const coll = authorCollections?.find(coll => coll._id === collection)
 		if (!coll) return <IoSearchOutline className={className} />
 
-		const Icon = visibilityOptions[coll.visibility].Icon
+		const Icon = visibilityOptions[+coll.private || 0].Icon
 		return <Icon className={className} />
 	}
 
@@ -273,14 +283,14 @@ function AdditionalDetails({
 										className="group w-full theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
 										onClick={event => {
 											event?.preventDefault()
-											setNewCollection({ visibility: visibilityOptions[0], name: "" })
+											setNewCollection({ private: visibilityOptions[0], name: "" })
 										}}
 									>
 										<IoAdd className="w-5 h-5 fill-white" />
 										<div className="text-sm/6 text-white">Add new collection</div>
 									</ComboboxOption>
 									{filteredCollections.map(coll => {
-										const Icon = visibilityOptions[coll.visibility].Icon
+										const Icon = visibilityOptions[+coll.private].Icon
 										return (
 											<ComboboxOption
 												key={coll._id as React.Key}
@@ -299,7 +309,7 @@ function AdditionalDetails({
 							<div className="theme-input flex">
 								<Menu>
 									<MenuButton className={"flex items-center gap-1 mr-4"}>
-										{newCollection?.visibility?.Icon && <newCollection.visibility.Icon className="w-5 h-5" />}
+										{newCollection?.private?.Icon && <newCollection.private.Icon className="w-5 h-5" />}
 										<FaChevronDown className="w-2 h-2 fill-white/40 group-data-[hover]:fill-white" />
 									</MenuButton>
 									<MenuItems
@@ -313,7 +323,7 @@ function AdditionalDetails({
 											<MenuItem key={"coll-op-" + i.label}>
 												<button
 													className={"theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"}
-													onClick={() => setNewCollection(prev => ({ ...prev, visibility: i }))}
+													onClick={() => setNewCollection(prev => ({ ...prev, private: i }))}
 												>
 													<i.Icon className="w-4 h-4" />
 													<p className="font-semibold fill-whitePrimary">{i.label}</p>
@@ -324,7 +334,7 @@ function AdditionalDetails({
 								</Menu>
 								<input
 									type="text"
-									className="w-full theme-input p-0"
+									className="w-full theme-input p-0 !outline-none"
 									placeholder="New collection name"
 									value={newCollection?.name}
 									onChange={event => setNewCollection(prev => ({ ...prev, name: event.target.value }))}
@@ -341,14 +351,14 @@ function AdditionalDetails({
 					</Field>
 
 					<Field>
-						<Label className="text-sm font-medium">Visibility</Label>
+						<Label className="text-sm font-medium">Post's Visibility</Label>
 						<Description className="text-sm text-white/50">
-							Post's visibility is inhereted from collection. Incase of post not being included in any collection,
-							post's visibility can be set saperately.
+							Post's visibility is inhereted from collection. In the absence of collection, post's visibility can
+							be set independently.
 						</Description>
 						<RadioGroup
-							value={visibility}
-							onChange={setVisibility}
+							value={isPrivate}
+							onChange={setIsPrivate}
 							aria-label="Visibility"
 							className="mt-3 space-y-3"
 						>
@@ -393,10 +403,10 @@ function AdditionalDetails({
 						if (newCollection)
 							params.newCollection = {
 								name: newCollection.name || "",
-								visibility: newCollection.visibility?.value || visibilityOptions[0].value
+								private: newCollection.private?.value || visibilityOptions[0].value
 							}
 						else if (collection) params.author_collection = collection
-					} else params.visibility = visibility
+					} else params.private = isPrivate
 
 					submit(params)
 				}}
