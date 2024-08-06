@@ -31,7 +31,7 @@ export const GET = async (request: NextRequest) => {
 		const readingList = await ReadingList.aggregate([
 			{
 				$match: {
-					author: new mongoose.Types.ObjectId(user_id)
+					user: new mongoose.Types.ObjectId(user_id)
 				}
 			},
 			...sortAndLimit,
@@ -63,7 +63,7 @@ export const GET = async (request: NextRequest) => {
 							$project: {
 								_id: 0,
 								title: 1,
-								author: 1,
+								user: 1,
 								...(!recent ? { content: 1 } : {})
 							}
 						},
@@ -108,14 +108,14 @@ export const POST = async (request: NextRequest) => {
 		const { post_id } = await request.json()
 		const userDetails = getUserHeaders(request)
 		const userReadingList = await ReadingList.findOne({
-			author: userDetails?.user_id
+			user: userDetails?.user_id
 		})
 
 		let status = false
 
 		if (!userReadingList) {
 			await ReadingList.create({
-				author: userDetails?.user_id,
+				user: userDetails?.user_id,
 				posts: [
 					{
 						post_id: post_id

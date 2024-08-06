@@ -5,9 +5,9 @@ import { IReadingList } from "@types"
 type ReadingListModel = Model<IReadingList>
 
 const ReadingListSchema = new Schema<IReadingList, ReadingListModel>({
-	author: {
+	user: {
 		type: Schema.Types.ObjectId,
-		ref: "authors",
+		ref: "users",
 		unique: true
 	},
 	posts: [

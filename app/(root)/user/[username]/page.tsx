@@ -3,13 +3,11 @@
 import React, { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IAuthor, ICollection, IPost, IProfilePictureComponent, IPromptAction, IReadingList } from "@types"
+import { IUser, ICollection, IPost, IProfilePictureComponent, IReadingList } from "@types"
 import axios from "axios"
 import { PostCard } from "@components"
-import Overlay from "@components/Overlay"
-import Prompt from "@components/Prompt"
 import { ImageCropWrapper } from "@components/ImageCrop"
-import { TbWorld } from "react-icons/tb"
+import { TbArrowsSort, TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
 import { AnyObject } from "mongoose"
 import { RiQuillPenLine, RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
@@ -19,12 +17,12 @@ import { BsCalendarDate } from "react-icons/bs"
 import { BsSortUp } from "react-icons/bs"
 import { BsSortDownAlt } from "react-icons/bs"
 import { IoMdTime } from "react-icons/io"
-import { AiOutlineDelete, AiOutlineNumber } from "react-icons/ai"
+import { AiOutlineNumber } from "react-icons/ai"
 import { IoAdd } from "react-icons/io5"
 import { MdFormatColorText } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
 import Link from "next/link"
-import { PiBookmarks, PiBookmarksSimpleBold, PiBookmarksSimpleLight, PiNewspaperClipping } from "react-icons/pi"
+import { PiBookmarks, PiNewspaperClipping } from "react-icons/pi"
 import { Radio, RadioGroup } from "@headlessui/react"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { FaCaretDown } from "react-icons/fa6"
@@ -33,7 +31,7 @@ import { useParams } from "next/navigation"
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
 	{ Icon: FiLock, label: "Private" },
-	{ Icon: () => <PiBookmarks className="text-2xl" />, label: "Reading List" }
+	{ Icon: () => <PiBookmarks className="text-xl" />, label: "Reading List" }
 ]
 
 const sortOptions = [
@@ -48,12 +46,11 @@ const viewOptions = [
 	{ Icon: BsCollection, type: "Collections" }
 ]
 
-const Profile = () => {
+const User = () => {
 	const { username } = useParams()
 	const { data: session } = useSession()
 	const [posts, setPosts] = useState<IPost[]>([])
-	const [user, setUser] = useState<IAuthor>()
-	const [promptState, setPromptState] = useState<{ description: string; action: IPromptAction } | null>(null)
+	const [user, setUser] = useState<IUser>()
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
 	const [collections, setCollections] = useState<ICollection[]>([])
 	const [readingList, setReadingList] = useState<IReadingList>()
@@ -63,8 +60,8 @@ const Profile = () => {
 	useEffect(() => {
 		if (username) {
 			;(async () => {
-				const [authorResponse, collectionsResponse, postsResponse, readingListResponse] = await Promise.all([
-					axios.get("/api/author", {
+				const [userResponse, collectionsResponse, postsResponse, readingListResponse] = await Promise.all([
+					axios.get("/api/user", {
 						params: { username }
 					}),
 					axios.get("/api/collection", {
@@ -76,48 +73,20 @@ const Profile = () => {
 					axios.get("/api/reading_list")
 				])
 
-				setUser(authorResponse.data)
+				setUser(userResponse.data)
 				setCollections(collectionsResponse.data)
 				setReadingList(readingListResponse.data)
 				setPosts(
 					postsResponse.data?.map((p: IPost) => ({
 						...p,
-						private: p.author_collection
-							? collectionsResponse.data?.find((c: ICollection) => c._id === p.author_collection)?.private
+						private: p.user_collection
+							? collectionsResponse.data?.find((c: ICollection) => c._id === p.user_collection)?.private
 							: p.private
 					}))
 				)
 			})()
 		}
 	}, [username])
-
-	const deletePost = async (post_id: string) => {
-		const response = await axios.delete(`/api/post/${post_id}`)
-	}
-
-	const toggleDeletePrompt = (e: React.MouseEvent<HTMLButtonElement>, post_title: string, post_id: string) => {
-		e.preventDefault()
-		setPromptState({
-			description: post_title,
-			action: { handler: () => deletePost(post_id), label: "Yes, Delete", classname: "delete" }
-		})
-	}
-
-	const handleReadingList = async (post_id: string) => {
-		try {
-			const response = await axios.post("/api/reading_list", {
-				post_id
-			})
-			if (response.data.success) {
-				setReadingList(prev => ({
-					...prev,
-					posts: prev.posts.filter(p => p._id !== post_id || response.data.updatedStatus)
-				}))
-			}
-		} catch (error) {
-			console.error(error)
-		}
-	}
 
 	return (
 		<LayoutWrapper
@@ -148,13 +117,13 @@ const Profile = () => {
 						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
 						<p className="font-lora text-whiteSecondary">{user?.about}</p>
 						<div className="opacity-60">
-							<span>{posts?.filter(p => !p.private)?.length} Published</span>
+							{!user?.private && <span>{posts?.filter(p => !p.private)?.length} Published</span>}
 							{isAutherLoggedIn && (
 								<>
 									<span className="ml-5 px-5 border-l border-[#7777777d]">
 										{posts?.filter(p => p.private)?.length} Private
 									</span>
-									{/* <span className="pl-5 border-l border-[#7777777d]">{user?.saved_posts?.length} Saved</span> */}
+									<span className="pl-5 border-l border-[#7777777d]">{readingList?.posts?.length} Saved</span>
 								</>
 							)}
 						</div>
@@ -173,7 +142,7 @@ const Profile = () => {
 								className={`absolute w-1/3 h-0.5 bg-whitePrimary bottom-0 left-0 transition-all duration-200 ease`}
 								style={{ translate: `${(state?.currTab || 0) * 100}%` }}
 							/>
-							{tabs.map((i, idx, tabsArr) => (
+							{tabs.slice(user?.private ? 1 : 0, 3).map((i, idx, tabsArr) => (
 								<button
 									onClick={() => setState(prev => ({ ...prev, currTab: idx, currCollection: null }))}
 									className={
@@ -327,7 +296,12 @@ const Profile = () => {
 								key={"reading_list:" + post?._id}
 								{...post}
 								inReadingList={true}
-								handleReadingList={handleReadingList}
+								onReadingListUpdate={(status: boolean) =>
+									setReadingList((prev: any) => ({
+										...prev,
+										posts: prev.posts.filter((p: { _id: string }) => p._id !== post?._id || status)
+									}))
+								}
 							/>
 						))}
 					</div>
@@ -379,37 +353,18 @@ const Profile = () => {
 							{posts
 								?.filter(post =>
 									state?.currCollection
-										? post.author_collection === state?.currCollection
+										? post.user_collection === state?.currCollection
 										: (+post.private || 0) === state?.currTab
 								)
 								?.map(post => (
-									<PostCard
-										key={post?._id}
-										{...post}
-										profileView={true}
-										authorView={isAutherLoggedIn}
-										toggleDeletePrompt={toggleDeletePrompt}
-									/>
+									<PostCard key={post?._id} {...post} profileView={true} userView={isAutherLoggedIn} />
 								))}
 						</div>
 					</div>
-				)}
-
-				{promptState && (
-					<Overlay>
-						<Prompt
-							warning="Delete Postpost"
-							description={promptState?.description}
-							actions={[
-								{ handler: () => setPromptState(null), label: "Cancel" },
-								promptState?.action as IPromptAction
-							]}
-						/>
-					</Overlay>
 				)}
 			</div>
 		</LayoutWrapper>
 	)
 }
 
-export default Profile
+export default User

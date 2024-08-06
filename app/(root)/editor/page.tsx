@@ -38,7 +38,7 @@ const Editor = () => {
 	const searchParams = useSearchParams()
 	const { data: session } = useSession()
 	const [post, setPost] = useState<IPost | null>(null)
-	const [authorCollections, setAuthorCollections] = useState<ICollection[]>([])
+	const [userCollections, setUserCollections] = useState<ICollection[]>([])
 
 	const router = useRouter()
 	const postId = searchParams.get("id")
@@ -63,7 +63,7 @@ const Editor = () => {
 					}
 				})
 
-				if (collectionsResponse?.data) setAuthorCollections(collectionsResponse?.data)
+				if (collectionsResponse?.data) setUserCollections(collectionsResponse?.data)
 			})()
 	}, [session?.user])
 
@@ -184,7 +184,7 @@ const Editor = () => {
 							})
 						}
 						submit={submitHandler}
-						authorCollections={authorCollections}
+						userCollections={userCollections}
 						post={post}
 					/>
 				) : null}
@@ -197,12 +197,12 @@ function AdditionalDetails({
 	goBack,
 	submit,
 	post,
-	authorCollections
+	userCollections
 }: {
 	goBack: () => void
 	submit: (props: IPostSubmitParams) => void
 	post: IPost | null
-	authorCollections: ICollection[]
+	userCollections: ICollection[]
 }) {
 	const [query, setQuery] = useState("")
 	const [tags, setTags] = useState<any>([])
@@ -212,7 +212,7 @@ function AdditionalDetails({
 
 	useEffect(() => {
 		if (post) {
-			setCollection(post?.author_collection?.toString() || "")
+			setCollection(post?.user_collection?.toString() || "")
 			setIsPrivate(post?.private)
 			if (post?.tags?.length) setTags(post?.tags)
 		}
@@ -220,13 +220,13 @@ function AdditionalDetails({
 
 	const filteredCollections =
 		query === ""
-			? authorCollections
-			: authorCollections.filter(coll => {
+			? userCollections
+			: userCollections.filter(coll => {
 					return coll.name.toLowerCase().includes(query.toLowerCase())
 			  })
 
 	const collVisibilityIcon = (className: string) => {
-		const coll = authorCollections?.find(coll => coll._id === collection)
+		const coll = userCollections?.find(coll => coll._id === collection)
 		if (!coll) return <IoSearchOutline className={className} />
 
 		const Icon = visibilityOptions[+coll.private || 0].Icon
@@ -262,7 +262,7 @@ function AdditionalDetails({
 											"pl-[52px] pr-12 theme-input bg-darkSecondary hover:bg-darkHighlight " +
 											"focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
 										}
-										displayValue={value => authorCollections.find(i => i._id === value)?.name as string}
+										displayValue={value => userCollections.find(i => i._id === value)?.name as string}
 										onChange={event => setQuery(event.target.value)}
 									/>
 									<ComboboxButton className="group absolute inset-y-0 right-0 px-5">
@@ -367,7 +367,7 @@ function AdditionalDetails({
 									key={option.label}
 									value={option.value}
 									className="group relative cursor-pointer w-full theme-button primary rounded-lg focus:outline-none data-[focus]:outline-1 data-[focus]:outline-whitePrimary data-[checked]:bg-darkSecondary data-[disabled]:opacity-40 data-[disabled]:pointer-events-none"
-									disabled={Boolean(authorCollections?.find(i => i._id === collection) || newCollection?.name)}
+									disabled={Boolean(userCollections?.find(i => i._id === collection) || newCollection?.name)}
 								>
 									<div className="flex w-full items-center justify-between">
 										<div className="flex items-center gap-2 text-sm/6">
@@ -405,7 +405,7 @@ function AdditionalDetails({
 								name: newCollection.name || "",
 								private: newCollection.private?.value || visibilityOptions[0].value
 							}
-						else if (collection) params.author_collection = collection
+						else if (collection) params.user_collection = collection
 					} else params.private = isPrivate
 
 					submit(params)

@@ -1,4 +1,4 @@
-import { Author, CollectionModel, Post } from "@db/models"
+import { User, CollectionModel, Post } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
 import connectToDB from "@db/index"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
@@ -10,7 +10,7 @@ import { postsRegexPipeline } from "@helpers/mongoPipelines"
 
 // 		for (const post of list) {
 // 			await Post.create({
-// 				author: new mongoose.Types.ObjectId("669d470eeef6bf3a81d31241"),
+// 				user: new mongoose.Types.ObjectId("669d470eeef6bf3a81d31241"),
 // 				title: post.title,
 // 				content: "<p>" + post.description + "</p>",
 // 				tags: [],
@@ -32,11 +32,11 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 
 		const username = request.nextUrl.searchParams.get("username")
-		const author = await Author.findOne({ username }, { _id: true })
+		const user = await User.findOne({ username }, { _id: true })
 		const posts = await Post.aggregate([
 			{
 				$match: {
-					author: author?._id
+					user: user?._id
 				}
 			},
 			...postsRegexPipeline,
@@ -57,16 +57,16 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: Request) => {
 	try {
 		const data = await request.json()
-		data.author = getUserHeaders(request)?.user_id
+		data.user = getUserHeaders(request)?.user_id
 
 		if (data?.newCollection) {
 			const newCollection = await CollectionModel.create({
-				author: data.author,
+				user: data.user,
 				name: data.newCollection.name,
 				private: data.newCollection.private
 			})
 
-			data.author_collection = newCollection?._id
+			data.user_collection = newCollection?._id
 		}
 
 		const post = await Post.create(data)

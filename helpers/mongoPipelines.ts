@@ -41,8 +41,8 @@ export const postsRegexPipeline = [
 export const postsAutherDetails = [
 	{
 		$lookup: {
-			from: "authors",
-			localField: "author",
+			from: "users",
+			localField: "user",
 			foreignField: "_id",
 			pipeline: [
 				{
@@ -53,26 +53,26 @@ export const postsAutherDetails = [
 					}
 				}
 			],
-			as: "_author_"
+			as: "_user_"
 		}
 	},
 	{
 		$set: {
-			author: {
+			user: {
 				name: {
-					$first: "$_author_.name"
+					$first: "$_user_.name"
 				},
 				profile_picture: {
-					$first: "$_author_.profile_picture"
+					$first: "$_user_.profile_picture"
 				},
 				username: {
-					$first: "$_author_.username"
+					$first: "$_user_.username"
 				}
 			}
 		}
 	},
 	{
-		$unset: "_author_"
+		$unset: "_user_"
 	}
 ]
 
@@ -84,7 +84,7 @@ export const postsCheckReadingList = (user_id: mongoose.Types.ObjectId) => [
 			pipeline: [
 				{
 					$match: {
-						author: user_id
+						user: user_id
 					}
 				},
 				{
@@ -98,7 +98,7 @@ export const postsCheckReadingList = (user_id: mongoose.Types.ObjectId) => [
 	},
 	{
 		$addFields: {
-			in_reading_list: {
+			inReadingList: {
 				$cond: {
 					if: {
 						$gt: [{ $size: "$reading_list_info" }, 0]

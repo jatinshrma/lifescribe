@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
 		return redirect("/sign-in")
 	if ((token && pathname.startsWith("/sign-in")) || (!token?.isNew && pathname.startsWith("/onboarding")))
 		return redirect("/")
-	if (token?.isNew && pathname.startsWith("/author") && pathname?.split("/")?.at(-1) === token.username)
+	if (token?.isNew && pathname.startsWith("/user") && pathname?.split("/")?.at(-1) === token.username)
 		return redirect("/onboarding")
 
 	if (token) {

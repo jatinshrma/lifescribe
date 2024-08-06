@@ -6,3 +6,5 @@ export const visibilityOptions: IVisibilityOption[] = [
 	{ Icon: TbWorld, value: false, label: "Public" },
 	{ Icon: FiLock, value: true, label: "Private" }
 ]
+
+export const interests = []

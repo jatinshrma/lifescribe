@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import { JWT } from "next-auth/jwt"
 
 const headerFields = [
@@ -11,7 +12,7 @@ export const getUserHeaders = (req: Request) => {
 		(result, obj) => ({ ...result, [obj.tokenField]: req.headers.get(obj.headerField) }),
 		{
 			email: "",
-			user_id: "",
+			user_id: "" as string | mongoose.Types.ObjectId,
 			username: ""
 		}
 	)

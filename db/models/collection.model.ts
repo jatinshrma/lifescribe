@@ -5,9 +5,9 @@ import createModel from "@helpers/createModel"
 type CollectionModel = Model<ICollection>
 
 const CollectionSchema = new Schema<ICollection, CollectionModel>({
-	author: {
+	user: {
 		type: Schema.Types.ObjectId,
-		ref: "authors"
+		ref: "users"
 	},
 	name: {
 		type: String,

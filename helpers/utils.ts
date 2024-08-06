@@ -14,7 +14,7 @@ export const selectRandomIndexes = (totalCount: number, numIndexesToSelect: numb
 export const getRandomString = (len = 10) =>
 	[...Array(len)].map(() => (~~(Math.random() * 36)).toString(36)).join("")
 
-export const calculateAge = (dateString: Date, shortUnits) => {
+export const calculateAge = (dateString: any, shortUnits?: boolean) => {
 	const units = ["day", "hour", "minute", "second"]
 	const divisors = [86400000, 3600000, 60000, 1000]
 
@@ -25,7 +25,7 @@ export const calculateAge = (dateString: Date, shortUnits) => {
 		const year = elapsedDate.getFullYear()
 		const month = elapsedDate.toLocaleString("default", { month: "short" })
 		const day = elapsedDate.getDate()
-		return `on ${month} ${day}${year === new Date().getFullYear() ? "" : ", " + year}`
+		return `${month} ${day}${year === new Date().getFullYear() ? "" : ", " + year}`
 	}
 
 	for (let i = 0; i < divisors.length; i++) {
@@ -37,4 +37,10 @@ export const calculateAge = (dateString: Date, shortUnits) => {
 	}
 
 	return "Just now"
+}
+
+export const getRedirectURL = (postId?: string, postTitle?: string, urlType: number = 1) => {
+	if (urlType === 1)
+		return `/post/${postId}?title=${postTitle?.replaceAll(" ", "-")?.replaceAll("#", "")?.toLowerCase()}`
+	else return `/editor?id=${postId}`
 }

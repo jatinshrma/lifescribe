@@ -13,14 +13,14 @@ const PostSchema = new Schema<IPost, PostModel>({
 		type: String,
 		required: true
 	},
-	author: {
+	user: {
 		type: Schema.Types.ObjectId,
-		ref: "authors",
+		ref: "users",
 		required: true
 	},
-	author_collection: {
+	user_collection: {
 		type: Schema.Types.ObjectId,
-		ref: "authors"
+		ref: "users"
 	},
 	tags: [
 		{
@@ -28,6 +28,10 @@ const PostSchema = new Schema<IPost, PostModel>({
 			ref: "tags"
 		}
 	],
+	likes: {
+		type: Number,
+		default: 0
+	},
 	private: {
 		type: Boolean,
 		default: () => false

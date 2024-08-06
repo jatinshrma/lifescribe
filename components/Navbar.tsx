@@ -11,6 +11,7 @@ import { SlLogout } from "react-icons/sl"
 import Overlay from "./Overlay"
 import { BsArrowRight } from "react-icons/bs"
 import { LuSettings } from "react-icons/lu"
+import Prompt from "./Prompt"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
@@ -65,7 +66,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 								className="w-52 mt-2 rounded-xl border border-darkHighlight bg-darkSecondary p-1 text-sm text-whitePrimary transition duration-100 ease-out [--anchor-gap:2px] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0"
 							>
 								<Link
-									href={"/author/" + session?.user?.username}
+									href={"/user/" + session?.user?.username}
 									className="theme-button primary gap-4 rounded-lg data-[focus]:bg-darkHighlight w-full"
 								>
 									<BiUser className="text-xl" />
@@ -91,37 +92,18 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 				)}
 			</div>
 
-			<Dialog
-				open={Boolean(flags?.signOut)}
-				as="div"
-				className="relative z-10 focus:outline-none"
+			<Prompt
+				isOpen={Boolean(flags?.signOut)}
 				onClose={() => setFlags({})}
-			>
-				<Overlay>
-					<div className="flex min-h-full items-center justify-center p-4">
-						<DialogPanel
-							transition
-							className="w-full max-w-xl rounded-xl bg-darkSecondary p-6 backdrop-blur-2xl duration-200 ease-in data-[closed]:transform-[scale(85%)] data-[closed]:opacity-0"
-						>
-							<DialogTitle as="h3" className="text-lg/8 font-medium text-white">
-								Are you sure you want to sign out
-							</DialogTitle>
-							<p className="mt-3 text-base/7 text-white/50">
-								After signing out you will be redirected to sign-in page. From there you can sign back into your
-								account anytime.
-							</p>
-							<div className="mt-6 flex justify-end">
-								<Button
-									className="theme-button primary gap-2 rounded-md text-base/7 font-semibold shadow-inner focus:outline-none !bg-red-900/10 text-red-600"
-									onClick={handleSignOut}
-								>
-									Sign out now!
-								</Button>
-							</div>
-						</DialogPanel>
-					</div>
-				</Overlay>
-			</Dialog>
+				warning="Are you sure you want to sign out"
+				description="After signing out you will be redirected to sign-in page. From there you can sign back into your account anytime."
+				actions={[
+					{
+						label: "Sign out now!",
+						handler: handleSignOut
+					}
+				]}
+			/>
 		</nav>
 	)
 }

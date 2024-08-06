@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
 import connectToDB from "@db/index"
-import { Author } from "@db/models"
+import { User } from "@db/models"
 
 const { GOOGLE_CLIENT_ID: clientId = "", GOOGLE_CLIENT_SECRET: clientSecret = "" } = process.env
 
@@ -20,9 +20,9 @@ export const authOptions: NextAuthOptions = {
 		async signIn({ profile, user }) {
 			try {
 				await connectToDB()
-				const userExists = await Author.findOne({ email: profile?.email })
+				const userExists = await User.findOne({ email: profile?.email })
 				if (!userExists) {
-					await Author.create({
+					await User.create({
 						email: profile?.email,
 						profile_picture: user?.image,
 						name: profile?.name,
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
 			}
 		},
 		async jwt({ token }) {
-			const DBUser = token?.email ? await Author.findOne({ email: token.email }) : null
+			const DBUser = token?.email ? await User.findOne({ email: token.email }) : null
 			if (DBUser) {
 				token.isNew = Boolean(DBUser.new_user)
 				token.name = DBUser.name

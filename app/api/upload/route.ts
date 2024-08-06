@@ -3,7 +3,7 @@ import { join } from "path"
 import { stat, mkdir, writeFile } from "fs/promises"
 import * as dateFn from "date-fns"
 import { NextRequest, NextResponse } from "next/server"
-import { Author } from "@db/models"
+import { User } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 
 export const POST = async (request: NextRequest) => {
@@ -38,7 +38,7 @@ export const POST = async (request: NextRequest) => {
 
 		filePath = "/" + filePath.split("/").slice(1).join("/")
 		if (type === "profile-picture") {
-			await Author.findByIdAndUpdate(user_id, {
+			await User.findByIdAndUpdate(user_id, {
 				profile_picture: filePath
 			})
 		}

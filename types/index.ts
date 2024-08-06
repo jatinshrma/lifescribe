@@ -10,25 +10,27 @@ export interface IPost {
 	_id?: string
 	title: string
 	content: string
-	author: mongoose.Schema.Types.ObjectId | string
-	author_collection?: mongoose.Schema.Types.ObjectId | string
+	user: mongoose.Schema.Types.ObjectId | string
+	user_collection?: mongoose.Schema.Types.ObjectId | string
 	private: boolean
 	tags: (mongoose.Schema.Types.ObjectId | string)[]
 	created_at: Date
 	reading_time: number
+	likes: number
+	isLiked?: boolean
 }
 
 export interface IPostCardProps {
 	_id: mongoose.Schema.Types.ObjectId | string
-	author?: {
-		profile_picture: IAuthor["profile_picture"]
+	user?: {
+		profile_picture: IUser["profile_picture"]
 	}
 	toggleDeletePrompt?: Function
 	hideTags?: boolean
 	hideHoverEffect?: boolean
 }
 
-export interface IAuthor {
+export interface IUser {
 	profile_picture: string
 	name: string
 	about: string
@@ -39,13 +41,14 @@ export interface IAuthor {
 	username: string
 	email: string
 	password: string
+	followers: number
 	created_at: Date
 	new_user?: boolean
 }
 
 export interface ICollection {
 	_id?: mongoose.Schema.Types.ObjectId | string
-	author?: mongoose.Schema.Types.ObjectId | string
+	user?: mongoose.Schema.Types.ObjectId | string
 	name: string
 	private: boolean
 	created_at?: Date
@@ -55,7 +58,7 @@ export interface ICollection {
 }
 
 export interface IReadingList {
-	author: mongoose.Schema.Types.ObjectId | string
+	user: mongoose.Schema.Types.ObjectId | string
 	posts: {
 		post_id: mongoose.Schema.Types.ObjectId | string
 		timestamp: Date
@@ -64,7 +67,17 @@ export interface IReadingList {
 
 export interface ITag {
 	name: string
-	parent: mongoose.Schema.Types.ObjectId | string
+	parents: (mongoose.Schema.Types.ObjectId | string)[]
+}
+
+export interface IPostLikes {
+	post: mongoose.Schema.Types.ObjectId | string
+	users: (mongoose.Schema.Types.ObjectId | string)[]
+}
+
+export interface IFollowing {
+	user: mongoose.Schema.Types.ObjectId | string
+	following: (mongoose.Schema.Types.ObjectId | string)[]
 }
 
 export interface IEditorProps {
@@ -94,6 +107,8 @@ export interface IPromptParams {
 	warning: string
 	description: string
 	actions: IPromptAction[]
+	isOpen: boolean
+	onClose: () => void
 }
 
 export interface IAuthPageProps {
@@ -103,7 +118,7 @@ export interface IAuthPageProps {
 
 export interface IPostSubmitParams {
 	private?: IPost["private"]
-	author_collection?: IPost["author_collection"]
+	user_collection?: IPost["user_collection"]
 	newCollection?: ICollection
 	tags: IPost["tags"]
 }

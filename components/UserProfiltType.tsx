@@ -10,11 +10,11 @@ function UserProfiltType({ isPrivate, setIsPrivate }: { isPrivate: boolean; setI
 			>
 				<div className="mb-2 flex items-center gap-4">
 					<FaUsers className="w-8 h-8" />
-					<span className="text-lg font-medium">Public Profile (Author)</span>
+					<span className="text-lg font-medium">Public Profile (User)</span>
 				</div>
 				<p className="opacity-60">
-					Public profiles are known as Authors. Authors can publich posts which is publicly accessible, they can
-					also maintain their personal writings such as their journals or other personal content.
+					Public profiles are known as Users. Users can publich posts which is publicly accessible, they can also
+					maintain their personal writings such as their journals or other personal content.
 				</p>
 			</div>
 			<div

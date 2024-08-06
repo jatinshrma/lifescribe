@@ -1,10 +1,10 @@
 import { Model, Schema } from "mongoose"
 import createModel from "@helpers/createModel"
-import { IAuthor } from "@types"
+import { IUser } from "@types"
 
-type AuthorModel = Model<IAuthor>
+type UserModel = Model<IUser>
 
-const AuthorSchema = new Schema<IAuthor, AuthorModel>({
+const UserSchema = new Schema<IUser, UserModel>({
 	profile_picture: {
 		type: String,
 		unique: true
@@ -42,6 +42,10 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 		required: true,
 		unique: true
 	},
+	followers: {
+		type: Number,
+		default: 0
+	},
 	created_at: {
 		type: Date,
 		default: Date.now
@@ -51,11 +55,11 @@ const AuthorSchema = new Schema<IAuthor, AuthorModel>({
 	}
 })
 
-AuthorSchema.pre("save", function (next) {
+UserSchema.pre("save", function (next) {
 	if (!this.username && this.email) {
 		this.username = this.email.split("@")[0]
 	}
 	next()
 })
 
-export default createModel<IAuthor, AuthorModel>("Author", AuthorSchema)
+export default createModel<IUser, UserModel>("User", UserSchema)

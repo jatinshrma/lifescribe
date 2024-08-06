@@ -34,7 +34,7 @@ export default function Home() {
 				<Feed session={session} />
 				<div className="w-1/4 h-[82vh] my-2">
 					<ReadingList session={session} />
-					<TopAuthors session={session} />
+					<TopUsers session={session} />
 				</div>
 			</div>
 		</LayoutWrapper>
@@ -58,21 +58,6 @@ const Feed = ({ session }: { session?: Session | null }) => {
 			})()
 	}, [session])
 
-	const handleReadingList = async (post_id: string) => {
-		try {
-			const response = await axios.post("/api/reading_list", {
-				post_id
-			})
-			if (response.data.success) {
-				setPosts(prev =>
-					prev.map(p => (p._id === post_id ? { ...p, in_reading_list: response.data.updatedStatus } : p))
-				)
-			}
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
 	return (
 		<div className="w-3/4 flex flex-col gap-3">
 			<div className="flex items-center gap-3 rounded-full p-4 px-5 bg-darkSecondary w-full">
@@ -81,7 +66,7 @@ const Feed = ({ session }: { session?: Session | null }) => {
 				</span>
 				<input
 					type="text"
-					placeholder="Search posts, topics or authors"
+					placeholder="Search posts, topics or users"
 					className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
 				/>
 				<button className="flex gap-2 items-center px-4">
@@ -91,7 +76,14 @@ const Feed = ({ session }: { session?: Session | null }) => {
 			</div>
 			<div>
 				{posts?.map(post => (
-					<PostCard key={post._id.toString()} {...post} hideTags={true} handleReadingList={handleReadingList} />
+					<PostCard
+						key={post._id.toString()}
+						{...post}
+						hideTags={true}
+						onReadingListUpdate={(status: boolean) =>
+							setPosts(prev => prev.map(p => (p._id === post._id ? { ...p, inReadingList: status } : p)))
+						}
+					/>
 				))}
 			</div>
 		</div>
@@ -152,17 +144,17 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 					<div className="border-b border-darkSecondary py-3 last:border-none">
 						<div className="flex justify-between w-full">
 							<div className="flex gap-3 items-center">
-								{i?.author?.profile_picture && (
+								{i?.user?.profile_picture && (
 									<Image
 										className={"rounded-full object-cover w-6 aspect-square"}
-										src={i.author.profile_picture}
+										src={i.user.profile_picture}
 										alt="user"
 										width={20}
 										height={20}
 									/>
 								)}
 								<div className="text-fontSecondary text-sm opacity-60">
-									<span>{i?.author?.name}</span>
+									<span>{i?.user?.name}</span>
 									<span className="px-2">·</span>
 									<span>{i.timeString}</span>
 								</div>
@@ -182,13 +174,13 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 	)
 }
 
-const TopAuthors = ({ session }: { session?: Session | null }) => {
+const TopUsers = ({ session }: { session?: Session | null }) => {
 	return (
 		<div className="mt-10 pb-6 space-y-6">
 			<div className="flex justify-between items-center">
 				<h2 className="text-lg flex items-center gap-2 font-medium">
 					<MdOutlineGroupAdd />
-					Top authors
+					Top users
 				</h2>
 			</div>
 

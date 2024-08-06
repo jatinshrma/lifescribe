@@ -1,5 +1,5 @@
 import connectToDB from "@db/index"
-import { Author } from "@db/models"
+import { User } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
 
 export const GET = async (request: NextRequest) => {
@@ -7,7 +7,7 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 		const username = request.nextUrl.searchParams.get("username")
 
-		const author = await Author.findOne(
+		const user = await User.findOne(
 			{ username },
 			{
 				name: 1,
@@ -20,7 +20,7 @@ export const GET = async (request: NextRequest) => {
 			}
 		)
 
-		return NextResponse.json(author)
+		return NextResponse.json(user)
 	} catch (error: any) {
 		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })
@@ -32,7 +32,7 @@ export const PUT = async (request: NextRequest) => {
 		await connectToDB()
 		const data: any = await request.json()
 
-		const result = await Author.findOneAndUpdate(
+		const result = await User.findOneAndUpdate(
 			{ username: data?.username },
 			{
 				name: data?.name,

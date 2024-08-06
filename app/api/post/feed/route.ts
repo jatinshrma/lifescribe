@@ -1,4 +1,4 @@
-import { Author, Post } from "@db/models"
+import { User, Post } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
 import connectToDB from "@db/index"
 import { postsAutherDetails, postsCheckReadingList, postsRegexPipeline } from "@helpers/mongoPipelines"
@@ -8,14 +8,14 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 		const username = request.nextUrl?.searchParams?.get("username")
 		const matchQuery = []
-		const user = username ? await Author.findOne({ username }, { _id: 1 }) : null
+		const user = username ? await User.findOne({ username }, { _id: 1 }) : null
 
 		if (user?._id)
 			matchQuery.push({
 				$match: {
 					$and: [
 						{
-							author: {
+							user: {
 								$ne: user?._id
 							}
 						},
@@ -35,7 +35,7 @@ export const GET = async (request: NextRequest) => {
 			...(user?._id ? (postsCheckReadingList(user?._id) as any[]) : []),
 			{
 				$project: {
-					author_collection: 0,
+					user_collection: 0,
 					private: 0
 				}
 			},

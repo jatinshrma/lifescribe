@@ -1,5 +1,5 @@
 import connectToDB from "@db/index"
-import { Author, CollectionModel } from "@db/models"
+import { User, CollectionModel } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -8,21 +8,21 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 		const username = request.nextUrl.searchParams.get("username")
 		const attachPosts = request.nextUrl.searchParams.get("attachPosts")
-		const author = await Author.findOne({ username }, { _id: true })
+		const user = await User.findOne({ username }, { _id: true })
 
 		const collections = !attachPosts
-			? await CollectionModel.find({ author: author?._id })
+			? await CollectionModel.find({ user: user?._id })
 			: await CollectionModel.aggregate([
 					{
 						$match: {
-							author: author?._id
+							user: user?._id
 						}
 					},
 					{
 						$lookup: {
 							from: "posts",
 							localField: "_id",
-							foreignField: "author_collection",
+							foreignField: "user_collection",
 							pipeline: [
 								{
 									$sort: {
@@ -64,7 +64,7 @@ export const POST = async (request: Request) => {
 	try {
 		const data = await request.json()
 		await CollectionModel.create({
-			author: getUserHeaders(request)?.user_id,
+			user: getUserHeaders(request)?.user_id,
 			name: data.name,
 			private: data.private
 		})

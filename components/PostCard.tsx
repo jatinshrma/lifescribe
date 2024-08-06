@@ -3,82 +3,38 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { AiOutlineDelete } from "react-icons/ai"
-import { BiShare } from "react-icons/bi"
-import { FaRegEye } from "react-icons/fa6"
-import { GoBookmark, GoBookmarkSlash } from "react-icons/go"
 import { useRouter } from "next/navigation"
-import { calculateAge } from "@helpers/utils"
+import { calculateAge, getRedirectURL } from "@helpers/utils"
+import { DeleteButton, SaveButton, ShareButton, ViewButton } from "./ActionButtons"
 
 const PostCard = (props: any) => {
 	const router = useRouter()
 
-	const getRedirectURL = (url_type: number = 1) => {
-		if (url_type === 1)
-			return `/post/${props?._id}?title=${props?.title?.replaceAll(" ", "-")?.replaceAll("#", "")?.toLowerCase()}`
-		else return `/editor?id=${props?._id}`
-	}
-
-	const copyLink = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault()
-		navigator.clipboard.writeText(location.origin + getRedirectURL())
-	}
-
-	const shareButton = (
-		<button onClick={copyLink} className="hover:scale-125 transition-transform ease-linear">
-			<BiShare className="hover:fill-blue-500 text-2xl" />
-		</button>
-	)
-	const viewButton = (
-		<button className="hover:scale-125 transition-transform ease-linear">
-			<Link href={getRedirectURL()}>
-				<FaRegEye className="hover:fill-amber-500 text-2xl" />
-			</Link>
-		</button>
-	)
-	const deleteButton = (
-		<button
-			onClick={e => props?.toggleDeletePrompt?.(e, props?.title, props?._id)}
-			className="hover:scale-125 transition-transform ease-linear"
-		>
-			<AiOutlineDelete className="hover:fill-red-500 text-2xl" />
-		</button>
-	)
+	const viewButton = <ViewButton url={getRedirectURL(props?._id, props?.title)} />
+	const shareButton = <ShareButton url={location.origin + getRedirectURL(props?._id, props?.title)} />
+	const deleteButton = <DeleteButton postId={props?._id} />
 	const saveButton = (
-		<button
-			className="hover:scale-125 transition-transform ease-linear"
-			onClick={e => {
-				e.preventDefault()
-				e.stopPropagation()
-				props.handleReadingList(props._id)
-			}}
-		>
-			{props.in_reading_list ? (
-				<GoBookmarkSlash className="fill-yellow-500 text-2xl" />
-			) : (
-				<GoBookmark className="hover:fill-yellow-500 text-2xl" />
-			)}
-		</button>
+		<SaveButton postId={props?._id} isAdded={props.inReadingList} onUpdate={props.onReadingListUpdate} />
 	)
 
 	return (
 		<div className="border-t border-darkHighlight group first:border-transparent hover:border-transparent [&:hover+div]:border-transparent">
 			<div className={`relative p-8 group-hover:bg-darkSecondary transition ease duration-300 rounded-5xl`}>
-				<Link href={getRedirectURL(props?.profileView && props.authorView ? 2 : 1)}>
+				<Link href={getRedirectURL(props?._id, props?.title, props?.profileView && props.userView ? 2 : 1)}>
 					<div className="flex ss:gap-2.5 gap-2 items-center">
 						{!props?.profileView ? (
 							<>
 								<Image
 									className={"rounded-full object-cover w-6 aspect-square"}
-									src={props?.author?.profile_picture}
+									src={props?.user?.profile_picture}
 									alt="user"
 									width={32}
 									height={32}
 								/>
 								<div className="flex justify-between w-full">
 									<div className="flex gap-2 items-center">
-										<button onClick={() => router.push(`/author/${props?.author?.username}`)}>
-											<span className="text-fontSecondary text-base hover:underline">{props?.author?.name}</span>
+										<button onClick={() => router.push(`/user/${props?.user?.username}`)}>
+											<span className="text-fontSecondary text-base hover:underline">{props?.user?.name}</span>
 										</button>
 										<span className="opacity-60 text-sm">·</span>
 										<span className="opacity-60 text-sm">{calculateAge(props?.created_at)}</span>
@@ -98,7 +54,7 @@ const PostCard = (props: any) => {
 								</div>
 								<div className="flex gap-5 items-center">
 									{shareButton}
-									{props?.authorView ? (
+									{props?.userView ? (
 										<>
 											{viewButton}
 											{deleteButton}

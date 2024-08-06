@@ -32,7 +32,7 @@ const Settings = () => {
 					].join("-")
 				}
 
-				const userResponse = await axios.get("/api/author", {
+				const userResponse = await axios.get("/api/user", {
 					params: { username: session?.user.username }
 				})
 				setUserData({
@@ -44,7 +44,7 @@ const Settings = () => {
 
 	const handleSubmit = async () => {
 		try {
-			const response = await axios.put("/api/author", {
+			const response = await axios.put("/api/user", {
 				...userData,
 				dob: typeof userData.dob === "string" ? new Date(userData.dob).toJSON() : userData.dob
 			})
