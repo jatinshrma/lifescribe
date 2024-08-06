@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { IPost } from "@types"
 import axios from "axios"
 
@@ -16,6 +16,7 @@ import { calculateAge, getRedirectURL } from "@helpers/utils"
 import { useSession } from "next-auth/react"
 
 const Post = () => {
+	const router = useRouter()
 	const { data: session } = useSession()
 	const { id } = useParams()
 	const [post, setPost] = useState<IPost>()
@@ -113,7 +114,7 @@ const Post = () => {
 									{author?.isUserLoggedIn ? (
 										<>
 											<EditButton url={`/editor?id=${post?._id}`} />
-											<DeleteButton postId={post?._id} />
+											<DeleteButton postId={post?._id} onDelete={() => router.back()} />
 										</>
 									) : (
 										<>

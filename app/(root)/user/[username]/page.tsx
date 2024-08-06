@@ -357,7 +357,13 @@ const User = () => {
 										: (+post.private || 0) === state?.currTab
 								)
 								?.map(post => (
-									<PostCard key={post?._id} {...post} profileView={true} userView={isAutherLoggedIn} />
+									<PostCard
+										key={post?._id}
+										{...post}
+										profileView={true}
+										userView={isAutherLoggedIn}
+										onDelete={() => setPosts(prev => prev.filter(i => i._id !== post._id))}
+									/>
 								))}
 						</div>
 					</div>

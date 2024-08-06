@@ -12,7 +12,7 @@ const PostCard = (props: any) => {
 
 	const viewButton = <ViewButton url={getRedirectURL(props?._id, props?.title)} />
 	const shareButton = <ShareButton url={location.origin + getRedirectURL(props?._id, props?.title)} />
-	const deleteButton = <DeleteButton postId={props?._id} />
+	const deleteButton = <DeleteButton postId={props?._id} onDelete={props?.onDelete} />
 	const saveButton = (
 		<SaveButton postId={props?._id} isAdded={props.inReadingList} onUpdate={props.onReadingListUpdate} />
 	)
