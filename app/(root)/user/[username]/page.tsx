@@ -100,21 +100,26 @@ const User = () => {
 			}
 		>
 			<div className="max-w-[850px] mx-auto mb-8">
-				<div className="flex items-center gap-20 pt-16 pb-[72px]">
+				<div className="flex items-center gap-20 pt-[5rem] pb-[72px]">
 					<ImageCropWrapper>
 						{(props: IProfilePictureComponent) => (
 							<Image
-								className="object-cover rounded-full aspect-square w-72 h-72 cursor-pointer"
+								className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
 								src={props.url}
 								alt="user"
-								width={300}
-								height={300}
+								width={364}
+								height={364}
 							/>
 						)}
 					</ImageCropWrapper>
 
-					<div className="space-y-6">
-						<h2 className="font-playFD text-5xl font-medium">{user?.name}</h2>
+					<div className="space-y-4">
+						<h2
+							className="font-serif font-extrabold leading-none"
+							style={{ fontSize: `calc(56vw / ${Math.min(30, Math.max(12, user?.name?.length || 0))})` }}
+						>
+							{user?.name}
+						</h2>
 						<p className="font-lora text-whiteSecondary">{user?.about}</p>
 						<div className="opacity-60">
 							{!user?.private && <span>{posts?.filter(p => !p.private)?.length} Published</span>}
