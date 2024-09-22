@@ -6,11 +6,11 @@ import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2"
 import { BiArrowBack } from "react-icons/bi"
 import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 import { GoArrowRight } from "react-icons/go"
-import { getProviders, getSession } from "next-auth/react"
+import { getProviders } from "next-auth/react"
 import { BuiltInProviderType } from "next-auth/providers/index"
 import { ClientSafeProvider, LiteralUnion } from "next-auth/react"
-import Select from "@components/Select"
 import Spinner, { spinnerTypes } from "@components/Spinner"
+import { Select } from "@headlessui/react"
 
 interface FormState {
 	[key: string]: string
@@ -118,7 +118,7 @@ function SignUp() {
 										required
 									/>
 									<div className="flex gap-3 relative">
-										<Select
+										{/* <Select
 											options={genderOptions}
 											placeholder={"Gender"}
 											formField={"gender"}
@@ -126,7 +126,7 @@ function SignUp() {
 											onSelect={gender => setData(prev => ({ ...prev, gender }))}
 											disabled={flags?.loading}
 											required={true}
-										/>
+										/> */}
 										<div className="theme-input flex items-center">
 											<input
 												type="date"

@@ -1,5 +1,16 @@
-import { interests } from "@helpers/constants"
-import React from "react"
+import axios from "axios"
+import React, { useEffect, useState } from "react"
+
+type Child = {
+	_id: string
+	name: string
+}
+type Interest = {
+	_id: string
+	name: string
+	parents: [string]
+	children: Child[]
+}
 
 function UserInterests({
 	userInterests,
@@ -8,25 +19,60 @@ function UserInterests({
 	userInterests: string[]
 	setUserInterests: (x: string[]) => void
 }) {
+	const [interests, setInterests] = useState<Interest[]>()
+	useEffect(() => {
+		;(async () => {
+			const interestsRes = await axios.get("/api/interests")
+			setInterests(interestsRes.data)
+		})()
+	}, [])
+
+	const onClick = (i: Interest | Child) =>
+		userInterests?.includes(i._id)
+			? setUserInterests((userInterests || [])?.filter((_i: string) => _i !== i._id))
+			: setUserInterests((userInterests || [])?.concat([i._id]))
+
 	return (
 		<div className="flex gap-3 flex-wrap">
 			{interests?.map(i => (
-				<button
-					className={
-						"theme-button medium rounded-full text-opacity-100 border " +
-						(userInterests?.includes(i) ? "bg-whitePrimary text-darkPrimary" : "outlined hover:bg-darkSecondary")
-					}
-					onClick={() =>
-						userInterests?.includes(i)
-							? setUserInterests((userInterests || [])?.filter((_i: string) => _i !== i))
-							: setUserInterests((userInterests || [])?.concat([i]))
-					}
-				>
-					{i}
-				</button>
+				<>
+					<InterestButton
+						data={i}
+						isSelected={Boolean(userInterests?.includes(i._id))}
+						onClick={() => onClick(i)}
+					/>
+					{i.children?.map(child => (
+						<InterestButton
+							data={child}
+							isSelected={Boolean(userInterests?.includes(child._id))}
+							onClick={() => onClick(child)}
+						/>
+					))}
+				</>
 			))}
 		</div>
 	)
 }
+
+const InterestButton = ({
+	data,
+	isSelected,
+	onClick
+}: {
+	data: Interest | Child
+	isSelected: Boolean
+	onClick: () => void
+}) => (
+	<button
+		key={data._id}
+		className={
+			"theme-button medium rounded-full text-opacity-100 border " +
+			(isSelected ? "bg-whitePrimary text-darkPrimary" : "outlined hover:bg-darkSecondary")
+		}
+		onClick={onClick}
+	>
+		{data.name}
+	</button>
+)
 
 export default UserInterests

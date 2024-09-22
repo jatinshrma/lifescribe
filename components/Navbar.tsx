@@ -5,13 +5,13 @@ import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { useSession, getProviders, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Button, Dialog, DialogPanel, DialogTitle, Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { BiUser } from "react-icons/bi"
 import { SlLogout } from "react-icons/sl"
-import Overlay from "./Overlay"
 import { BsArrowRight } from "react-icons/bs"
 import { LuSettings } from "react-icons/lu"
 import Prompt from "./Prompt"
+import { FiFilter, FiSearch } from "react-icons/fi"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
@@ -33,13 +33,27 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	return (
-		<nav className="flex justify-between items-center py-3.5 px-5 ss:p-5">
+		<nav className="flex justify-between items-center gap-6 py-3.5 px-5 ss:p-5">
 			<div className="flex items-center justify-between ss:gap-7 gap-3">
 				<Link href="/">
 					<button className="ss:text-3xl text-lg font-bold">LifeScribe</button>
 				</Link>
 			</div>
-			<div className="flex gap-4 items-center">
+			<div className="flex items-center gap-3 rounded-full p-3 px-5 bg-darkSecondary w-[50vw]">
+				<span>
+					<FiSearch className="ss:text-[1.1rem] text-[1rem]" />
+				</span>
+				<input
+					type="text"
+					placeholder="Search posts, topics or users"
+					className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
+				/>
+				<button className="flex gap-2 items-center px-4">
+					<FiFilter />
+					Filter
+				</button>
+			</div>
+			<div className="flex gap-4 items-center flex-shrink-0">
 				{!session?.user.username ? (
 					<Link
 						href={"/sign-in"}
@@ -54,7 +68,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 						<Popover className="relative">
 							<PopoverButton className="rounded-full overflow-hidden">
 								<Image
-									className="object-cover sm:w-11 w-8 pointer-events-none"
+									className="object-cover sm:w-11 w-8 pointer-events-none aspect-square"
 									src={session?.user?.image || ""}
 									alt="user"
 									width={40}

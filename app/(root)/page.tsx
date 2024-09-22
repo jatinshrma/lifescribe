@@ -33,7 +33,7 @@ export default function Home() {
 			<div className="flex gap-16 mx-16">
 				<Feed session={session} />
 				<div className="w-1/4 h-[82vh] my-2">
-					<ReadingList session={session} />
+					{session?.user?.username && <ReadingList session={session} />}
 					<TopUsers session={session} />
 				</div>
 			</div>
@@ -60,20 +60,6 @@ const Feed = ({ session }: { session?: Session | null }) => {
 
 	return (
 		<div className="w-3/4 flex flex-col gap-3">
-			<div className="flex items-center gap-3 rounded-full p-4 px-5 bg-darkSecondary w-full">
-				<span>
-					<FiSearch className="ss:text-[1.1rem] text-[1rem]" />
-				</span>
-				<input
-					type="text"
-					placeholder="Search posts, topics or users"
-					className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
-				/>
-				<button className="flex gap-2 items-center px-4">
-					<FiFilter />
-					Filter
-				</button>
-			</div>
 			<div>
 				{posts?.map(post => (
 					<PostCard
@@ -128,7 +114,7 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 
 	return (
 		<>
-			<div className="flex justify-between items-center mb-4">
+			<div className="mb-10 flex justify-between items-center">
 				<div className="flex justify-between items-center w-full">
 					<div className="flex items-center gap-2">
 						<PiBookmarks className="text-2xl" />
@@ -176,10 +162,10 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 
 const TopUsers = ({ session }: { session?: Session | null }) => {
 	return (
-		<div className="mt-10 pb-6 space-y-6">
+		<div className="pb-6 space-y-6">
 			<div className="flex justify-between items-center">
 				<h2 className="text-lg flex items-center gap-2 font-medium">
-					<MdOutlineGroupAdd />
+					<MdOutlineGroupAdd className="text-xl" />
 					Top users
 				</h2>
 			</div>

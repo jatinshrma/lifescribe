@@ -1,4 +1,4 @@
-import { User, Post } from "@db/models"
+import { User, Post, Tag } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
 import connectToDB from "@db/index"
 import { postsAutherDetails, postsCheckReadingList, postsRegexPipeline } from "@helpers/mongoPipelines"
@@ -8,9 +8,61 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 		const username = request.nextUrl?.searchParams?.get("username")
 		const matchQuery = []
+
 		const user = username ? await User.findOne({ username }, { _id: 1 }) : null
 
-		if (user?._id)
+		if (user?._id) {
+			const tagsList = (
+				await User.aggregate([
+					{
+						$match: {
+							username
+						}
+					},
+					{
+						$unwind: {
+							path: "$interests",
+							preserveNullAndEmptyArrays: false
+						}
+					},
+					{
+						$group: {
+							_id: "$interests"
+						}
+					},
+					{
+						$lookup: {
+							from: "tags",
+							localField: "_id",
+							foreignField: "parents",
+							pipeline: [
+								{
+									$project: {
+										_id: 1
+									}
+								}
+							],
+							as: "tags"
+						}
+					},
+					{
+						$set: {
+							tags: {
+								$concatArrays: [["$_id"], "$tags._id"]
+							}
+						}
+					},
+					{
+						$group: {
+							_id: 0,
+							tags: {
+								$push: "$tags"
+							}
+						}
+					}
+				])
+			)?.[0]?.tags?.flat()
+
 			matchQuery.push({
 				$match: {
 					$and: [
@@ -23,10 +75,16 @@ export const GET = async (request: NextRequest) => {
 							private: {
 								$ne: true
 							}
+						},
+						{
+							tags: {
+								$in: tagsList
+							}
 						}
 					]
 				}
 			})
+		}
 
 		const pipeline = [
 			...matchQuery,

@@ -66,8 +66,9 @@ export interface IReadingList {
 }
 
 export interface ITag {
+	_id: mongoose.Schema.Types.ObjectId | string
 	name: string
-	parents: (mongoose.Schema.Types.ObjectId | string)[]
+	parents?: (mongoose.Schema.Types.ObjectId | string)[]
 }
 
 export interface IPostLikes {

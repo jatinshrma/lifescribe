@@ -137,7 +137,7 @@ export const GET = async (request: NextRequest, { params }: IParams) => {
 export const PUT = async (request: NextRequest, { params }: IParams) => {
 	try {
 		const postId = params?.id
-		const data: any = request.body
+		const data: any = await request.json()
 		await Post.findByIdAndUpdate(postId, data)
 		return NextResponse.json({ success: true })
 	} catch (error: any) {

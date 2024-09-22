@@ -1,5 +1,5 @@
 import connectToDB from "@db/index"
-import { ReadingList } from "@db/models"
+import { ReadingList, Tag } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 import { postsAutherDetails, postsRegexPipeline } from "@helpers/mongoPipelines"
 import mongoose from "mongoose"
@@ -8,6 +8,39 @@ import { NextRequest, NextResponse } from "next/server"
 export const GET = async (request: NextRequest) => {
 	try {
 		await connectToDB()
+
+		// {
+		// 	const tags = []
+		// 	for (let index1 = 1; index1 < 10; index1++) {
+		// 		const _id1 = new mongoose.Types.ObjectId()
+		// 		tags.push({
+		// 			_id: _id1,
+		// 			name: `Tag A${index1}`,
+		// 			parents: null
+		// 		})
+		// 		for (let index2 = 1; index2 <= 5; index2++) {
+		// 			const _id2 = new mongoose.Types.ObjectId()
+		// 			tags.push({
+		// 				_id: _id2,
+		// 				name: `Tag A${index1}:B${index2}`,
+		// 				parents: [_id1]
+		// 			})
+		// 			for (let index3 = 1; index3 <= 3; index3++) {
+		// 				const _id3 = new mongoose.Types.ObjectId()
+		// 				tags.push({
+		// 					_id: _id3,
+		// 					name: `Tag A${index1}:B${index2}:C${index3}`,
+		// 					parents: [_id1, _id2]
+		// 				})
+		// 			}
+		// 		}
+		// 	}
+
+		// 	for (const element of tags) {
+		// 		await Tag.create(element)
+		// 	}
+		// }
+
 		const { user_id } = getUserHeaders(request)
 		const recent = Boolean(request.nextUrl?.searchParams?.get("recent"))
 		const sortAndLimit = !recent
