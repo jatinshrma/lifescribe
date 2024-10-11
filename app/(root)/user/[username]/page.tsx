@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import { IUser, ICollection, IPost, IProfilePictureComponent, IReadingList } from "@types"
+import { IUser, ICollection, IPost, IProfilePictureComponent, IReadingList, ReadingListType } from "@types"
 import axios from "axios"
 import { PostCard } from "@components"
 import { ImageCropWrapper } from "@components/ImageCrop"
@@ -53,7 +53,7 @@ const User = () => {
 	const [user, setUser] = useState<IUser>()
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
 	const [collections, setCollections] = useState<ICollection[]>([])
-	const [readingList, setReadingList] = useState<IReadingList>()
+	const [readingList, setReadingList] = useState<ReadingListType>()
 
 	const isAutherLoggedIn = session?.user.username && username === session?.user.username
 
@@ -107,7 +107,7 @@ const User = () => {
 					) : (
 						<Image
 							className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
-							src={user?.profile_picture}
+							src={user?.profile_picture as string}
 							alt="user"
 							width={364}
 							height={364}
@@ -299,7 +299,7 @@ const User = () => {
 					<div className="space-y-5">
 						{readingList?.posts?.map(post => (
 							<PostCard
-								key={"reading_list:" + post?._id}
+								key={"reading_list:" + (post?._id as string)}
 								{...post}
 								inReadingList={true}
 								onReadingListUpdate={(status: boolean) =>

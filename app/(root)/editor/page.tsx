@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 
 import axios from "axios"
-import React, { useState, useEffect, useMemo, useRef, MutableRefObject } from "react"
+import React, { useState, useEffect, useMemo, useRef, MutableRefObject, Suspense } from "react"
 import { TbUpload } from "react-icons/tb"
 import ReactQuill from "@components/ReactQuill"
 import RQType from "react-quill"
@@ -34,7 +34,7 @@ import { tagsList, visibilityOptions } from "@helpers/constants"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { useRouter } from "next/navigation"
 
-const Editor = () => {
+const EditorComponent = () => {
 	const searchParams = useSearchParams()
 	const { data: session } = useSession()
 	const [post, setPost] = useState<IPost | null>(null)
@@ -497,4 +497,10 @@ type TagsSelectionProps = {
 	setTags: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export default Editor
+export default function Editor() {
+	return (
+		<Suspense>
+			<EditorComponent />
+		</Suspense>
+	)
+}

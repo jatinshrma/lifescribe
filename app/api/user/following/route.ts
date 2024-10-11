@@ -53,8 +53,6 @@ export const PUT = async (request: NextRequest) => {
 			}
 		])
 
-		console.log(currFollowing)
-
 		let status = false
 		if (!currFollowing) {
 			await Following.create({

@@ -34,7 +34,7 @@ export const POST = async (request: NextRequest) => {
 		const fileName = `${type}-${dateFn.format(Date.now(), "yyyy-MM-dd-HH-mm")}.${mime.getExtension(file.type)}`
 		let filePath = userUploadDir + "/" + fileName
 
-		await writeFile(join(process.cwd(), filePath), buffer)
+		await writeFile(join(process.cwd(), filePath), buffer as any)
 
 		filePath = "/" + filePath.split("/").slice(1).join("/")
 		if (type === "profile-picture") {

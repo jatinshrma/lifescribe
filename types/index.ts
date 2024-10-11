@@ -18,6 +18,7 @@ export interface IPost {
 	reading_time: number
 	likes: number
 	isLiked?: boolean
+	inReadingList?: boolean
 }
 
 export interface IPostCardProps {
@@ -63,6 +64,25 @@ export interface IReadingList {
 		post_id: mongoose.Schema.Types.ObjectId | string
 		timestamp: Date
 	}[]
+}
+
+export type ReadingListType = {
+	_id: string
+	posts: [
+		{
+			title: string
+			content: string
+			user: {
+				name: string
+				profile_picture: string
+				username: string
+			}
+			post_id: string
+			_id: string
+			timestamp: Date
+			timeString?: string
+		}
+	]
 }
 
 export interface ITag {

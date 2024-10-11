@@ -1,7 +1,7 @@
 "use client"
 
 import { PostCard } from "@components/index"
-import { IPostCardProps, IReadingList } from "@types"
+import { IPostCardProps, IReadingList, ReadingListType } from "@types"
 import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -65,7 +65,7 @@ const Feed = ({ session }: { session?: Session | null }) => {
 }
 
 const ReadingList = ({ session }: { session?: Session | null }) => {
-	const [readingList, setReadingList] = useState<IReadingList["posts"]>()
+	const [readingList, setReadingList] = useState<ReadingListType["posts"]>()
 
 	useEffect(() => {
 		if (session?.user?.username)
@@ -78,7 +78,7 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 
 				if (response.data) {
 					setReadingList(
-						response.data?.posts?.map(i => ({
+						response.data?.posts?.map((i: { timestamp: Date }) => ({
 							...i,
 							timeString: calculateAge(i.timestamp, true)
 						}))
@@ -93,7 +93,7 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 				post_id
 			})
 			if (response.data.success) {
-				setReadingList(prev => prev?.filter(p => p.post_id !== post_id) || [])
+				setReadingList(prev => (prev?.filter(p => p.post_id !== post_id) || []) as ReadingListType["posts"])
 			}
 		} catch (error) {
 			console.error(error)

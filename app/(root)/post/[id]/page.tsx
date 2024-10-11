@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { IPost } from "@types"
+import { IPost, IUser } from "@types"
 import axios from "axios"
 
 import "react-quill/dist/quill.bubble.css"
@@ -15,12 +15,24 @@ import { DeleteButton, EditButton, SaveButton, ShareButton } from "@components/A
 import { calculateAge, getRedirectURL } from "@helpers/utils"
 import { useSession } from "next-auth/react"
 
+type PostAuthor = {
+	profile_picture: Pick<IUser, "profile_picture"> | string
+	name: Pick<IUser, "name">
+	username: Pick<IUser, "username">
+	isFollowed: boolean
+	followers: number
+	isUserLoggedIn: boolean
+	user_collection: {
+		name: string
+	}
+}
+
 const Post = () => {
 	const router = useRouter()
 	const { data: session } = useSession()
 	const { id } = useParams()
 	const [post, setPost] = useState<IPost>()
-	const [author, setAuthor] = useState({})
+	const [author, setAuthor] = useState<PostAuthor | null>(null)
 
 	useEffect(() => {
 		if (session?.user?.name || session === null)
@@ -58,11 +70,14 @@ const Post = () => {
 				username: author?.username
 			})
 			if (response.data.success) {
-				setAuthor(prev => ({
-					...prev,
-					isFollowed: response.data.isFollowed,
-					followers: (prev.followers || 0) + (response.data.isFollowed ? 1 : -1)
-				}))
+				setAuthor(
+					prev =>
+						({
+							...prev,
+							isFollowed: response.data.isFollowed,
+							followers: (prev?.followers || 0) + (response.data.isFollowed ? 1 : -1)
+						} as PostAuthor)
+				)
 			}
 		} catch (error) {
 			console.error(error)
@@ -78,7 +93,7 @@ const Post = () => {
 						<div className="mt-8 mb-5 flex gap-4">
 							<Image
 								className={"rounded-full object-cover w-12 aspect-square"}
-								src={author?.profile_picture}
+								src={author?.profile_picture as string}
 								alt="user"
 								width={32}
 								height={32}
@@ -87,7 +102,7 @@ const Post = () => {
 								<div>
 									<div className="flex items-center gap-2">
 										<Link href={`/user/${author?.username}`}>
-											<span className="text-fontSecondary text-base hover:underline">{author?.name}</span>
+											<span className="text-fontSecondary text-base hover:underline">{`${author?.name}`}</span>
 										</Link>
 										<span className="opacity-60 text-sm">·</span>
 										<span className="opacity-60 text-sm">{author?.followers || 0} Followers</span>
@@ -114,7 +129,7 @@ const Post = () => {
 									{author?.isUserLoggedIn ? (
 										<>
 											<EditButton url={`/editor?id=${post?._id}`} />
-											<DeleteButton postId={post?._id} onDelete={() => router.back()} />
+											<DeleteButton postId={post?._id as string} onDelete={() => router.back()} />
 										</>
 									) : (
 										<>
@@ -126,8 +141,8 @@ const Post = () => {
 											</button>
 											<ShareButton url={location.origin + getRedirectURL(post?._id, post?.title)} />
 											<SaveButton
-												postId={post?._id}
-												isAdded={post?.inReadingList}
+												postId={post?._id as string}
+												isAdded={Boolean(post?.inReadingList)}
 												onUpdate={status =>
 													setPost(prev => ({
 														...(prev as IPost),
