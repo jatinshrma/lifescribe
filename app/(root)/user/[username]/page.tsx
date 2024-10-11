@@ -10,7 +10,7 @@ import { ImageCropWrapper } from "@components/ImageCrop"
 import { TbArrowsSort, TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
 import { AnyObject } from "mongoose"
-import { RiQuillPenLine, RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
+import { RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
 import { BsCollection } from "react-icons/bs"
 import { FiArrowLeft } from "react-icons/fi"
 import { BsCalendarDate } from "react-icons/bs"
@@ -89,29 +89,30 @@ const User = () => {
 	}, [username])
 
 	return (
-		<LayoutWrapper
-			navActions={
-				<Link href={"/editor"}>
-					<button className="theme-button primary">
-						<RiQuillPenLine className="h-5 w-5" />
-						<span>Scribe</span>
-					</button>
-				</Link>
-			}
-		>
+		<LayoutWrapper showScribeButton>
 			<div className="max-w-[850px] mx-auto mb-8">
 				<div className="flex items-center gap-20 pt-[5rem] pb-[72px]">
-					<ImageCropWrapper>
-						{(props: IProfilePictureComponent) => (
-							<Image
-								className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
-								src={props.url}
-								alt="user"
-								width={364}
-								height={364}
-							/>
-						)}
-					</ImageCropWrapper>
+					{isAutherLoggedIn ? (
+						<ImageCropWrapper>
+							{(props: IProfilePictureComponent) => (
+								<Image
+									className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
+									src={props.url}
+									alt="user"
+									width={364}
+									height={364}
+								/>
+							)}
+						</ImageCropWrapper>
+					) : (
+						<Image
+							className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
+							src={user?.profile_picture}
+							alt="user"
+							width={364}
+							height={364}
+						/>
+					)}
 
 					<div className="space-y-4">
 						<h2

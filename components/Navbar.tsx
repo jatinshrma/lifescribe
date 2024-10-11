@@ -48,16 +48,16 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 					placeholder="Search posts, topics or users"
 					className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
 				/>
-				<button className="flex gap-2 items-center px-4">
+				{/* <button className="flex gap-2 items-center px-4">
 					<FiFilter />
 					Filter
-				</button>
+				</button> */}
 			</div>
 			<div className="flex gap-4 items-center flex-shrink-0">
 				{!session?.user.username ? (
 					<Link
 						href={"/sign-in"}
-						className="theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
+						className="absolute right-4 theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
 					>
 						Sign In
 						<BsArrowRight className="text-lg w-[0px] group-hover:!w-[18px] transition-all ease-linear" />

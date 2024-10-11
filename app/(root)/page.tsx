@@ -6,11 +6,8 @@ import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { GoBookmarkSlash } from "react-icons/go"
-import { FiArrowRight, FiFilter, FiSearch } from "react-icons/fi"
 import { MdOutlineGroupAdd } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
-import { RiQuillPenLine } from "react-icons/ri"
-import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { PiBookmarks } from "react-icons/pi"
 import { Session } from "next-auth"
@@ -20,21 +17,12 @@ import { calculateAge } from "@helpers/utils"
 export default function Home() {
 	const { data: session } = useSession()
 	return (
-		<LayoutWrapper
-			navActions={
-				<Link href={"/editor"}>
-					<button className="theme-button primary">
-						<RiQuillPenLine className="h-5 w-5" />
-						<span>Scribe</span>
-					</button>
-				</Link>
-			}
-		>
+		<LayoutWrapper showScribeButton>
 			<div className="flex gap-16 mx-16">
 				<Feed session={session} />
 				<div className="w-1/4 h-[82vh] my-2">
 					{session?.user?.username && <ReadingList session={session} />}
-					<TopUsers session={session} />
+					{/* <TopUsers session={session} /> */}
 				</div>
 			</div>
 		</LayoutWrapper>

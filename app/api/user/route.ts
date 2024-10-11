@@ -16,6 +16,7 @@ export const GET = async (request: NextRequest) => {
 				gender: 1,
 				dob: 1,
 				interests: 1,
+				profile_picture: 1,
 				private: 1
 			}
 		)
