@@ -1,10 +1,8 @@
-import mime from "mime"
-import { join } from "path"
-import { stat, mkdir, writeFile } from "fs/promises"
-import * as dateFn from "date-fns"
 import { NextRequest, NextResponse } from "next/server"
 import { User } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
+import { format } from "date-fns"
+import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from "cloudinary"
 
 export const POST = async (request: NextRequest) => {
 	const { user_id } = getUserHeaders(request)
@@ -12,38 +10,38 @@ export const POST = async (request: NextRequest) => {
 
 	const type = formData.get("type")
 	const file = formData.get("file") as Blob | null
-	if (!file) {
-		return NextResponse.json({ error: "File blob is required." }, { status: 400 })
-	}
-
-	const buffer = Buffer.from(await file.arrayBuffer())
-	const userUploadDir = "public/uploads/" + user_id
+	if (!file) return NextResponse.json({ error: "File blob is required." }, { status: 400 })
 
 	try {
-		await stat(join(process.cwd(), userUploadDir))
-	} catch (e: any) {
-		if (e.code === "ENOENT") {
-			await mkdir(join(process.cwd(), userUploadDir), { recursive: true })
-		} else {
-			console.error("Error while trying to create directory when uploading a file\n", e)
-			return NextResponse.json({ error: "Something went wrong." }, { status: 500 })
-		}
-	}
+		const fileBuffer = Buffer.from(await file.arrayBuffer())
+		const response: UploadApiResponse | UploadApiErrorResponse | undefined = await new Promise(
+			(resolve, reject) => {
+				const uploadStream = cloudinary.uploader.upload_stream(
+					{
+						resource_type: "auto",
+						public_id: type === "profile_picture" ? type : `${type}_${format(Date.now(), "yyyy-MM-dd-HH-mm")}`,
+						folder: `lifescribe/${type}/${user_id}`
+					},
+					(error, result) => {
+						if (error) {
+							reject(error)
+						} else {
+							resolve(result)
+						}
+					}
+				)
 
-	try {
-		const fileName = `${type}-${dateFn.format(Date.now(), "yyyy-MM-dd-HH-mm")}.${mime.getExtension(file.type)}`
-		let filePath = userUploadDir + "/" + fileName
+				uploadStream.end(fileBuffer)
+			}
+		)
 
-		await writeFile(join(process.cwd(), filePath), buffer as any)
-
-		filePath = "/" + filePath.split("/").slice(1).join("/")
-		if (type === "profile-picture") {
+		if (type === "profile_picture") {
 			await User.findByIdAndUpdate(user_id, {
-				profile_picture: filePath
+				profile_picture: response?.secure_url
 			})
 		}
 
-		return NextResponse.json({ filePath })
+		return NextResponse.json({ url: response?.secure_url })
 	} catch (e) {
 		console.error("Error while trying to upload a file\n", e)
 		return NextResponse.json({ error: "Something went wrong." }, { status: 500 })

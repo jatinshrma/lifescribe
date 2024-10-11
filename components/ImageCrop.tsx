@@ -151,7 +151,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 		})
 
 		const formData = new FormData()
-		formData.append("type", "profile-picture")
+		formData.append("type", "profile_picture")
 		formData.append("file", file)
 
 		const response = await axios.post("/api/upload", formData, {

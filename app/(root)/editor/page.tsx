@@ -79,6 +79,7 @@ const EditorComponent = () => {
 				if (!/^image\//.test(file.type)) return console.warn("You could only upload images.")
 
 				const fd = new FormData()
+				fd.append("type", "blog_image")
 				fd.append("file", file)
 
 				const config = { headers: { "content-type": "multipart/form-data" } }
@@ -86,7 +87,7 @@ const EditorComponent = () => {
 
 				if (response.status !== 200) return
 				const index = editorRef?.current?.getEditor()?.getSelection()?.index || 0
-				editorRef?.current?.getEditor().insertEmbed(index, "image", response.data.file_url)
+				editorRef?.current?.getEditor().insertEmbed(index, "image", response.data.url)
 			} catch (error) {
 				console.error("Error occurred in uploading image:", error)
 			}

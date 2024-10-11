@@ -31,6 +31,12 @@ module.exports = {
 				hostname: "randomuser.me",
 				port: "",
 				pathname: "/**"
+			},
+			{
+				protocol: "https",
+				hostname: "res.cloudinary.com",
+				port: "",
+				pathname: "/**"
 			}
 		]
 	}
