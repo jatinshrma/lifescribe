@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Suspense } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import Link from "next/link"
@@ -15,21 +15,23 @@ export default function LayoutWrapper({
 }) {
 	return (
 		<div>
-			<Navbar>
-				{navActions}
-				{showScribeButton && (
-					<Link href={"/editor"}>
-						<button className="theme-button primary">
-							<RiQuillPenLine className="h-5 w-5" />
-							<span>Scribe</span>
-						</button>
-					</Link>
-				)}
-			</Navbar>
-			<main className="px-5">{children}</main>
-			{/* <main id="app-content">{children}</main> */}
-			{/* {children} */}
-			<Footer />
+			<Suspense fallback={<p>Loading...</p>}>
+				<Navbar>
+					{navActions}
+					{showScribeButton && (
+						<Link href={"/editor"}>
+							<button className="theme-button primary">
+								<RiQuillPenLine className="h-5 w-5" />
+								<span>Scribe</span>
+							</button>
+						</Link>
+					)}
+				</Navbar>
+				<main className="px-5">{children}</main>
+				{/* <main id="app-content">{children}</main> */}
+				{/* {children} */}
+				<Footer />
+			</Suspense>
 		</div>
 	)
 }

@@ -80,17 +80,20 @@ export const SaveButton = ({
 	isAdded: boolean
 	onUpdate: (x: boolean) => void
 }) => {
+	const [loading, setLoading] = useState(false)
 	const handleReadingList = async () => {
 		try {
+			setLoading(true)
 			const response = await axios.post("/api/reading_list", {
 				post_id: postId
 			})
 			if (response.data.success) {
-				onUpdate(response.data.updatedStatus)
+				await onUpdate(response.data.updatedStatus)
 			}
 		} catch (error) {
 			console.error(error)
 		}
+		setLoading(false)
 	}
 
 	return (
@@ -101,10 +104,12 @@ export const SaveButton = ({
 				handleReadingList()
 			}}
 		>
-			{isAdded ? (
-				<GoBookmarkSlash className="fill-yellow-500 text-2xl" />
+			{loading ? (
+				<div className="custom-spinner w-5 h-5" />
+			) : isAdded ? (
+				<GoBookmarkSlash className="fill-yellow-500 text-xl scale-11" />
 			) : (
-				<GoBookmark className="hover:fill-yellow-500 text-2xl" />
+				<GoBookmark className="hover:fill-yellow-500 text-xl scale-11" />
 			)}
 		</button>
 	)

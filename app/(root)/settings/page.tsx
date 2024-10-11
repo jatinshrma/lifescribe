@@ -13,11 +13,16 @@ import UserInterests from "@components/UserInterests"
 import UserProfileForm from "@components/UserProfileForm"
 import UserProfiltType from "@components/UserProfiltType"
 import { FaChevronRight } from "react-icons/fa6"
+import Button from "@components/Button"
+import { toast } from "react-toastify"
 
 const Settings = () => {
 	const router = useRouter()
 	const { data: session, update } = useSession()
 	const [userData, setUserData] = useState<any>({})
+	const [flags, setFlags] = useState<{
+		saving?: boolean
+	}>({})
 
 	useEffect(() => {
 		if (session?.user.username)
@@ -44,15 +49,20 @@ const Settings = () => {
 
 	const handleSubmit = async () => {
 		try {
+			setFlags({ saving: true })
 			const response = await axios.put("/api/user", {
 				...userData,
 				dob: typeof userData.dob === "string" ? new Date(userData.dob).toJSON() : userData.dob
 			})
 			if (response.data.success) {
 				await update()
+				toast("Changes saved successfully!", {
+					progressStyle: { backgroundColor: "white" }
+				})
 				router.push("/")
 			}
 		} catch (error) {
+			setFlags({})
 			console.error(error)
 		}
 	}
@@ -134,12 +144,14 @@ const Settings = () => {
 						</TabList>
 					</div>
 
-					<button
+					<Button
+						loading={flags?.saving}
+						spinnerClassName="border-darkPrimary"
 						onClick={handleSubmit}
-						className={"theme-button w-full bg-whitePrimary text-opacity-100 rounded-lg gap-2 justify-center"}
+						className={"theme-button w-full bg-whitePrimary rounded-lg gap-3 justify-center"}
 					>
-						<span className="text-darkPrimary font-medium pl-2 block">Save changes</span>
-					</button>
+						<span className="text-darkPrimary font-semibold block">Save Changes</span>
+					</Button>
 				</div>
 				<TabPanels className="w-2/3 overflow-auto h-[calc(100vh-90px)]">
 					{tabsData?.map(i => (

@@ -7,11 +7,10 @@ import { useSession, getProviders, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { BiUser } from "react-icons/bi"
-import { SlLogout } from "react-icons/sl"
 import { BsArrowRight } from "react-icons/bs"
 import { LuSettings } from "react-icons/lu"
 import Prompt from "./Prompt"
-import { FiFilter, FiSearch } from "react-icons/fi"
+import { PiSignOutBold } from "react-icons/pi"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
@@ -36,10 +35,10 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 		<nav className="flex justify-between items-center gap-6 py-3.5 px-5 ss:p-5">
 			<div className="flex items-center justify-between ss:gap-7 gap-3">
 				<Link href="/">
-					<button className="ss:text-3xl text-lg font-bold">LifeScribe</button>
+					<button className="font-playFD ss:text-3xl text-lg font-bold">LifeScribe</button>
 				</Link>
 			</div>
-			<div className="flex items-center gap-3 rounded-full p-3 px-5 bg-darkSecondary w-[50vw]">
+			{/* <div className="flex items-center gap-3 rounded-full p-3 px-5 bg-darkSecondary w-[50vw]">
 				<span>
 					<FiSearch className="ss:text-[1.1rem] text-[1rem]" />
 				</span>
@@ -48,11 +47,11 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 					placeholder="Search posts, topics or users"
 					className="text-sm w-full text-whitePrimary text-opacity-100 placeholder:text-whitePrimary placeholder:text-opacity-60"
 				/>
-				{/* <button className="flex gap-2 items-center px-4">
+				<button className="flex gap-2 items-center px-4">
 					<FiFilter />
 					Filter
-				</button> */}
-			</div>
+				</button>
+			</div> */}
 			<div className="flex gap-4 items-center flex-shrink-0">
 				{!session?.user.username ? (
 					<Link
@@ -97,7 +96,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 									className="theme-button primary gap-4 rounded-lg w-full"
 									onClick={() => setFlags({ signOut: true })}
 								>
-									<SlLogout className="text-xl -translate-x-1 " />
+									<PiSignOutBold className="text-xl" />
 									<span className="text-base">Sign Out</span>
 								</button>
 							</PopoverPanel>

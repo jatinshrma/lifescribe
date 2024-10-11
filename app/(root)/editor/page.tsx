@@ -33,6 +33,8 @@ import { IoAdd, IoSearchOutline } from "react-icons/io5"
 import { tagsList, visibilityOptions } from "@helpers/constants"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { useRouter } from "next/navigation"
+import Button from "@components/Button"
+import { toast } from "react-toastify"
 
 const EditorComponent = () => {
 	const searchParams = useSearchParams()
@@ -44,7 +46,11 @@ const EditorComponent = () => {
 	const postId = searchParams.get("id")
 
 	const editorRef = useRef(null) as MutableRefObject<RQType> | MutableRefObject<null>
-	const [state, setState] = useState({ state: 0 })
+	const [state, setState] = useState<{
+		contentLoading?: boolean
+		publishing?: boolean
+		state?: number
+	}>({ state: 0 })
 
 	useEffect(() => {
 		if (postId)
@@ -121,40 +127,49 @@ const EditorComponent = () => {
 	}
 
 	const submitHandler = async (params: IPostSubmitParams) => {
-		const div = document.createElement("div")
-		if (post?.content) div.innerHTML = post.content
+		try {
+			setState(prev => ({ ...prev, publishing: true }))
 
-		const words_count = Array.from(div.children, ({ textContent }) => textContent?.trim())
-			.filter(Boolean)
-			.join(" ").length
+			const div = document.createElement("div")
+			if (post?.content) div.innerHTML = post.content
 
-		const response = await axios({
-			method: postId ? "PUT" : "POST",
-			url: "/api/post" + (postId ? `/${postId}` : ""),
-			data: {
-				title: post?.title,
-				content: post?.content,
-				reading_time: Math.ceil(words_count / 200),
-				...params
+			const words_count = Array.from(div.children, ({ textContent }) => textContent?.trim())
+				.filter(Boolean)
+				.join(" ").length
+
+			const response = await axios({
+				method: postId ? "PUT" : "POST",
+				url: "/api/post" + (postId ? `/${postId}` : ""),
+				data: {
+					title: post?.title,
+					content: post?.content,
+					reading_time: Math.ceil(words_count / 200),
+					...params
+				}
+			})
+
+			const _postId = response.data.postId || postId
+			if (_postId) {
+				toast.success("Published your new post successfully!")
+				router.push(`/post/${_postId}?title=${post?.title?.replaceAll(" ", "-")}`)
 			}
-		})
-
-		const _postId = response.data.postId || postId
-		if (_postId) {
-			router.push(`/post/${_postId}?title=${post?.title?.replaceAll(" ", "-")}`)
+		} catch (error) {
+			setState(prev => ({ ...prev, publishing: false }))
 		}
 	}
 
 	return (
 		<LayoutWrapper
 			navActions={
-				<button
-					className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
-					onClick={() => setState(prev => ({ state: +Boolean(!prev.state) }))}
-				>
-					<TbUpload className="stroke-darkPrimary" />
-					<span className="text-darkPrimary text-sm">Publish</span>
-				</button>
+				state?.state === 0 && (
+					<button
+						className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
+						onClick={() => setState(prev => ({ state: +Boolean(!prev.state) }))}
+					>
+						<TbUpload className="stroke-darkPrimary" />
+						<span className="text-darkPrimary text-sm">Publish</span>
+					</button>
+				)
 			}
 		>
 			<div className="ss:px-0 px-4">
@@ -180,11 +195,8 @@ const EditorComponent = () => {
 					</div>
 				) : state?.state === 1 ? (
 					<AdditionalDetails
-						goBack={() =>
-							setState({
-								state: 0
-							})
-						}
+						goBack={() => setState({ state: 0 })}
+						isPublishing={Boolean(state?.publishing)}
 						submit={submitHandler}
 						userCollections={userCollections}
 						post={post}
@@ -199,12 +211,14 @@ function AdditionalDetails({
 	goBack,
 	submit,
 	post,
-	userCollections
+	userCollections,
+	isPublishing
 }: {
 	goBack: () => void
 	submit: (props: IPostSubmitParams) => void
 	post: IPost | null
 	userCollections: ICollection[]
+	isPublishing: boolean
 }) {
 	const [query, setQuery] = useState("")
 	const [tags, setTags] = useState<any>([])
@@ -391,8 +405,12 @@ function AdditionalDetails({
 				</div>
 			</div>
 
-			<button
-				className="theme-button bg-whitePrimary text-darkPrimary text-opacity-100 font-medium"
+			<Button
+				loading={isPublishing}
+				className="bg-whitePrimary text-darkPrimary font-medium"
+				spinnerClassName="border-darkPrimary"
+				Icon={TbUpload}
+				iconsClassName="stroke-darkPrimary"
 				onClick={() => {
 					const params: IPostSubmitParams = {
 						tags
@@ -410,9 +428,8 @@ function AdditionalDetails({
 					submit(params)
 				}}
 			>
-				<TbUpload className="stroke-darkPrimary" />
 				<span className="text-darkPrimary text-sm">Publish now</span>
-			</button>
+			</Button>
 		</div>
 	)
 }

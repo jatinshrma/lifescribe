@@ -24,6 +24,8 @@ export const PUT = async (request: NextRequest, { params }: { params: { id: stri
 			}
 		])
 
+		console.log({ currPostLikes })
+
 		let status = false
 		if (!currPostLikes?.[0]) {
 			await PostLikes.create({
@@ -33,6 +35,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { id: stri
 			status = true
 		} else {
 			status = currPostLikes?.[0]?.isLiked
+			console.log({ status })
 			await PostLikes.findByIdAndUpdate(currPostLikes[0]._id, {
 				[status ? "$pull" : "$push"]: {
 					users: user_id

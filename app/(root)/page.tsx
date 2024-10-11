@@ -1,29 +1,35 @@
 "use client"
 
 import { PostCard } from "@components/index"
-import { IPostCardProps, IReadingList, ReadingListType } from "@types"
+import { IPostCardProps, ReadingListType } from "@types"
 import axios from "axios"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { GoBookmarkSlash } from "react-icons/go"
-import { MdOutlineGroupAdd } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
 import { useSession } from "next-auth/react"
-import { PiBookmarks } from "react-icons/pi"
 import { Session } from "next-auth"
-import { FaChevronRight } from "react-icons/fa6"
-import { calculateAge } from "@helpers/utils"
+import { calculateAge, getRedirectURL } from "@helpers/utils"
+import { PostSkeleton, ReadingListSkeleton, TopArtistSkeleton } from "@components/Skeleton"
+import Link from "next/link"
+import { FiArrowRight } from "react-icons/fi"
+import { BsBookmarkCheck } from "react-icons/bs"
 
 export default function Home() {
 	const { data: session } = useSession()
+
 	return (
 		<LayoutWrapper showScribeButton>
 			<div className="flex gap-16 mx-16">
-				<Feed session={session} />
-				<div className="w-1/4 h-[82vh] my-2">
-					{session?.user?.username && <ReadingList session={session} />}
-					{/* <TopUsers session={session} /> */}
+				<div className={"w-3/4 " + (session?.user?.username ? "" : "m-auto")}>
+					<Feed session={session} />
 				</div>
+				{session?.user?.username && (
+					<div className="w-1/4 h-[82vh] my-2 space-y-6">
+						<ReadingList session={session} />
+						{/* <TopUsers session={session} /> */}
+					</div>
+				)}
 			</div>
 		</LayoutWrapper>
 	)
@@ -31,34 +37,46 @@ export default function Home() {
 
 const Feed = ({ session }: { session?: Session | null }) => {
 	const [posts, setPosts] = useState<IPostCardProps[]>([])
+	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
 		if (session !== undefined)
 			(async () => {
-				const response = await axios.get("/api/post/feed", {
-					params: {
-						username: session?.user?.username
+				try {
+					const response = await axios.get("/api/post/feed", {
+						params: {
+							username: session?.user?.username
+						}
+					})
+					if (response.data) {
+						setPosts(response?.data)
 					}
-				})
-				if (response.data) {
-					setPosts(response?.data)
-				}
+				} catch (error) {}
+				setLoading(false)
 			})()
 	}, [session])
 
 	return (
-		<div className="w-3/4 flex flex-col gap-3">
+		<div className="flex flex-col gap-3">
 			<div>
-				{posts?.map(post => (
-					<PostCard
-						key={post._id.toString()}
-						{...post}
-						hideTags={true}
-						onReadingListUpdate={(status: boolean) =>
-							setPosts(prev => prev.map(p => (p._id === post._id ? { ...p, inReadingList: status } : p)))
-						}
-					/>
-				))}
+				{loading ? (
+					<>
+						<PostSkeleton />
+						<PostSkeleton />
+						<PostSkeleton />
+					</>
+				) : (
+					posts?.map(post => (
+						<PostCard
+							key={post._id.toString()}
+							{...post}
+							hideTags={true}
+							onReadingListUpdate={(status: boolean) =>
+								setPosts(prev => prev.map(p => (p._id === post._id ? { ...p, inReadingList: status } : p)))
+							}
+						/>
+					))
+				)}
 			</div>
 		</div>
 	)
@@ -66,24 +84,28 @@ const Feed = ({ session }: { session?: Session | null }) => {
 
 const ReadingList = ({ session }: { session?: Session | null }) => {
 	const [readingList, setReadingList] = useState<ReadingListType["posts"]>()
+	const [loading, setLoading] = useState(true)
 
 	useEffect(() => {
 		if (session?.user?.username)
 			(async () => {
-				const response = await axios.get("/api/reading_list", {
-					params: {
-						recent: true
-					}
-				})
+				try {
+					const response = await axios.get("/api/reading_list", {
+						params: {
+							recent: true
+						}
+					})
 
-				if (response.data) {
-					setReadingList(
-						response.data?.posts?.map((i: { timestamp: Date }) => ({
-							...i,
-							timeString: calculateAge(i.timestamp, true)
-						}))
-					)
-				}
+					if (response.data) {
+						setReadingList(
+							response.data?.posts?.map((i: { timestamp: Date }) => ({
+								...i,
+								timeString: calculateAge(i.timestamp, true)
+							}))
+						)
+					}
+				} catch (error) {}
+				setLoading(false)
 			})()
 	}, [session])
 
@@ -102,48 +124,69 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 
 	return (
 		<>
-			<div className="mb-10 flex justify-between items-center">
+			<div className="mb-4 flex justify-between items-center">
 				<div className="flex justify-between items-center w-full">
-					<div className="flex items-center gap-2">
-						<PiBookmarks className="text-2xl" />
-						<span className="text-lg font-medium">Reading List</span>
-					</div>
-					<button className="flex p-2 aspect-square rounded-full hover:bg-darkHighlight">
-						<FaChevronRight className="text-sm" />
-					</button>
+					<span className="text-sm font-medium opacity-50">Reading list</span>
+					{!loading &&
+						((readingList?.length || 0) > 0 ? (
+							<Link
+								href={"/user/" + session?.user.username}
+								className="opacity-50 flex gap-2 text-sm items-center"
+							>
+								<span>See all</span>
+								<FiArrowRight className="text-sm" />
+							</Link>
+						) : null)}
 				</div>
 			</div>
-			<div>
-				{readingList?.map(i => (
-					<div className="border-b border-darkSecondary py-3 last:border-none">
-						<div className="flex justify-between w-full">
-							<div className="flex gap-3 items-center">
-								{i?.user?.profile_picture && (
-									<Image
-										className={"rounded-full object-cover w-6 aspect-square"}
-										src={i.user.profile_picture}
-										alt="user"
-										width={20}
-										height={20}
-									/>
-								)}
-								<div className="text-fontSecondary text-sm opacity-60">
-									<span>{i?.user?.name}</span>
-									<span className="px-2">·</span>
-									<span>{i.timeString}</span>
+			{loading ? (
+				<>
+					<ReadingListSkeleton />
+					<ReadingListSkeleton />
+				</>
+			) : (readingList?.length || 0) > 0 ? (
+				<div>
+					{readingList?.map(i => (
+						<Link href={getRedirectURL(i?.post_id, i?.title)}>
+							<div className="border-b border-darkSecondary py-3 last:border-none">
+								<div className="flex justify-between w-full">
+									<div className="flex gap-3 items-center">
+										{i?.user?.profile_picture && (
+											<Image
+												className={"rounded-full object-cover w-6 aspect-square"}
+												src={i.user.profile_picture}
+												alt="user"
+												width={20}
+												height={20}
+											/>
+										)}
+										<div className="text-fontSecondary text-sm opacity-60">
+											<span>{i?.user?.name}</span>
+											<span className="px-2">·</span>
+											<span>{i.timeString}</span>
+										</div>
+									</div>
+									<button
+										className="hover:scale-110 transition-all ease-linear"
+										onClick={e => {
+											e.preventDefault()
+											handleReadingList(i.post_id)
+										}}
+									>
+										<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
+									</button>
 								</div>
+								<p className="mt-2.5 text-sm line-clamp-2">{i?.title}</p>
 							</div>
-							<button
-								className="hover:scale-110 transition-all ease-linear"
-								onClick={() => handleReadingList(i.post_id)}
-							>
-								<GoBookmarkSlash className="text-lg hover:fill-yellow-500" />
-							</button>
-						</div>
-						<p className="mt-2.5 text-sm line-clamp-2">{i?.title}</p>
-					</div>
-				))}
-			</div>
+						</Link>
+					))}
+				</div>
+			) : (
+				<div className="flex items-center gap-2 opacity-50">
+					<BsBookmarkCheck className="text-base" />
+					<span className="text-xs">Your recently saved posts will appear here.</span>
+				</div>
+			)}
 		</>
 	)
 }
@@ -151,14 +194,12 @@ const ReadingList = ({ session }: { session?: Session | null }) => {
 const TopUsers = ({ session }: { session?: Session | null }) => {
 	return (
 		<div className="pb-6 space-y-6">
-			<div className="flex justify-between items-center">
-				<h2 className="text-lg flex items-center gap-2 font-medium">
-					<MdOutlineGroupAdd className="text-xl" />
-					Top users
-				</h2>
+			<span className="text-sm font-medium opacity-50">Top artists</span>
+			<div>
+				<TopArtistSkeleton />
+				<TopArtistSkeleton />
 			</div>
-
-			<div className="border-b border-darkHighlight last:border-none">
+			{/* <div className="border-b border-darkHighlight last:border-none">
 				<div className="flex justify-between items-center">
 					<div className="flex items-center gap-3">
 						<Image
@@ -186,7 +227,7 @@ const TopUsers = ({ session }: { session?: Session | null }) => {
 					<button className="theme-button small outlined text-opacity-20">Fitness</button>
 					<button className="theme-button small outlined text-opacity-20">Entrepreneurship</button>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	)
 }

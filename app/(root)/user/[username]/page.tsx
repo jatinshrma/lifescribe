@@ -27,6 +27,7 @@ import { Radio, RadioGroup } from "@headlessui/react"
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { FaCaretDown } from "react-icons/fa6"
 import { useParams } from "next/navigation"
+import { PostSkeleton, ProfileSkeleton } from "@components/Skeleton"
 
 const tabs = [
 	{ Icon: TbWorld, label: "Published" },
@@ -54,36 +55,40 @@ const User = () => {
 	const [state, setState] = useState<AnyObject>({ view: viewOptions[1].type, currTab: 0 })
 	const [collections, setCollections] = useState<ICollection[]>([])
 	const [readingList, setReadingList] = useState<ReadingListType>()
+	const [loading, setLoading] = useState(true)
 
 	const isAutherLoggedIn = session?.user.username && username === session?.user.username
 
 	useEffect(() => {
 		if (username) {
 			;(async () => {
-				const [userResponse, collectionsResponse, postsResponse, readingListResponse] = await Promise.all([
-					axios.get("/api/user", {
-						params: { username }
-					}),
-					axios.get("/api/collection", {
-						params: { username, attachPosts: true }
-					}),
-					axios.get("/api/post", {
-						params: { username }
-					}),
-					axios.get("/api/reading_list")
-				])
+				try {
+					const [userResponse, collectionsResponse, postsResponse, readingListResponse] = await Promise.all([
+						axios.get("/api/user", {
+							params: { username }
+						}),
+						axios.get("/api/collection", {
+							params: { username, attachPosts: true }
+						}),
+						axios.get("/api/post", {
+							params: { username }
+						}),
+						axios.get("/api/reading_list")
+					])
 
-				setUser(userResponse.data)
-				setCollections(collectionsResponse.data)
-				setReadingList(readingListResponse.data)
-				setPosts(
-					postsResponse.data?.map((p: IPost) => ({
-						...p,
-						private: p.user_collection
-							? collectionsResponse.data?.find((c: ICollection) => c._id === p.user_collection)?.private
-							: p.private
-					}))
-				)
+					setUser(userResponse.data)
+					setCollections(collectionsResponse.data)
+					setReadingList(readingListResponse.data)
+					setPosts(
+						postsResponse.data?.map((p: IPost) => ({
+							...p,
+							private: p.user_collection
+								? collectionsResponse.data?.find((c: ICollection) => c._id === p.user_collection)?.private
+								: p.private
+						}))
+					)
+				} catch (error) {}
+				setLoading(false)
 			})()
 		}
 	}, [username])
@@ -91,56 +96,63 @@ const User = () => {
 	return (
 		<LayoutWrapper showScribeButton>
 			<div className="max-w-[850px] mx-auto mb-8">
-				<div className="flex items-center gap-20 pt-[5rem] pb-[72px]">
-					{isAutherLoggedIn ? (
-						<ImageCropWrapper>
-							{(props: IProfilePictureComponent) => (
-								<Image
-									className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
-									src={props.url}
-									alt="user"
-									width={364}
-									height={364}
-								/>
-							)}
-						</ImageCropWrapper>
-					) : (
-						<Image
-							className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
-							src={user?.profile_picture as string}
-							alt="user"
-							width={364}
-							height={364}
-						/>
-					)}
+				{loading ? (
+					<ProfileSkeleton />
+				) : (
+					<div className="flex items-center gap-20 pt-[5rem] pb-[72px]">
+						{isAutherLoggedIn ? (
+							<ImageCropWrapper>
+								{(props: IProfilePictureComponent) => (
+									<Image
+										className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
+										src={props.url}
+										alt="user"
+										width={364}
+										height={364}
+									/>
+								)}
+							</ImageCropWrapper>
+						) : (
+							<Image
+								className="object-cover rounded-full aspect-square w-[20rem] h-[20rem] cursor-pointer"
+								src={user?.profile_picture as string}
+								alt="user"
+								width={364}
+								height={364}
+							/>
+						)}
 
-					<div className="space-y-4">
-						<h2
-							className="font-serif font-extrabold leading-none"
-							style={{ fontSize: `calc(56vw / ${Math.min(30, Math.max(12, user?.name?.length || 0))})` }}
-						>
-							{user?.name}
-						</h2>
-						<p className="font-lora text-whiteSecondary">{user?.about}</p>
-						<div className="opacity-60">
-							{!user?.private && <span>{posts?.filter(p => !p.private)?.length} Published</span>}
-							{isAutherLoggedIn && (
-								<>
-									<span className="ml-5 px-5 border-l border-[#7777777d]">
-										{posts?.filter(p => p.private)?.length} Private
-									</span>
-									<span className="pl-5 border-l border-[#7777777d]">{readingList?.posts?.length} Saved</span>
-								</>
-							)}
-						</div>
-						<div>
-							<Link href={"/settings"} className="theme-button primary gap-2.5 medium rounded-lg w-fit">
-								<RiUserSettingsLine className="text-lg" />
-								<span>Edit Profile</span>
-							</Link>
+						<div className="space-y-4">
+							<h2
+								className="font-serif font-extrabold leading-none"
+								style={{ fontSize: `calc(56vw / ${Math.min(30, Math.max(12, user?.name?.length || 0))})` }}
+							>
+								{user?.name}
+							</h2>
+							<p className="font-lora text-whiteSecondary">{user?.about}</p>
+							<div className="opacity-60">
+								{!user?.private && <span>{posts?.filter(p => !p.private)?.length} Published</span>}
+								{isAutherLoggedIn && (
+									<>
+										<span className="ml-5 px-5 border-l border-[#7777777d]">
+											{posts?.filter(p => p.private)?.length} Private
+										</span>
+										<span className="pl-5 border-l border-[#7777777d]">{readingList?.posts?.length} Saved</span>
+									</>
+								)}
+							</div>
+							<div>
+								{isAutherLoggedIn && (
+									<Link href={"/settings"} className="theme-button primary gap-2.5 medium rounded-lg w-fit">
+										<RiUserSettingsLine className="text-lg" />
+										<span>Edit Profile</span>
+									</Link>
+								)}
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
+
 				<div className="sticky top-0 bg-darkPrimary z-10">
 					{isAutherLoggedIn && (
 						<div className="flex border-b border-darkSecondary text-opacity-100 relative">
@@ -150,6 +162,7 @@ const User = () => {
 							/>
 							{tabs.slice(user?.private ? 1 : 0, 3).map((i, idx, tabsArr) => (
 								<button
+									disabled={loading}
 									onClick={() => setState(prev => ({ ...prev, currTab: idx, currCollection: null }))}
 									className={
 										"text-base py-5 flex gap-2 justify-center items-center w-1/3 " +
@@ -166,6 +179,7 @@ const User = () => {
 						<div>
 							{state?.currCollection ? (
 								<button
+									disabled={loading}
 									className="theme-button primary gap-2 pl-3.5"
 									onClick={() => setState(prev => ({ ...prev, currCollection: null }))}
 								>
@@ -174,6 +188,7 @@ const User = () => {
 								</button>
 							) : (
 								<RadioGroup
+									disabled={loading}
 									aria-label="View"
 									className="bg-darkSecondary flex rounded-full"
 									value={state?.view}
@@ -181,6 +196,7 @@ const User = () => {
 								>
 									{viewOptions.map(option => (
 										<Radio
+											disabled={loading}
 											key={option?.type}
 											value={option?.type}
 											as={"button"}
@@ -195,14 +211,17 @@ const User = () => {
 						</div>
 						<div className="flex items-stretch gap-4 w-full justify-end">
 							<div className="bg-darkSecondary w-full pl-4 py-2 pr-2 rounded-full flex items-center gap-4">
-								<input type="text" placeholder="Search" className="w-full" />
-								<button className="h-full aspect-square flex items-center justify-center rounded-full text-opacity-100 group hover:bg-whitePrimary transition-colors duration-300 ease">
+								<input disabled={loading} type="text" placeholder="Search" className="w-full" />
+								<button
+									disabled={loading}
+									className="h-full aspect-square flex items-center justify-center rounded-full text-opacity-100 group hover:bg-whitePrimary transition-colors duration-300 ease"
+								>
 									<RiSearchLine className="text-lg group-hover:fill-darkPrimary" />
 								</button>
 							</div>
 
 							<Popover className="relative group">
-								<PopoverButton className={"theme-button primary gap-4 px-4 py-3"}>
+								<PopoverButton disabled={loading} className={"theme-button primary gap-4 px-4 py-3"}>
 									<div className="flex gap-2 items-center">
 										<TbArrowsSort className="text-lg" />
 										<span>Sort</span>
@@ -264,7 +283,7 @@ const User = () => {
 							</Popover>
 
 							<Popover className="relative group">
-								<PopoverButton className={"theme-button primary gap-4 px-4 py-3"}>
+								<PopoverButton disabled={loading} className={"theme-button primary gap-4 px-4 py-3"}>
 									<div className="flex gap-2 items-center">
 										<BsCalendarDate className="text-lg" />
 										<span>Date</span>
@@ -295,7 +314,12 @@ const User = () => {
 					</div>
 				</div>
 
-				{isAutherLoggedIn && state.currTab === 2 ? (
+				{loading ? (
+					<div>
+						<PostSkeleton />
+						<PostSkeleton />
+					</div>
+				) : isAutherLoggedIn && state.currTab === 2 ? (
 					<div className="space-y-5">
 						{readingList?.posts?.map(post => (
 							<PostCard

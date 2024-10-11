@@ -25,7 +25,7 @@
 		color: rgb(var(--white-primary));
 	}
 	*:disabled {
-		@apply cursor-wait;
+		@apply cursor-default;
 	}
 	input {
 		@apply bg-transparent border-none outline-none text-base;
@@ -105,6 +105,9 @@
 	}
 	.prompt button.delete {
 		@apply rounded-sm px-3 border border-red-500 text-red-500;
+	}
+	.custom-spinner {
+		@apply w-4 h-4 border-2 !border-t-transparent border-white rounded-full animate-spin;
 	}
 	.spinner-wrapper.progress-bar {
 		@apply bg-whiteSecondary text-opacity-100 z-10 top-0 left-0 w-full h-full cursor-wait absolute flex items-center justify-center;

@@ -6,8 +6,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { calculateAge, getRedirectURL } from "@helpers/utils"
 import { DeleteButton, SaveButton, ShareButton, ViewButton } from "./ActionButtons"
+import { useSession } from "next-auth/react"
 
 const PostCard = (props: any) => {
+	const session = useSession()
 	const router = useRouter()
 
 	const viewButton = <ViewButton url={getRedirectURL(props?._id, props?.title)} />
@@ -41,7 +43,7 @@ const PostCard = (props: any) => {
 									</div>
 									<div className="flex gap-5 items-center">
 										{shareButton}
-										{saveButton}
+										{session?.data?.user && <>{saveButton}</>}
 									</div>
 								</div>
 							</>
@@ -59,9 +61,9 @@ const PostCard = (props: any) => {
 											{viewButton}
 											{deleteButton}
 										</>
-									) : (
+									) : session?.data?.user ? (
 										saveButton
-									)}
+									) : null}
 								</div>
 							</div>
 						)}
