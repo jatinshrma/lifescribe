@@ -20,7 +20,8 @@ export const POST = async (request: NextRequest) => {
 					{
 						resource_type: "auto",
 						public_id: type === "profile_picture" ? type : `${type}_${format(Date.now(), "yyyy-MM-dd-HH-mm")}`,
-						folder: `lifescribe/${type}/${user_id}`
+						folder: `lifescribe/${type}/${user_id}`,
+						overwrite: true
 					},
 					(error, result) => {
 						if (error) {

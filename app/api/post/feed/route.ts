@@ -76,11 +76,15 @@ export const GET = async (request: NextRequest) => {
 								$ne: true
 							}
 						},
-						{
-							tags: {
-								$in: tagsList
-							}
-						}
+						...(tagsList?.length > 0
+							? [
+									{
+										tags: {
+											$in: tagsList
+										}
+									}
+							  ]
+							: [])
 					]
 				}
 			})

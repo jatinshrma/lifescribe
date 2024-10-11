@@ -24,6 +24,7 @@ export const authOptions: NextAuthOptions = {
 				if (!userExists) {
 					await User.create({
 						email: profile?.email,
+						username: profile?.email?.split("@")[0],
 						profile_picture: user?.image,
 						name: profile?.name,
 						new_user: true

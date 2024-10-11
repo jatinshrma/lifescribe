@@ -44,6 +44,26 @@ export const GET = async (request: NextRequest) => {
 				$sort: {
 					created_at: -1
 				}
+			},
+			{
+				$lookup: {
+					from: "tags",
+					localField: "tags",
+					foreignField: "_id",
+					pipeline: [
+						{
+							$project: {
+								name: 1
+							}
+						}
+					],
+					as: "tags"
+				}
+			},
+			{
+				$addFields: {
+					tags: "$tags.name"
+				}
 			}
 		])
 
