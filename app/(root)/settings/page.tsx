@@ -45,15 +45,16 @@ const tabsData = [
 ]
 
 const Settings = () => {
-	const isMobileView = window.innerWidth <= 620
 	const router = useRouter()
 	const { data: session, update } = useSession()
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 	const [unModifiedUserData, setUnModifiedUserData] = useState<any>({})
 	const [userData, setUserData] = useState<any>({})
 	const [flags, setFlags] = useState<{ saving?: boolean }>({})
+	const [isMobileView, setIsMobileView] = useState(false)
 
 	useEffect(() => {
+		setIsMobileView(window.innerWidth <= 620)
 		if (session?.user.username)
 			(async () => {
 				const convertDOB = (date: string) => {
