@@ -32,19 +32,35 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 
 		const username = request.nextUrl.searchParams.get("username")
+		const isPrivate = request.nextUrl.searchParams.get("private") || ""
+		const skipPages = request.nextUrl.searchParams.get("skipPages") || ""
+		const totalPages = request.nextUrl.searchParams.get("totalPages") || ""
+		const pageSize = request.nextUrl.searchParams.get("pageSize") || ""
+
 		const user = await User.findOne({ username }, { _id: true })
-		const posts = await Post.aggregate([
+		const matchQuery = {
+			user: user?._id,
+			private: Boolean(+isPrivate)
+		}
+
+		const totalPagesCount = +totalPages || (await Post.countDocuments(matchQuery))
+		const result = await Post.aggregate([
 			{
-				$match: {
-					user: user?._id
-				}
+				$match: matchQuery
 			},
-			...postsRegexPipeline,
 			{
 				$sort: {
 					created_at: -1
 				}
 			},
+			{
+				$skip: +skipPages * +pageSize
+			},
+			{
+				$limit: +pageSize
+			},
+
+			...postsRegexPipeline,
 			{
 				$lookup: {
 					from: "tags",
@@ -67,7 +83,7 @@ export const GET = async (request: NextRequest) => {
 			}
 		])
 
-		return NextResponse.json(posts)
+		return NextResponse.json({ result, totalPages: totalPagesCount })
 	} catch (error: any) {
 		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })

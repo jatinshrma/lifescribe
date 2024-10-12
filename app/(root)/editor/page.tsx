@@ -172,7 +172,7 @@ const EditorComponent = () => {
 				)
 			}
 		>
-			<div className="ss:px-0 px-4">
+			<div>
 				{state?.state === 0 ? (
 					<div className="max-w-screen-sm mx-auto">
 						<textarea
@@ -250,14 +250,14 @@ function AdditionalDetails({
 	}
 
 	return (
-		<div className="max-w-screen-md mx-auto py-8">
+		<div className="max-w-screen-md mx-auto ss:py-8 py-2">
 			<button className="theme-button primary small flex items-center gap-1" onClick={goBack}>
 				<FiArrowLeft />
 				<span>Back</span>
 			</button>
 
-			<div className="flex my-6 gap-6">
-				<div className="w-1/2 space-y-4">
+			<div className="flex my-6 gap-6 flex-wrap">
+				<div className="ss:w-1/2 space-y-4">
 					<Field>
 						<Label className="text-sm font-medium mb-3 block">
 							Collection <span className="opacity-50">(optional)</span>
@@ -295,7 +295,7 @@ function AdditionalDetails({
 									}
 								>
 									<ComboboxOption
-										value={"new"}
+										value={0}
 										className="group w-full theme-button static rounded-md transition-none select-none data-[focus]:bg-darkHighlight"
 										onClick={event => {
 											event?.preventDefault()
@@ -397,7 +397,8 @@ function AdditionalDetails({
 						</RadioGroup>
 					</Field>
 				</div>
-				<div className="w-1/2 space-y-4">
+
+				<div className="ss:w-1/2 space-y-4">
 					<Field>
 						<Label className="text-sm font-medium">Tags</Label>
 						<TagsSelection tags={tags} setTags={setTags} />
@@ -407,7 +408,7 @@ function AdditionalDetails({
 
 			<Button
 				loading={isPublishing}
-				className="bg-whitePrimary text-darkPrimary font-medium"
+				className="bg-whitePrimary text-darkPrimary font-medium ss:mb-0 ss:w-fit w-full justify-center mb-8"
 				spinnerClassName="border-darkPrimary"
 				Icon={TbUpload}
 				iconsClassName="stroke-darkPrimary"

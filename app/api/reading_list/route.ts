@@ -3,6 +3,7 @@ import { ReadingList, Tag } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 import { postsAutherDetails, postsRegexPipeline } from "@helpers/mongoPipelines"
 import mongoose from "mongoose"
+import { useSearchParams } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
 
 export const GET = async (request: NextRequest) => {
@@ -42,24 +43,46 @@ export const GET = async (request: NextRequest) => {
 		// }
 
 		const { user_id } = getUserHeaders(request)
+		const isPrivate = request.nextUrl.searchParams.get("private") || ""
+		const skipPages = request.nextUrl.searchParams.get("skipPages") || ""
+		const totalPages = request.nextUrl.searchParams.get("totalPages") || ""
+		const pageSize = request.nextUrl.searchParams.get("pageSize") || ""
 		const recent = Boolean(request.nextUrl?.searchParams?.get("recent"))
-		const sortAndLimit = !recent
-			? [
+		const matchQuery = { user: user_id }
+
+		const totalPagesCount =
+			+totalPages ||
+			(
+				await ReadingList.aggregate([
 					{
-						$set: {
-							posts: {
-								$sortArray: {
-									input: "$posts",
-									sortBy: { timestamp: -1 }
-								}
-							}
+						$match: matchQuery
+					},
+					{
+						$unwind: {
+							path: "$posts",
+							preserveNullAndEmptyArrays: false
 						}
 					},
+					{
+						$count: "count"
+					}
+				])
+			)?.[0]?.count
+
+		const skipAndLimit = recent
+			? [
 					{
 						$limit: 10
 					}
 			  ]
-			: []
+			: [
+					{
+						$skip: +skipPages * +pageSize
+					},
+					{
+						$limit: +pageSize
+					}
+			  ]
 
 		const readingList = await ReadingList.aggregate([
 			{
@@ -67,7 +90,6 @@ export const GET = async (request: NextRequest) => {
 					user: new mongoose.Types.ObjectId(user_id)
 				}
 			},
-			...sortAndLimit,
 			{
 				$set: {
 					posts: {
@@ -80,6 +102,7 @@ export const GET = async (request: NextRequest) => {
 					}
 				}
 			},
+			...skipAndLimit,
 			{
 				$unwind: {
 					path: "$posts",
@@ -128,7 +151,14 @@ export const GET = async (request: NextRequest) => {
 			}
 		])
 
-		return NextResponse.json(readingList?.[0] || null)
+		return NextResponse.json(
+			recent
+				? readingList?.[0] || null
+				: {
+						result: readingList?.[0]?.posts,
+						totalPages: totalPagesCount
+				  }
+		)
 	} catch (error: any) {
 		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })

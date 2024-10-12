@@ -69,7 +69,7 @@ const Onboarding = () => {
 	}
 
 	return (
-		<div id="onboarding" className="px-10 mx-auto mt-10">
+		<div id="onboarding" className="ss:px-10 px-4 mx-auto ss:mt-10 mt-6">
 			<h1 className="heading mb-2">Onboarding</h1>
 
 			<div className="flex gap-4 my-3 py-4 sticky top-0 bg-darkPrimary">
@@ -87,7 +87,7 @@ const Onboarding = () => {
 			<div className="flex justify-between items-center sticky top-9 bg-darkPrimary">
 				<div>
 					<h2 className="sub-heading">{stages[stage]?.heading}</h2>
-					{stages[stage]?.info && <span className="opacity-40">{stages[stage].info}</span>}
+					{stages[stage]?.info && <span className="opacity-40 ss:text-base text-sm">{stages[stage].info}</span>}
 				</div>
 				<div className="flex gap-4">
 					{stage > 0 && (
@@ -104,7 +104,9 @@ const Onboarding = () => {
 							userData?.interests?.length > 2 ? "" : "--opacity-30"
 						}`}
 					>
-						{stage === 2 && <span className="text-darkPrimary text-sm font-medium pl-2 block">View Profile</span>}
+						{stage === 2 && (
+							<span className="ss:block hidden text-darkPrimary text-sm font-medium pl-2">View Profile</span>
+						)}
 						<LuArrowRight className="stroke-darkPrimary text-lg" />
 					</button>
 				</div>
@@ -119,17 +121,17 @@ const Onboarding = () => {
 						/>
 					</div>
 				) : stage === 1 ? (
-					<div className="flex mx-auto max-w-screen-md h-[calc(100vh-93px)] overflow-auto">
+					<div className="flex ss:flex-row flex-col mx-auto max-w-screen-md h-[calc(100vh-93px)] overflow-auto">
 						<UserProfileForm
 							userData={userData}
 							setUserData={setUserData}
 							classes={{
-								rightComponent: "px-12"
+								rightComponent: "ss:px-12 mx-1"
 							}}
 						/>
 					</div>
 				) : (
-					<div className="mb-7 flex gap-4">
+					<div className="mb-7 flex ss:flex-nowrap flex-wrap ss:gap-4">
 						<UserProfiltType
 							isPrivate={Boolean(userData?.private)}
 							setIsPrivate={(value: boolean) => setUserData((prev: any) => ({ ...prev, private: value }))}

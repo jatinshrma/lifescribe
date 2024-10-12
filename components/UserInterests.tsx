@@ -33,7 +33,7 @@ function UserInterests({
 			: setUserInterests((userInterests || [])?.concat([i._id]))
 
 	return (
-		<div className="flex gap-3 flex-wrap">
+		<div className="flex ss:gap-3 gap-2 flex-wrap ss:justify-start justify-center">
 			{interests?.map(i => (
 				<>
 					<InterestButton
@@ -66,7 +66,7 @@ const InterestButton = ({
 	<button
 		key={data._id}
 		className={
-			"theme-button medium rounded-full text-opacity-100 border " +
+			"theme-button medium rounded-full text-opacity-100 border ss:text-base text-sm " +
 			(isSelected ? "bg-whitePrimary text-darkPrimary" : "outlined hover:bg-darkSecondary")
 		}
 		onClick={onClick}

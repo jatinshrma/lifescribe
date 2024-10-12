@@ -10,17 +10,17 @@ const Prompt = ({ isOpen, warning, description, actions, onClose }: IPromptParam
 				<div className="flex min-h-full items-center justify-center p-4">
 					<DialogPanel
 						transition
-						className="w-full max-w-xl rounded-xl bg-darkSecondary p-6 backdrop-blur-2xl duration-200 ease-in data-[closed]:transform-[scale(85%)] data-[closed]:opacity-0"
+						className="w-full max-w-xl rounded-xl bg-darkSecondary ss:p-6 p-4 backdrop-blur-2xl duration-200 ease-in data-[closed]:transform-[scale(85%)] data-[closed]:opacity-0"
 					>
-						<DialogTitle as="h3" className="text-lg/8 font-medium text-white">
+						<DialogTitle as="h3" className="ss:text-lg/8 text-base font-medium text-white">
 							{warning}
 						</DialogTitle>
-						<p className="mt-3 text-base/7 text-white/50">{description}</p>
+						<p className="ss:mt-3 mt-2 ss:text-base/7 text-sm text-white/50">{description}</p>
 						<div className="mt-6 flex justify-end">
 							{actions.map(action => (
 								<Button
 									className={
-										"theme-button primary gap-2 rounded-md text-base/7 font-semibold shadow-inner focus:outline-none " +
+										"theme-button primary gap-2 rounded-md ss:text-base/7 text-sm font-semibold shadow-inner focus:outline-none " +
 										"!bg-red-900/10 text-red-600"
 									}
 									onClick={action?.handler}

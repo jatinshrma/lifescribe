@@ -17,15 +17,14 @@ import { BsBookmarkCheck } from "react-icons/bs"
 
 export default function Home() {
 	const { data: session } = useSession()
-
 	return (
 		<LayoutWrapper showScribeButton>
-			<div className="flex gap-16 mx-16">
-				<div className={"w-3/4 " + (session?.user?.username ? "" : "m-auto")}>
+			<div className="flex gap-16 ss:mx-16">
+				<div className={"ss:w-3/4 w-full " + (session?.user?.username ? "" : "m-auto")}>
 					<Feed session={session} />
 				</div>
 				{session?.user?.username && (
-					<div className="w-1/4 h-[82vh] my-2 space-y-6">
+					<div className="ss:block hidden w-1/4 h-[82vh] my-2 space-y-6">
 						<ReadingList session={session} />
 						{/* <TopUsers session={session} /> */}
 					</div>

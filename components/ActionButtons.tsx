@@ -16,14 +16,14 @@ export const ShareButton = ({ url }: { url: string }) => (
 		}}
 		className="hover:scale-125 transition-transform ease-linear"
 	>
-		<BiShare className="hover:fill-blue-500 text-2xl" />
+		<BiShare className="hover:fill-blue-500 ss:text-2xl text-xl" />
 	</button>
 )
 
 export const ViewButton = ({ url }: { url: string }) => (
 	<button className="hover:scale-125 transition-transform ease-linear">
 		<Link href={url}>
-			<FaRegEye className="hover:fill-amber-500 text-2xl" />
+			<FaRegEye className="hover:fill-amber-500 ss:text-2xl text-xl" />
 		</Link>
 	</button>
 )
@@ -31,7 +31,7 @@ export const ViewButton = ({ url }: { url: string }) => (
 export const EditButton = ({ url }: { url: string }) => (
 	<button className="hover:scale-125 transition-transform ease-linear">
 		<Link href={url}>
-			<RiQuillPenLine className="hover:fill-amber-500 text-2xl" />
+			<RiQuillPenLine className="hover:fill-amber-500 ss:text-2xl text-xl" />
 		</Link>
 	</button>
 )
@@ -53,7 +53,7 @@ export const DeleteButton = ({ postId, onDelete }: { postId: string; onDelete?: 
 				}}
 				className="hover:scale-125 transition-transform ease-linear"
 			>
-				<AiOutlineDelete className="hover:fill-red-500 text-2xl" />
+				<AiOutlineDelete className="hover:fill-red-500 ss:text-2xl text-xl" />
 			</button>
 			<Prompt
 				isOpen={state}
@@ -105,11 +105,11 @@ export const SaveButton = ({
 			}}
 		>
 			{loading ? (
-				<div className="custom-spinner w-5 h-5" />
+				<div className="custom-spinner ss:w-5 ss:h-5 w-3 h-3" />
 			) : isAdded ? (
-				<GoBookmarkSlash className="fill-yellow-500 text-xl scale-11" />
+				<GoBookmarkSlash className="fill-yellow-500 ss:text-xl text-lg scale-11" />
 			) : (
-				<GoBookmark className="hover:fill-yellow-500 text-xl scale-11" />
+				<GoBookmark className="hover:fill-yellow-500 ss:text-xl text-lg scale-11" />
 			)}
 		</button>
 	)

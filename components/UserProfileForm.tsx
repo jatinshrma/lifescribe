@@ -21,7 +21,10 @@ function UserProfileForm({ userData, setUserData, classes }: any) {
 	return (
 		<>
 			<div
-				className={"w-1/2 flex items-center justify-center sticky top-0 z-10 " + (classes?.leftComponent || "")}
+				className={
+					"ss:w-1/2 flex items-center justify-center ss:sticky ss:top-0 ss:z-10 ss:mb-0 mb-6 " +
+					(classes?.leftComponent || "")
+				}
 			>
 				<ImageCropWrapper>
 					{({ url, changeFile, editFile, deleteFile }: IProfilePictureComponent) => (
@@ -56,7 +59,7 @@ function UserProfileForm({ userData, setUserData, classes }: any) {
 					)}
 				</ImageCropWrapper>
 			</div>
-			<div className={"w-1/2 rounded-lg space-y-4 z-0 px-6 " + (classes?.rightComponent || "")}>
+			<div className={"ss:w-1/2 rounded-lg space-y-4 z-0 ss:px-6 " + (classes?.rightComponent || "")}>
 				<label className="block space-y-2">
 					<span className="text-sm opacity-60">Username</span>
 					<input

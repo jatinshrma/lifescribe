@@ -107,46 +107,47 @@ const Post = () => {
 				) : post ? (
 					<>
 						<h1 className="post__title mb-0">{post?.title}</h1>
-						<div className="mt-8 mb-5 flex gap-4">
-							<Image
-								className={"rounded-full object-cover w-12 aspect-square"}
-								src={author?.profile_picture as string}
-								alt="user"
-								width={32}
-								height={32}
-							/>
-							<div className="flex justify-between w-full">
-								<div>
-									<div className="flex items-center gap-2">
-										<Link href={`/user/${author?.username}`}>
-											<span className="text-fontSecondary text-base hover:underline">{`${author?.name}`}</span>
-										</Link>
-										{(author?.followers || 0) > 0 && (
-											<>
-												<span className="opacity-60 text-sm">·</span>
-												<span className="opacity-60 text-sm">{author?.followers} Followers</span>
-											</>
-										)}
-									</div>
-									<div className="flex items-center gap-2">
-										{author?.user_collection?.name && (
-											<>
-												<span>
-													<span className="opacity-60 text-sm">From collection</span>{" "}
-													<Link href={"#"} className="text-base hover:underline">
-														{author?.user_collection?.name}
-													</Link>
-												</span>
-												<span className="opacity-60 text-sm">·</span>
-											</>
-										)}
-										<span className="opacity-60 text-sm">{post?.reading_time} min read</span>
-										<span className="opacity-60 text-sm">·</span>
-										<span className="opacity-60 text-sm">{calculateAge(post?.created_at)}</span>
+						<div className="mt-8 mb-5">
+							<div className="flex gap-4 items-center">
+								<Image
+									className={"rounded-full object-cover w-12 aspect-square flex-shrink-0"}
+									src={author?.profile_picture as string}
+									alt="user"
+									width={32}
+									height={32}
+								/>
+								<div className="flex justify-between w-full">
+									<div>
+										<div className="flex items-center gap-2">
+											<Link href={`/user/${author?.username}`}>
+												<span className="text-fontSecondary text-base hover:underline">{`${author?.name}`}</span>
+											</Link>
+											{(author?.followers || 0) > 0 && (
+												<>
+													<span className="opacity-60 text-sm">·</span>
+													<span className="opacity-60 text-sm">{author?.followers} Followers</span>
+												</>
+											)}
+										</div>
+										<div className="flex items-center gap-2">
+											{author?.user_collection?.name && (
+												<>
+													<span>
+														<span className="opacity-60 text-sm">From collection</span>{" "}
+														<Link href={"#"} className="text-base hover:underline">
+															{author?.user_collection?.name}
+														</Link>
+													</span>
+													<span className="opacity-60 text-sm">·</span>
+												</>
+											)}
+											<span className="opacity-60 text-sm">{post?.reading_time} min read</span>
+											<span className="opacity-60 text-sm">·</span>
+											<span className="opacity-60 text-sm">{calculateAge(post?.created_at)}</span>
+										</div>
 									</div>
 								</div>
-
-								<div className="flex items-center gap-6">
+								<div className="ss:flex hidden items-center gap-6">
 									{author?.isUserLoggedIn ? (
 										<>
 											<EditButton url={`/editor?id=${post?._id}`} />
@@ -180,6 +181,42 @@ const Post = () => {
 									)}
 								</div>
 							</div>
+
+							<div className="ss:hidden mt-3 pt-3 border-t border-darkHighlight flex items-center gap-6 w-full">
+								{author?.isUserLoggedIn ? (
+									<>
+										<EditButton url={`/editor?id=${post?._id}`} />
+										<DeleteButton postId={post?._id as string} onDelete={() => router.back()} />
+									</>
+								) : (
+									<div className="flex items-center justify-between w-full">
+										{session?.user && (
+											<Button
+												loading={flags?.followLoading}
+												className="primary medium !bg-darkHighlight hover:!bg-whitePrimary text-opacity-100 hover:text-black"
+												onClick={handleFollow}
+											>
+												Follow{author?.isFollowed ? "ing" : ""}
+											</Button>
+										)}
+										<div className="flex items-center gap-6">
+											<ShareButton url={location.origin + getRedirectURL(post?._id, post?.title)} />
+											{session?.user && (
+												<SaveButton
+													postId={post?._id as string}
+													isAdded={Boolean(post?.inReadingList)}
+													onUpdate={status =>
+														setPost(prev => ({
+															...(prev as IPost),
+															inReadingList: status
+														}))
+													}
+												/>
+											)}
+										</div>
+									</div>
+								)}
+							</div>
 						</div>
 						<ReactQuill
 							id="editor"
@@ -194,7 +231,7 @@ const Post = () => {
 							<div>
 								<Button
 									loading={flags?.likeLoading}
-									className="theme-button primary"
+									className="theme-button primary mb-10"
 									onClick={handleLike}
 									Icon={post?.isLiked ? AiFillLike : AiOutlineLike}
 									iconsClassName="text-xl"

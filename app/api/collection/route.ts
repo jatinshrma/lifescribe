@@ -8,16 +8,37 @@ export const GET = async (request: NextRequest) => {
 		await connectToDB()
 		const username = request.nextUrl.searchParams.get("username")
 		const attachPosts = request.nextUrl.searchParams.get("attachPosts")
-		const user = await User.findOne({ username }, { _id: true })
+		const isPrivate = request.nextUrl.searchParams.get("private") || ""
+		const skipPages = request.nextUrl.searchParams.get("skipPages") || ""
+		const totalPages = request.nextUrl.searchParams.get("totalPages") || ""
+		const pageSize = request.nextUrl.searchParams.get("pageSize") || ""
 
-		const collections = !attachPosts
-			? await CollectionModel.find({ user: user?._id })
+		const user = await User.findOne({ username }, { _id: true })
+		const matchQuery = {
+			user: user?._id,
+			private: Boolean(+isPrivate)
+		}
+
+		const totalPagesCount = +totalPages || (await CollectionModel.countDocuments(matchQuery))
+
+		const result = !attachPosts
+			? await CollectionModel.find(matchQuery)
 			: await CollectionModel.aggregate([
 					{
-						$match: {
-							user: user?._id
+						$match: matchQuery
+					},
+					{
+						$sort: {
+							created_at: -1
 						}
 					},
+					{
+						$skip: +skipPages * +pageSize
+					},
+					{
+						$limit: +pageSize
+					},
+
 					{
 						$lookup: {
 							from: "posts",
@@ -53,7 +74,7 @@ export const GET = async (request: NextRequest) => {
 					}
 			  ])
 
-		return NextResponse.json(collections)
+		return NextResponse.json(!attachPosts ? result : { result, totalPages: totalPagesCount })
 	} catch (error: any) {
 		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })

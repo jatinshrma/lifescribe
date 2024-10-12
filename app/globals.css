@@ -21,6 +21,7 @@
 		background: var(--dark-primary);
 	}
 	* {
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 		scroll-behavior: smooth;
 		color: rgb(var(--white-primary));
 	}
@@ -58,7 +59,7 @@
 	}
 
 	.theme-button {
-		@apply flex items-center gap-2 py-3 px-5 rounded-full transition-all ease-linear;
+		@apply flex items-center gap-2 ss:py-3 py-2.5 ss:px-5 px-4 rounded-full transition-all ease-linear;
 	}
 	.theme-button:not(.static) {
 		@apply active:scale-95;
@@ -67,7 +68,7 @@
 		@apply bg-darkSecondary hover:bg-darkHighlight;
 	}
 	.theme-button.medium {
-		@apply px-4 py-1.5;
+		@apply ss:px-4 ss:py-1.5 px-2.5 py-1;
 	}
 	.theme-button.small {
 		@apply px-3 py-1 text-[14px];
@@ -155,7 +156,7 @@
 #editor .ql-editor p,
 #editor .ql-editor li,
 #editor .ql-editor blockquote {
-	@apply ss:text-lg text-lg leading-[1.58] ss:mb-4 mb-2 last:mb-8 text-whiteSecondary font-lora tracking-wider;
+	@apply ss:text-lg text-base leading-[1.58] ss:mb-4 mb-2 last:mb-8 text-whiteSecondary font-lora tracking-wider;
 }
 
 #editor .ql-editor li {
@@ -184,7 +185,7 @@
 }
 
 #editor .ql-toolbar {
-	@apply bg-darkSecondary sticky top-0 z-10;
+	@apply bg-darkSecondary sticky top-0 z-10 gap-y-2 flex flex-wrap;
 }
 
 #editor .ql-editor p:has(+ p > br) {
@@ -196,7 +197,7 @@
 }
 
 #editor .ql-editor pre {
-	@apply ss:my-6 my-3 py-2 ss:text-base text-xs bg-darkSecondary;
+	@apply ss:my-6 my-3 py-2 ss:text-base text-sm bg-darkSecondary;
 }
 
 #editor .ql-editor blockquote {
@@ -204,5 +205,5 @@
 }
 
 #editor .ql-editor.ql-blank::before {
-	@apply text-lg text-whitePrimary opacity-30 not-italic left-0;
+	@apply ss:text-lg text-sm text-whitePrimary opacity-30 not-italic left-0;
 }

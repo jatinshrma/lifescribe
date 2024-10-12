@@ -35,7 +35,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 		<nav className="flex justify-between items-center gap-6 py-3.5 px-5 ss:p-5">
 			<div className="flex items-center justify-between ss:gap-7 gap-3">
 				<Link href="/">
-					<button className="font-playFD ss:text-3xl text-lg font-bold">LifeScribe</button>
+					<button className="font-playFD ss:text-3xl text-2xl font-bold">LifeScribe</button>
 				</Link>
 			</div>
 			{/* <div className="flex items-center gap-3 rounded-full p-3 px-5 bg-darkSecondary w-[50vw]">
@@ -56,7 +56,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 				{!session?.user.username ? (
 					<Link
 						href={"/sign-in"}
-						className="absolute right-4 theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
+						className="theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
 					>
 						Sign In
 						<BsArrowRight className="text-lg w-[0px] group-hover:!w-[18px] transition-all ease-linear" />
@@ -65,9 +65,9 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 					<>
 						{children}
 						<Popover className="relative">
-							<PopoverButton className="rounded-full overflow-hidden">
+							<PopoverButton className="rounded-full overflow-hidden flex items-center">
 								<Image
-									className="object-cover sm:w-11 w-8 pointer-events-none aspect-square"
+									className="object-cover w-11 pointer-events-none aspect-square"
 									src={session?.user?.image || ""}
 									alt="user"
 									width={40}
@@ -108,7 +108,7 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 			<Prompt
 				isOpen={Boolean(flags?.signOut)}
 				onClose={() => setFlags({})}
-				warning="Are you sure you want to sign out"
+				warning="Are you sure you want to sign out?"
 				description="After signing out you will be redirected to sign-in page. From there you can sign back into your account anytime."
 				actions={[
 					{

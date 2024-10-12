@@ -66,23 +66,23 @@ export interface IReadingList {
 	}[]
 }
 
+export type ReadingListItem = {
+	title: string
+	content: string
+	user: {
+		name: string
+		profile_picture: string
+		username: string
+	}
+	post_id: string
+	_id: string
+	timestamp: Date
+	timeString?: string
+}
+
 export type ReadingListType = {
 	_id: string
-	posts: [
-		{
-			title: string
-			content: string
-			user: {
-				name: string
-				profile_picture: string
-				username: string
-			}
-			post_id: string
-			_id: string
-			timestamp: Date
-			timeString?: string
-		}
-	]
+	posts: ReadingListItem[]
 }
 
 export interface ITag {

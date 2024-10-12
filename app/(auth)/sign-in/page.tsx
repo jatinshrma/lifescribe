@@ -26,10 +26,10 @@ function SignIn() {
 	if (session) return redirect("/")
 	return (
 		<div className="flex h-screen">
-			<div className="bg-auth w-1/2 h-screen bg-cover bg-right" />
-			<div className="w-1/2 max-h-screen overflow-auto">
-				<div className="w-[65%] mx-auto pt-16 pb-8">
-					<small className="text-base">Welcome.</small>
+			<div className="bg-auth ss:w-1/2 hidden h-screen bg-cover bg-right" />
+			<div className="ss:w-1/2 w-full max-h-screen overflow-auto">
+				<div className="ss:w-[65%] ss:mx-auto mx-5 pt-16 pb-8">
+					<small className="ss:text-base text-lg">Welcome.</small>
 					<h2 className="heading">Sign into your account</h2>
 					<div className="mt-12 mb-6 flex gap-3 flex-col">
 						{/* {Object.values(providers || {})
@@ -39,35 +39,47 @@ function SignIn() {
 						<div className="flex gap-3 flex-col">
 							<div>
 								<button
-									className="flex items-center auth-button dark gap-3"
+									className="flex items-center justify-center auth-button dark gap-3"
 									onClick={() => signIn("google")}
 									disabled={flags?.loading}
 								>
-									<FcGoogle className="w-7 h-7 ml-[25%]" />
+									<FcGoogle className="w-7 h-7" />
 									<span className="text-fontSecondary font-normal">Continue with google</span>
 								</button>
 							</div>
 							<div>
-								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
+								<button
+									className="flex items-center justify-center auth-button dark gap-3"
+									disabled={flags?.loading}
+								>
 									<FacebookIcon />
 									<span className="text-fontSecondary font-normal">Continue with Facebook</span>
 								</button>
 							</div>
 							<div>
-								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
+								<button
+									className="flex items-center justify-center auth-button dark gap-3"
+									disabled={flags?.loading}
+								>
 									<LinkedInIcon />
 									<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
 								</button>
 							</div>
 							<div>
-								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
+								<button
+									className="flex items-center justify-center auth-button dark gap-3"
+									disabled={flags?.loading}
+								>
 									<GithubIcon />
 									<span className="text-fontSecondary font-normal">Continue with Github</span>
 								</button>
 							</div>
 							<div>
-								<button className="flex items-center auth-button dark gap-3" disabled={flags?.loading}>
-									<FaXTwitter className="w-7 h-6 ml-[25%] text-fontSecondary" />
+								<button
+									className="flex items-center justify-center auth-button dark gap-3"
+									disabled={flags?.loading}
+								>
+									<FaXTwitter className="w-7 h-6 text-fontSecondary" />
 									<span className="text-fontSecondary font-normal">Continue with Twitter</span>
 								</button>
 							</div>
@@ -87,7 +99,7 @@ function SignIn() {
 
 const GithubIcon = () => (
 	<svg
-		className="w-7 h-7 ml-[25%]"
+		className="w-7 h-7"
 		xmlns="http://www.w3.org/2000/svg"
 		x="0px"
 		y="0px"
@@ -128,7 +140,7 @@ const FacebookIcon = () => (
 		width="100"
 		height="100"
 		viewBox="0,0,256,256"
-		className="w-7 h-7 ml-[25%]"
+		className="w-7 h-7"
 	>
 		<defs>
 			<linearGradient
@@ -176,7 +188,7 @@ const FacebookIcon = () => (
 
 const LinkedInIcon = () => (
 	<svg
-		className="w-7 h-7 ml-[25%]"
+		className="w-7 h-7"
 		xmlns="http://www.w3.org/2000/svg"
 		x="0px"
 		y="0px"
