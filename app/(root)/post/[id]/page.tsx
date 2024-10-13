@@ -133,7 +133,6 @@ const Post = () => {
 											<span className="opacity-60 text-sm">From</span>{" "}
 											<Link href={"#"} className="text-sm hover:underline">
 												{author?.user_collection?.name}
-												My New Collection Name
 											</Link>
 										</span>
 										<div className="flex items-center gap-2">
