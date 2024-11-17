@@ -14,8 +14,8 @@
 		--white-bright: 208 208 208;
 	}
 	::selection {
-		background: white;
-		color: #292929;
+		background: #2d2d2d;
+		color: rgb(182 182 182);
 	}
 	body {
 		background: var(--dark-primary);
@@ -185,7 +185,10 @@
 }
 
 #editor .ql-toolbar {
-	@apply bg-darkSecondary sticky top-0 z-10 gap-y-2 flex flex-wrap;
+	@apply bg-darkSecondary sticky top-0 z-10 flex flex-nowrap overflow-auto;
+	.ql-formats {
+		@apply flex flex-nowrap flex-row w-fit;
+	}
 }
 
 #editor .ql-editor p:has(+ p > br) {

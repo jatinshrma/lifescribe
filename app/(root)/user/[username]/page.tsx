@@ -3,39 +3,26 @@
 import React, { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import {
-	IUser,
-	ICollection,
-	IPost,
-	IProfilePictureComponent,
-	IReadingList,
-	ReadingListType,
-	ReadingListItem
-} from "@types"
+import { IUser, ICollection, IPost, ReadingListItem } from "@types"
 import axios, { AxiosRequestConfig } from "axios"
 import { PostCard } from "@components"
-import { ImageCropWrapper } from "@components/ImageCrop"
-import { TbArrowsSort, TbWorld } from "react-icons/tb"
+import { TbWorld } from "react-icons/tb"
 import { FiLock } from "react-icons/fi"
-import { AnyObject } from "mongoose"
-import { RiSearchLine, RiUserSettingsLine } from "react-icons/ri"
-import { BsCollection } from "react-icons/bs"
-import { FiArrowLeft } from "react-icons/fi"
+import { RiUserSettingsLine } from "react-icons/ri"
 import { BsCalendarDate } from "react-icons/bs"
-import { BsSortUp } from "react-icons/bs"
-import { BsSortDownAlt } from "react-icons/bs"
 import { IoMdTime } from "react-icons/io"
 import { AiOutlineNumber } from "react-icons/ai"
-import { IoAdd } from "react-icons/io5"
 import { MdFormatColorText } from "react-icons/md"
 import LayoutWrapper from "@components/LayoutWrapper"
 import Link from "next/link"
-import { PiBookmarks, PiNewspaperClipping } from "react-icons/pi"
-import { Radio, RadioGroup } from "@headlessui/react"
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
-import { FaCaretDown } from "react-icons/fa6"
+import { PiBookmarks } from "react-icons/pi"
 import { useParams } from "next/navigation"
 import { PostSkeleton, ProfileSkeleton } from "@components/Skeleton"
+import { ValuesStateType } from "./types"
+import { viewOptions } from "./constants"
+import Header from "./components/Header"
+import Collections from "./components/Collections"
+import Posts from "./components/Posts"
 
 type PageConfigType = {
 	currentPage: number
@@ -50,17 +37,12 @@ const tabs = [
 	{ Icon: () => <PiBookmarks className="text-xl" />, label: "Reading List", value: "readingList" }
 ]
 
-const sortOptions = [
-	{ Icon: MdFormatColorText, label: "Alphabetically", value: "alphabetically" },
-	{ Icon: BsCalendarDate, label: "Date", value: "date" },
-	{ Icon: IoMdTime, label: "Last Update", value: "last_update" },
-	{ Icon: AiOutlineNumber, label: "Post Count", value: "post_count" }
-]
-
-const viewOptions = [
-	{ Icon: (props: any) => <PiNewspaperClipping className={"text-xl " + props?.className} />, type: "Posts" },
-	{ Icon: BsCollection, type: "Collections" }
-]
+// const sortOptions = [
+// 	{ Icon: MdFormatColorText, label: "Alphabetically", value: "alphabetically" },
+// 	{ Icon: BsCalendarDate, label: "Date", value: "date" },
+// 	{ Icon: IoMdTime, label: "Last Update", value: "last_update" },
+// 	{ Icon: AiOutlineNumber, label: "Post Count", value: "post_count" }
+// ]
 
 const User = () => {
 	const { username } = useParams()
@@ -214,6 +196,7 @@ const User = () => {
 							/>
 							{tabs.slice(user?.private ? 1 : 0, 3).map((i, idx, tabsArr) => (
 								<button
+									key={"profile-tab:" + i.label}
 									disabled={loading}
 									onClick={() => setCurrTab(idx)}
 									className={
@@ -251,155 +234,41 @@ const User = () => {
 						deletePost={postId =>
 							setPosts(prev => ({
 								...prev,
-								[tabs[currTab].value]: prev.private.filter(i => i._id !== postId)
+								[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== postId)
 							}))
 						}
+						deleteCollection={(collId, deleteOption) => {
+							setCollections(prev => ({
+								...prev,
+								[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== collId)
+							}))
+
+							if (deleteOption === -1)
+								setPosts(prev => ({
+									...prev,
+									[visibilityType]: prev?.[visibilityType]?.filter(i => i.user_collection !== collId)
+								}))
+							else if (deleteOption === 1 && currTab === 0)
+								setPosts(prev => ({
+									...prev,
+									public: prev.public?.filter(i => i.user_collection !== collId),
+									private: prev.private.concat(
+										prev.public?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: true }))
+									)
+								}))
+							else if (deleteOption === 0 && currTab === 1)
+								setPosts(prev => ({
+									...prev,
+									private: prev.private?.filter(i => i.user_collection !== collId),
+									public: prev.public.concat(
+										prev.private?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: false }))
+									)
+								}))
+						}}
 					/>
 				)}
 			</div>
 		</LayoutWrapper>
-	)
-}
-
-type ValuesStateType = {
-	currCollection?: {
-		_id: string
-		name: string
-	}
-	view?: string
-}
-
-const Header = ({
-	loading,
-	state,
-	changeState
-}: {
-	loading?: boolean
-	state: ValuesStateType
-	changeState: (values: { [x: string]: any }) => void
-}) => {
-	return (
-		<div className="flex ss:flex-row flex-col ss:py-3 mt-3 pb-3 ss:gap-4 gap-3 ss:my-2 justify-between">
-			<div className="ss:w-fit w-full">
-				{state?.currCollection ? (
-					<button
-						disabled={loading}
-						className="theme-button primary gap-2 ss:pl-3.5 pl-3"
-						onClick={() => changeState({ currCollection: null })}
-					>
-						<FiArrowLeft className="ss:text-lg text-base" />
-						<span className="ss:text-base text-sm">Back</span>
-					</button>
-				) : (
-					<RadioGroup
-						disabled={loading}
-						aria-label="View"
-						className="bg-darkSecondary rounded-full flex ss:w-fit w-full"
-						value={state?.view}
-						onChange={value => changeState({ view: value })}
-					>
-						{viewOptions.map(option => (
-							<Radio
-								disabled={loading}
-								key={option?.type}
-								value={option?.type}
-								as={"button"}
-								className="theme-button flex items-center gap-2 data-[checked]:bg-darkHighlight ss:w-fit w-full justify-center"
-							>
-								<option.Icon className="ss:text-base text-sm" />
-								<span className="ss:text-base text-sm">{option?.type}</span>
-							</Radio>
-						))}
-					</RadioGroup>
-				)}
-			</div>
-
-			<div className="flex items-stretch gap-4 w-full justify-end">
-				<div className="ss:bg-darkSecondary ss:border-none border border-darkHighlight w-full pl-4 py-2 pr-2 rounded-full flex items-center gap-4">
-					<input disabled={loading} type="text" placeholder="Search" className="w-full" />
-					<button
-						disabled={loading}
-						className="h-full aspect-square flex items-center justify-center rounded-full text-opacity-100 group hover:bg-whitePrimary transition-colors duration-300 ease"
-					>
-						<RiSearchLine className="text-lg group-hover:fill-darkPrimary" />
-					</button>
-				</div>
-			</div>
-		</div>
-	)
-}
-
-const Posts = ({
-	posts,
-	isAutherLoggedIn,
-	onDelete
-}: {
-	posts: IPost[]
-	isAutherLoggedIn: boolean
-	onDelete: (postId: string) => void
-}) => {
-	return (
-		<div className="ss:space-y-5">
-			{posts?.map(post => (
-				<PostCard
-					key={post?._id}
-					{...post}
-					profileView={true}
-					userView={isAutherLoggedIn}
-					onDelete={() => onDelete(post._id || "")}
-				/>
-			))}
-		</div>
-	)
-}
-
-const Collections = ({
-	collections,
-	isAutherLoggedIn,
-	onCollectionSelect
-}: {
-	collections: ICollection[]
-	isAutherLoggedIn: boolean
-	onCollectionSelect: (value: { _id: string; name: string }) => void
-}) => {
-	return (
-		<div className="space-y-5">
-			{collections?.length > 0 &&
-				collections?.map(coll => (
-					<div
-						className="bg-darkSecondary ss:rounded-5xl rounded-3xl ss:p-8 p-6 cursor-pointer relative first:mt-0"
-						onClick={() => onCollectionSelect({ _id: coll?._id as string, name: coll?.name })}
-					>
-						<div className="flex items-center justify-between">
-							<div className="flex items-center ss:gap-4 gap-3">
-								<BsCollection className="ss:text-2xl text-lg" />
-								{coll?.created_at && (
-									<span className="ss:text-sm text-xs opacity-60">
-										{new Date(coll?.created_at as any)?.toDateString()}
-									</span>
-								)}
-							</div>
-						</div>
-						<p className="ss:my-5 my-4 ss:text-3xl text-2xl">{coll?.name}</p>
-						<div className="ss:text-sm text-xs opacity-60 flex ss:gap-3 gap-2">
-							<span>
-								{coll?.total_posts} post{(coll?.total_posts as number) > 0 ? "s" : ""}
-							</span>
-							{coll?.recent_post && (
-								<>
-									<span>·</span>
-									<span>Recent post at {new Date(coll?.recent_post as any).toDateString()}</span>
-								</>
-							)}
-						</div>
-						{isAutherLoggedIn && (
-							<button className="ss:p-3 p-2 rounded-full bg-whitePrimary text-opacity-100 absolute ss:right-8 right-6 bottom-5 transition-transform duration-200 ease-linear hover:scale-125">
-								<IoAdd className="text-xl stroke-darkSecondary" />
-							</button>
-						)}
-					</div>
-				))}
-		</div>
 	)
 }
 
@@ -409,7 +278,8 @@ const Content = ({
 	collections,
 	loadPosts,
 	loadCollections,
-	deletePost
+	deletePost,
+	deleteCollection
 }: {
 	isAutherLoggedIn: boolean
 	posts: IPost[]
@@ -417,6 +287,7 @@ const Content = ({
 	loadPosts: () => Promise<void>
 	loadCollections: () => Promise<void>
 	deletePost: (postId: string) => void
+	deleteCollection: (collId: string, deleteOption: number) => void
 }) => {
 	const [loading, setLoading] = useState(true)
 	const [state, setState] = useState<ValuesStateType>({
@@ -424,16 +295,15 @@ const Content = ({
 	})
 
 	useEffect(() => {
-		;(async () => {
-			setLoading(true)
-			try {
-				if (!posts?.length && !collections?.length) {
+		if (!posts?.length && !collections?.length)
+			(async () => {
+				setLoading(true)
+				try {
 					await loadPosts()
 					await loadCollections()
-				}
-			} catch (error) {}
-			setLoading(false)
-		})()
+				} catch (error) {}
+				setLoading(false)
+			})()
 	}, [posts?.length, collections?.length])
 
 	if (loading)
@@ -453,15 +323,26 @@ const Content = ({
 			{state?.currCollection || state?.view === viewOptions[0].type ? (
 				<>
 					{state?.currCollection?.name && (
-						<h1 className="mt-8 mb-14 text-4xl font-semibold">{state?.currCollection?.name}</h1>
+						<h1 className="ss:mt-8 ss:mb-14 mt-5 mb-8 ss:text-4xl text-3xl font-semibold">
+							{state?.currCollection?.name}
+						</h1>
 					)}
-					<Posts posts={posts} isAutherLoggedIn={isAutherLoggedIn} onDelete={deletePost} />
+					<Posts
+						posts={
+							state?.currCollection?.name
+								? posts?.filter(i => i.user_collection === state?.currCollection?._id)
+								: posts
+						}
+						isAutherLoggedIn={isAutherLoggedIn}
+						onDelete={deletePost}
+					/>
 				</>
 			) : (
 				<Collections
 					collections={collections}
 					isAutherLoggedIn={isAutherLoggedIn}
 					onCollectionSelect={value => setState(prev => ({ ...prev, currCollection: value }))}
+					onDelete={deleteCollection}
 				/>
 			)}
 		</>

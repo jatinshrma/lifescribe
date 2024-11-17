@@ -1,6 +1,8 @@
 import connectToDB from "@db/index"
-import { User, CollectionModel } from "@db/models"
+import { User, CollectionModel, Post } from "@db/models"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
+import mongoose from "mongoose"
+import { Mongoose } from "mongoose"
 import { NextRequest, NextResponse } from "next/server"
 
 export const GET = async (request: NextRequest) => {
@@ -9,15 +11,21 @@ export const GET = async (request: NextRequest) => {
 		const username = request.nextUrl.searchParams.get("username")
 		const attachPosts = request.nextUrl.searchParams.get("attachPosts")
 		const isPrivate = request.nextUrl.searchParams.get("private") || ""
+		const visibilityInsensitive = request.nextUrl.searchParams.get("visibilityInsensitive") || ""
 		const skipPages = request.nextUrl.searchParams.get("skipPages") || ""
 		const totalPages = request.nextUrl.searchParams.get("totalPages") || ""
 		const pageSize = request.nextUrl.searchParams.get("pageSize") || ""
 
 		const user = await User.findOne({ username }, { _id: true })
-		const matchQuery = {
+		const matchQuery: {
+			user: mongoose.Types.ObjectId | undefined
+			private?: boolean
+		} = {
 			user: user?._id,
 			private: Boolean(+isPrivate)
 		}
+
+		if (+visibilityInsensitive) delete matchQuery.private
 
 		const totalPagesCount = +totalPages || (await CollectionModel.countDocuments(matchQuery))
 
@@ -111,6 +119,35 @@ export const PUT = async (request: NextRequest) => {
 		return NextResponse.json({
 			success: Boolean(result)
 		})
+	} catch (error: any) {
+		console.error(error.message)
+		return NextResponse.json({ message: error.message }, { status: 500 })
+	}
+}
+
+export const DELETE = async (request: NextRequest) => {
+	try {
+		await connectToDB()
+		const collId = request.nextUrl.searchParams.get("collectionId") as string
+		const collectionId = new mongoose.Types.ObjectId(collId)
+
+		const deleteOption = request.nextUrl.searchParams.get("collecetionId") || ""
+
+		await CollectionModel.findByIdAndDelete(collectionId)
+
+		if (+deleteOption === -1) await Post.deleteMany({ user_collection: collectionId })
+		else if (+deleteOption === 0)
+			await Post.updateMany(
+				{ user_collection: collectionId },
+				{ $set: { private: 0 }, $unset: { user_collection: "" } }
+			)
+		else if (+deleteOption === 1)
+			await Post.updateMany(
+				{ user_collection: collectionId },
+				{ $set: { private: 1 }, $unset: { user_collection: "" } }
+			)
+
+		return NextResponse.json({ success: true })
 	} catch (error: any) {
 		console.error(error.message)
 		return NextResponse.json({ message: error.message }, { status: 500 })

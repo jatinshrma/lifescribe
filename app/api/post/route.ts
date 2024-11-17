@@ -103,6 +103,7 @@ export const POST = async (request: Request) => {
 			})
 
 			data.user_collection = newCollection?._id
+			data.private = data.newCollection.private
 		}
 
 		const post = await Post.create(data)

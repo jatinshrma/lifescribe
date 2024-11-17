@@ -133,17 +133,15 @@ const Post = () => {
 											<span className="opacity-60 text-sm">From</span>{" "}
 											<Link href={"#"} className="text-sm hover:underline">
 												{author?.user_collection?.name}
-												My New Collection Name
 											</Link>
 										</span>
 										<div className="flex items-center gap-2">
 											{!author?.user_collection?.name && (
 												<div className="ss:flex gap-2 hidden">
 													<span>
-														<span className="opacity-60 text-sm">From collection</span>{" "}
+														<span className="opacity-60 text-sm">From</span>{" "}
 														<Link href={"#"} className="text-base hover:underline">
 															{author?.user_collection?.name}
-															My New Collection Name
 														</Link>
 													</span>
 													<span className="opacity-60 text-sm">·</span>

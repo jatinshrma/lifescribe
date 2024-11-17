@@ -130,6 +130,7 @@ export interface IPromptParams {
 	actions: IPromptAction[]
 	isOpen: boolean
 	onClose: () => void
+	children?: React.ReactNode
 }
 
 export interface IAuthPageProps {

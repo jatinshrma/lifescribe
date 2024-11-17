@@ -1,4 +1,4 @@
-import { Following, Post, PostLikes, ReadingList } from "@db/models"
+import { CollectionModel, Following, Post, PostLikes, ReadingList } from "@db/models"
 import { NextRequest, NextResponse } from "next/server"
 import connectToDB from "@db/index"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
@@ -15,8 +15,14 @@ export const GET = async (request: NextRequest, { params }: IParams) => {
 		let loggedInUser: string | mongoose.Types.ObjectId = getUserHeaders(request)?.user_id
 		if (loggedInUser) loggedInUser = new mongoose.Types.ObjectId(loggedInUser)
 		if (params?.id) params.id = new mongoose.Types.ObjectId(params.id)
+		const basic = request.nextUrl.searchParams.get("basic") === "1"
 
 		await connectToDB()
+		if (basic) {
+			const basicPost = await Post.findById(params.id, { created_at: 0, __v: 0 })
+			return NextResponse.json(basicPost)
+		}
+
 		const [post] = await Post.aggregate([
 			{
 				$match: {
@@ -138,6 +144,16 @@ export const PUT = async (request: NextRequest, { params }: IParams) => {
 	try {
 		const postId = params?.id
 		const data: any = await request.json()
+
+		const currentPost = await Post.findById(postId, { user_collection: 1, private: 1 })
+		if (data.user_collection && currentPost?.user_collection?.toString() !== data.user_collection) {
+			const coll = await CollectionModel.findById(new mongoose.Types.ObjectId(data.user_collection), {
+				private: 1
+			})
+
+			data.private = coll?.private
+		}
+
 		await Post.findByIdAndUpdate(postId, data)
 		return NextResponse.json({ success: true })
 	} catch (error: any) {

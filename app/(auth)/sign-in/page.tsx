@@ -26,7 +26,7 @@ function SignIn() {
 	if (session) return redirect("/")
 	return (
 		<div className="flex h-screen">
-			<div className="bg-auth ss:w-1/2 hidden h-screen bg-cover bg-right" />
+			<div className="bg-auth ss:w-1/2 ss:block hidden h-screen bg-cover bg-right" />
 			<div className="ss:w-1/2 w-full max-h-screen overflow-auto">
 				<div className="ss:w-[65%] ss:mx-auto mx-5 pt-16 pb-8">
 					<small className="ss:text-base text-lg">Welcome.</small>
