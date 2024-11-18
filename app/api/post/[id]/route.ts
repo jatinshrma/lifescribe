@@ -74,7 +74,6 @@ export const GET = async (request: NextRequest, { params }: IParams) => {
 			},
 			{
 				$project: {
-					private: 0,
 					_user_: 0,
 					_coll_: 0
 				}
@@ -136,27 +135,6 @@ export const GET = async (request: NextRequest, { params }: IParams) => {
 		return NextResponse.json(post)
 	} catch (error: any) {
 		console.error(error)
-		return NextResponse.json({ message: error.message }, { status: 500 })
-	}
-}
-
-export const PUT = async (request: NextRequest, { params }: IParams) => {
-	try {
-		const postId = params?.id
-		const data: any = await request.json()
-
-		const currentPost = await Post.findById(postId, { user_collection: 1, private: 1 })
-		if (data.user_collection && currentPost?.user_collection?.toString() !== data.user_collection) {
-			const coll = await CollectionModel.findById(new mongoose.Types.ObjectId(data.user_collection), {
-				private: 1
-			})
-
-			data.private = coll?.private
-		}
-
-		await Post.findByIdAndUpdate(postId, data)
-		return NextResponse.json({ success: true })
-	} catch (error: any) {
 		return NextResponse.json({ message: error.message }, { status: 500 })
 	}
 }

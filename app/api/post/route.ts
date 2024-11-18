@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import connectToDB from "@db/index"
 import { getUserHeaders } from "@helpers/handleUserHeaders"
 import { postsRegexPipeline } from "@helpers/mongoPipelines"
+import mongoose from "mongoose"
 
 // export const GET = async (request: NextRequest) => {
 // 	try {
@@ -111,5 +112,46 @@ export const POST = async (request: Request) => {
 	} catch (error: any) {
 		console.log(error)
 		return NextResponse.json({ error: error.message }, { status: 500 })
+	}
+}
+
+export const PUT = async (request: NextRequest) => {
+	try {
+		let { postId, ...data }: any = await request.json()
+		data.user = getUserHeaders(request)?.user_id
+
+		if (data?.newCollection) {
+			const newCollection = await CollectionModel.create({
+				user: data.user,
+				name: data.newCollection.name,
+				private: data.newCollection.private
+			})
+
+			data.user_collection = newCollection?._id
+			data.private = data.newCollection.private
+		} else {
+			const currentPost = await Post.findById(postId, { user_collection: 1, private: 1 })
+			if (data.user_collection && currentPost?.user_collection?.toString() !== data.user_collection) {
+				const coll = await CollectionModel.findById(new mongoose.Types.ObjectId(data.user_collection), {
+					private: 1
+				})
+
+				data.private = coll?.private
+			} else if (currentPost?.user_collection && !data.user_collection) {
+				data = {
+					$set: {
+						...data
+					},
+					$unset: {
+						user_collection: ""
+					}
+				}
+			}
+		}
+
+		await Post.findByIdAndUpdate(postId, data)
+		return NextResponse.json({ success: true })
+	} catch (error: any) {
+		return NextResponse.json({ message: error.message }, { status: 500 })
 	}
 }

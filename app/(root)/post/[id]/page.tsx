@@ -16,6 +16,8 @@ import { calculateAge, getRedirectURL } from "@helpers/utils"
 import { useSession } from "next-auth/react"
 import { BlogSkeleton } from "@components/Skeleton"
 import Button from "@components/Button"
+import { TbWorld } from "react-icons/tb"
+import { FiLock } from "react-icons/fi"
 
 type PostAuthor = {
 	profile_picture: Pick<IUser, "profile_picture"> | string
@@ -129,14 +131,16 @@ const Post = () => {
 												</>
 											)}
 										</div>
-										<span className="ss:hidden block">
-											<span className="opacity-60 text-sm">From</span>{" "}
-											<Link href={"#"} className="text-sm hover:underline">
-												{author?.user_collection?.name}
-											</Link>
-										</span>
+										{Boolean(author?.user_collection?.name) && (
+											<span className="ss:hidden block">
+												<span className="opacity-60 text-sm">From</span>{" "}
+												<Link href={"#"} className="text-sm hover:underline">
+													{author?.user_collection?.name}
+												</Link>
+											</span>
+										)}
 										<div className="flex items-center gap-2">
-											{!author?.user_collection?.name && (
+											{Boolean(author?.user_collection?.name) && (
 												<div className="ss:flex gap-2 hidden">
 													<span>
 														<span className="opacity-60 text-sm">From</span>{" "}
@@ -150,6 +154,14 @@ const Post = () => {
 											<span className="opacity-60 text-sm">{post?.reading_time} min read</span>
 											<span className="opacity-60 text-sm">·</span>
 											<span className="opacity-60 text-sm">{calculateAge(post?.created_at)}</span>
+											{author?.isUserLoggedIn && (
+												<>
+													<span className="opacity-60 text-sm">·</span>
+													<span className="opacity-60 text-lg mt-[.155em]">
+														{post?.private ? <FiLock className="text-base" /> : <TbWorld />}
+													</span>
+												</>
+											)}
 										</div>
 									</div>
 								</div>

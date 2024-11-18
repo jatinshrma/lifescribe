@@ -7,7 +7,19 @@ export const GET = async (request: NextRequest) => {
 	try {
 		await connectToDB()
 		const username = request.nextUrl?.searchParams?.get("username")
-		const matchQuery = []
+		const matchQuery: any = [
+			{
+				$match: {
+					$and: [
+						{
+							private: {
+								$ne: true
+							}
+						}
+					]
+				}
+			}
+		]
 
 		const user = username ? await User.findOne({ username }, { _id: 1 }) : null
 
@@ -63,31 +75,15 @@ export const GET = async (request: NextRequest) => {
 				])
 			)?.[0]?.tags?.flat()
 
-			matchQuery.push({
-				$match: {
-					$and: [
-						{
-							user: {
-								$ne: user?._id
-							}
-						},
-						{
-							private: {
-								$ne: true
-							}
-						},
-						...(tagsList?.length > 0
-							? [
-									{
-										tags: {
-											$in: tagsList
-										}
-									}
-							  ]
-							: [])
-					]
-				}
+			matchQuery[0]["$match"]["$and"].push({
+				user: { $ne: user?._id }
 			})
+			if (tagsList?.length > 0)
+				matchQuery[0]["$match"]["$and"].push({
+					tags: {
+						$in: tagsList
+					}
+				})
 		}
 
 		const pipeline = [

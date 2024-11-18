@@ -105,8 +105,9 @@ const EditorComponent = () => {
 
 			const response = await axios({
 				method: postId ? "PUT" : "POST",
-				url: "/api/post" + (postId ? `/${postId}` : ""),
+				url: "/api/post",
 				data: {
+					postId: postId,
 					title: post?.title,
 					content: post?.content,
 					reading_time: Math.ceil(words_count / 200),

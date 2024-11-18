@@ -92,6 +92,21 @@ const PostSettings = ({
 		return <Icon className={className} />
 	}
 
+	const handleSubmit = () => {
+		const params: IPostSubmitParams = { tags }
+
+		if (newCollection || collection) {
+			if (newCollection)
+				params.newCollection = {
+					name: newCollection.name || "",
+					private: newCollection.private?.value || visibilityOptions[0].value
+				}
+			else if (collection) params.user_collection = collection
+		} else params.private = isPrivate
+
+		submit(params)
+	}
+
 	return (
 		<div className="max-w-screen-md mx-auto ss:py-8 py-2">
 			<button className="theme-button primary small flex items-center gap-1" onClick={goBack}>
@@ -126,7 +141,7 @@ const PostSettings = ({
 									/>
 
 									<div className="absolute inset-y-0 right-0 px-5 flex items-center">
-										{collection && (
+										{Boolean(collection) && (
 											<button
 												className="px-5"
 												type="button"
@@ -270,22 +285,7 @@ const PostSettings = ({
 				spinnerClassName="border-darkPrimary"
 				Icon={TbUpload}
 				iconsClassName="stroke-darkPrimary"
-				onClick={() => {
-					const params: IPostSubmitParams = {
-						tags
-					}
-
-					if (newCollection || collection) {
-						if (newCollection)
-							params.newCollection = {
-								name: newCollection.name || "",
-								private: newCollection.private?.value || visibilityOptions[0].value
-							}
-						else if (collection) params.user_collection = collection
-					} else params.private = isPrivate
-
-					submit(params)
-				}}
+				onClick={handleSubmit}
 			>
 				<span className="text-darkPrimary text-sm">Publish now</span>
 			</Button>
