@@ -34,7 +34,7 @@ const PostSettings = ({
 	goBack,
 	submit,
 	post,
-	isPublishing
+	isPublishing: isSaving
 }: {
 	goBack: () => void
 	submit: (props: IPostSubmitParams) => void
@@ -280,14 +280,14 @@ const PostSettings = ({
 			</div>
 
 			<Button
-				loading={isPublishing}
+				loading={isSaving}
 				className="bg-whitePrimary text-darkPrimary font-medium ss:mb-0 ss:w-fit w-full justify-center mb-8"
 				spinnerClassName="border-darkPrimary"
 				Icon={TbUpload}
 				iconsClassName="stroke-darkPrimary"
 				onClick={handleSubmit}
 			>
-				<span className="text-darkPrimary text-sm">Publish now</span>
+				<span className="text-darkPrimary text-sm">Save now</span>
 			</Button>
 		</div>
 	)

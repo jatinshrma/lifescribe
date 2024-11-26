@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { Suspense, useEffect, useState } from "react"
 import { MdOutlineInterests } from "react-icons/md"
 import { RiUserSettingsLine } from "react-icons/ri"
 import { useSession } from "next-auth/react"
@@ -16,6 +16,7 @@ import { toast } from "react-toastify"
 import { FiArrowLeft } from "react-icons/fi"
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import { useRouter } from "next/navigation"
+import Loading from "../loading"
 
 const tabsData = [
 	{
@@ -137,114 +138,116 @@ const Settings = () => {
 		) : null
 
 	return (
-		<LayoutWrapper>
-			{isMobileView ? (
-				<>
-					<div className="flex items-center gap-3 mb-2">
-						{selectedIndex !== null && (
-							<button
-								className="theme-button primary p-2"
-								onClick={() => {
-									setUserData(unModifiedUserData)
-									setSelectedIndex(null)
-								}}
-							>
-								<FiArrowLeft className="text-lg" />
-							</button>
-						)}
-						<h1 className="heading">Settings</h1>
-					</div>
-					<div className="ss:hidden block relative">
-						{component === null ? (
-							<div>
-								{tabsData?.map((i, idx) => (
-									<div
-										key={i.labels.button}
-										className="theme-button w-full px-2 py-6 justify-between first:border-none border-t border-darkHighlight rounded-none"
-										onClick={() => setSelectedIndex(idx)}
-									>
-										<div className="flex items-center gap-4">
-											<i.Icon className="text-2xl" />
-											<span>{i.labels.button}</span>
-										</div>
-										<FaChevronRight />
-									</div>
-								))}
-							</div>
-						) : (
-							<>
-								<div className="w-full h-[calc(100vh-5.5rem-80px)] overflow-auto">
-									<div className="sticky top-0 flex justify-between items-center py-2 mt-2 bg-darkPrimary z-10">
-										<div>
-											<h2 className="sub-heading">{component.labels.heading}</h2>
-											{component.labels.info && <span className="opacity-40">{component.labels.info}</span>}
-										</div>
-									</div>
-									<div className="mt-5">{pageComponent}</div>
-								</div>
-								<Button
-									loading={flags?.saving}
-									spinnerClassName="border-darkPrimary"
-									onClick={handleSubmit}
-									className={"theme-button w-full bg-whitePrimary rounded-lg gap-3 justify-center"}
+		<Suspense fallback={<Loading />}>
+			<LayoutWrapper>
+				{isMobileView ? (
+					<>
+						<div className="flex items-center gap-3 mb-2">
+							{selectedIndex !== null && (
+								<button
+									className="theme-button primary p-2"
+									onClick={() => {
+										setUserData(unModifiedUserData)
+										setSelectedIndex(null)
+									}}
 								>
-									<span className="text-darkPrimary font-semibold block">Save Changes</span>
-								</Button>
-							</>
-						)}
-					</div>
-				</>
-			) : (
-				<TabGroup
-					className="flex gap-8"
-					vertical
-					selectedIndex={selectedIndex as number}
-					onChange={setSelectedIndex}
-				>
-					<div className="w-1/3 sticky top-0 flex justify-between flex-col pb-3">
-						<div>
-							<h1 className="heading mb-2">Settings</h1>
-							<TabList className="mt-7">
-								{tabsData?.map(i => (
-									<Tab
-										key={i.labels.button}
-										className="data-[selected]:bg-darkHighlight theme-button justify-between rounded-lg py-5 hover:bg-darkSecondary [&:hover+*]:border-transparent rouded-lg flex w-full"
-									>
-										<div className="flex items-center gap-4">
-											<i.Icon className="text-2xl" />
-											<span>{i.labels.button}</span>
-										</div>
-										<FaChevronRight />
-									</Tab>
-								))}
-							</TabList>
+									<FiArrowLeft className="text-lg" />
+								</button>
+							)}
+							<h1 className="heading">Settings</h1>
 						</div>
-
-						<Button
-							loading={flags?.saving}
-							spinnerClassName="border-darkPrimary"
-							onClick={handleSubmit}
-							className={"theme-button w-full bg-whitePrimary rounded-lg gap-3 justify-center"}
-						>
-							<span className="text-darkPrimary font-semibold block">Save Changes</span>
-						</Button>
-					</div>
-					<TabPanels className="w-2/3 overflow-auto h-[calc(100vh-90px)]">
-						{tabsData?.map(i => (
-							<TabPanel>
-								<div className="flex justify-between items-center">
-									<div>
-										<h2 className="sub-heading">{i.labels.heading}</h2>
-										{i.labels.info && <span className="opacity-40">{i.labels.info}</span>}
-									</div>
+						<div className="ss:hidden block relative">
+							{component === null ? (
+								<div>
+									{tabsData?.map((i, idx) => (
+										<div
+											key={i.labels.button}
+											className="theme-button w-full px-2 py-6 justify-between first:border-none border-t border-darkHighlight rounded-none"
+											onClick={() => setSelectedIndex(idx)}
+										>
+											<div className="flex items-center gap-4">
+												<i.Icon className="text-2xl" />
+												<span>{i.labels.button}</span>
+											</div>
+											<FaChevronRight />
+										</div>
+									))}
 								</div>
-								<div className="mt-7">{pageComponent}</div>
-							</TabPanel>
-						))}
-					</TabPanels>
-				</TabGroup>
-			)}
-		</LayoutWrapper>
+							) : (
+								<>
+									<div className="w-full h-[calc(100vh-5.5rem-80px)] overflow-auto">
+										<div className="sticky top-0 flex justify-between items-center py-2 mt-2 bg-darkPrimary z-10">
+											<div>
+												<h2 className="sub-heading">{component.labels.heading}</h2>
+												{component.labels.info && <span className="opacity-40">{component.labels.info}</span>}
+											</div>
+										</div>
+										<div className="mt-5">{pageComponent}</div>
+									</div>
+									<Button
+										loading={flags?.saving}
+										spinnerClassName="border-darkPrimary"
+										onClick={handleSubmit}
+										className={"theme-button w-full bg-whitePrimary rounded-lg gap-3 justify-center"}
+									>
+										<span className="text-darkPrimary font-semibold block">Save Changes</span>
+									</Button>
+								</>
+							)}
+						</div>
+					</>
+				) : (
+					<TabGroup
+						className="flex gap-8"
+						vertical
+						selectedIndex={selectedIndex as number}
+						onChange={setSelectedIndex}
+					>
+						<div className="w-1/3 sticky top-0 flex justify-between flex-col pb-3">
+							<div>
+								<h1 className="heading mb-2">Settings</h1>
+								<TabList className="mt-7">
+									{tabsData?.map(i => (
+										<Tab
+											key={i.labels.button}
+											className="data-[selected]:bg-darkHighlight theme-button justify-between rounded-lg py-5 hover:bg-darkSecondary [&:hover+*]:border-transparent rouded-lg flex w-full"
+										>
+											<div className="flex items-center gap-4">
+												<i.Icon className="text-2xl" />
+												<span>{i.labels.button}</span>
+											</div>
+											<FaChevronRight />
+										</Tab>
+									))}
+								</TabList>
+							</div>
+
+							<Button
+								loading={flags?.saving}
+								spinnerClassName="border-darkPrimary"
+								onClick={handleSubmit}
+								className={"theme-button w-full bg-whitePrimary rounded-lg gap-3 justify-center"}
+							>
+								<span className="text-darkPrimary font-semibold block">Save Changes</span>
+							</Button>
+						</div>
+						<TabPanels className="w-2/3 overflow-auto h-[calc(100vh-90px)]">
+							{tabsData?.map(i => (
+								<TabPanel>
+									<div className="flex justify-between items-center">
+										<div>
+											<h2 className="sub-heading">{i.labels.heading}</h2>
+											{i.labels.info && <span className="opacity-40">{i.labels.info}</span>}
+										</div>
+									</div>
+									<div className="mt-7">{pageComponent}</div>
+								</TabPanel>
+							))}
+						</TabPanels>
+					</TabGroup>
+				)}
+			</LayoutWrapper>
+		</Suspense>
 	)
 }
 

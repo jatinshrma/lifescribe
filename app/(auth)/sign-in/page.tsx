@@ -2,10 +2,11 @@
 
 import { FcGoogle } from "react-icons/fc"
 import { ClientSafeProvider, LiteralUnion, getProviders, signIn, useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { BuiltInProviderType } from "next-auth/providers/index"
 import { FaXTwitter } from "react-icons/fa6"
 import { redirect } from "next/navigation"
+import Loading from "@app/(root)/loading"
 
 function SignIn() {
 	const { data: session } = useSession()
@@ -25,75 +26,77 @@ function SignIn() {
 
 	if (session) return redirect("/")
 	return (
-		<div className="flex h-screen">
-			<div className="bg-auth ss:w-1/2 ss:block hidden h-screen bg-cover bg-right" />
-			<div className="ss:w-1/2 w-full max-h-screen overflow-auto">
-				<div className="ss:w-[65%] ss:mx-auto mx-5 pt-16 pb-8">
-					<small className="ss:text-base text-lg">Welcome.</small>
-					<h2 className="heading">Sign into your account</h2>
-					<div className="mt-12 mb-6 flex gap-3 flex-col">
-						{/* {Object.values(providers || {})
+		<Suspense fallback={<Loading />}>
+			<div className="flex h-screen">
+				<div className="bg-auth ss:w-1/2 ss:block hidden h-screen bg-cover bg-right" />
+				<div className="ss:w-1/2 w-full max-h-screen overflow-auto">
+					<div className="ss:w-[65%] ss:mx-auto mx-5 pt-16 pb-8">
+						<small className="ss:text-base text-lg">Welcome.</small>
+						<h2 className="heading">Sign into your account</h2>
+						<div className="mt-12 mb-6 flex gap-3 flex-col">
+							{/* {Object.values(providers || {})
 							.filter(i => i.name !== "Credentials")
 							.map(provider => (
 							))} */}
-						<div className="flex gap-3 flex-col">
-							<div>
-								<button
-									className="flex items-center justify-center auth-button dark gap-3"
-									onClick={() => signIn("google")}
-									disabled={flags?.loading}
-								>
-									<FcGoogle className="w-7 h-7" />
-									<span className="text-fontSecondary font-normal">Continue with google</span>
-								</button>
-							</div>
-							<div>
-								<button
-									className="flex items-center justify-center auth-button dark gap-3"
-									disabled={flags?.loading}
-								>
-									<FacebookIcon />
-									<span className="text-fontSecondary font-normal">Continue with Facebook</span>
-								</button>
-							</div>
-							<div>
-								<button
-									className="flex items-center justify-center auth-button dark gap-3"
-									disabled={flags?.loading}
-								>
-									<LinkedInIcon />
-									<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
-								</button>
-							</div>
-							<div>
-								<button
-									className="flex items-center justify-center auth-button dark gap-3"
-									disabled={flags?.loading}
-								>
-									<GithubIcon />
-									<span className="text-fontSecondary font-normal">Continue with Github</span>
-								</button>
-							</div>
-							<div>
-								<button
-									className="flex items-center justify-center auth-button dark gap-3"
-									disabled={flags?.loading}
-								>
-									<FaXTwitter className="w-7 h-6 text-fontSecondary" />
-									<span className="text-fontSecondary font-normal">Continue with Twitter</span>
-								</button>
+							<div className="flex gap-3 flex-col">
+								<div>
+									<button
+										className="flex items-center justify-center auth-button dark gap-3"
+										onClick={() => signIn("google")}
+										disabled={flags?.loading}
+									>
+										<FcGoogle className="w-7 h-7" />
+										<span className="text-fontSecondary font-normal">Continue with google</span>
+									</button>
+								</div>
+								<div>
+									<button
+										className="flex items-center justify-center auth-button dark gap-3"
+										disabled={flags?.loading}
+									>
+										<FacebookIcon />
+										<span className="text-fontSecondary font-normal">Continue with Facebook</span>
+									</button>
+								</div>
+								<div>
+									<button
+										className="flex items-center justify-center auth-button dark gap-3"
+										disabled={flags?.loading}
+									>
+										<LinkedInIcon />
+										<span className="text-fontSecondary font-normal">Continue with LinkedIn</span>
+									</button>
+								</div>
+								<div>
+									<button
+										className="flex items-center justify-center auth-button dark gap-3"
+										disabled={flags?.loading}
+									>
+										<GithubIcon />
+										<span className="text-fontSecondary font-normal">Continue with Github</span>
+									</button>
+								</div>
+								<div>
+									<button
+										className="flex items-center justify-center auth-button dark gap-3"
+										disabled={flags?.loading}
+									>
+										<FaXTwitter className="w-7 h-6 text-fontSecondary" />
+										<span className="text-fontSecondary font-normal">Continue with Twitter</span>
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div>
-						<span className="text-xs text-whitePrimary text-opacity-50">
-							By continuing, you agree to our <span className="underline">Terms of Service</span> and acknowledge
-							you've read our <span className="underline">Privacy Policy</span>.
-						</span>
+						<div>
+							<span className="text-xs text-whitePrimary text-opacity-50">
+								By continuing, you agree to our <span className="underline">Terms of Service</span> and acknowledge
+								you've read our <span className="underline">Privacy Policy</span>.
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</Suspense>
 	)
 }
 

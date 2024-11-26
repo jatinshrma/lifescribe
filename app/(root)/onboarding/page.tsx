@@ -57,6 +57,7 @@ const Onboarding = () => {
 		try {
 			const response = await axios.put("/api/user", {
 				...userData,
+				originalUsername: session?.user.username,
 				dob: typeof userData.dob === "string" ? new Date(userData.dob).toJSON() : userData.dob
 			})
 			if (response.data.success) {

@@ -117,7 +117,7 @@ const EditorComponent = () => {
 
 			const _postId = response.data.postId || postId
 			if (_postId) {
-				toast.success("Published your new post successfully!")
+				toast.success("Saved your post successfully!")
 				router.push(`/post/${_postId}?title=${post?.title?.replaceAll(" ", "-")}`)
 			}
 		} catch (error) {

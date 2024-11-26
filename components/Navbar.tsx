@@ -11,6 +11,7 @@ import { BsArrowRight } from "react-icons/bs"
 import { LuSettings } from "react-icons/lu"
 import Prompt from "./Prompt"
 import { PiSignOutBold } from "react-icons/pi"
+import Button from "./Button"
 
 const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const router = useRouter()
@@ -28,6 +29,11 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 	const handleSignOut = async () => {
 		await signOut()
 		setFlags({})
+		router.push("/sign-in", { scroll: false })
+	}
+
+	const handleSignIn = () => {
+		setFlags({ loadingSignIn: true })
 		router.push("/sign-in", { scroll: false })
 	}
 
@@ -54,13 +60,14 @@ const Navbar = ({ children }: { children: React.ReactNode }) => {
 			</div> */}
 			<div className="flex gap-4 items-center flex-shrink-0">
 				{!session?.user.username ? (
-					<Link
-						href={"/sign-in"}
+					<Button
+						loading={Boolean(flags?.loadingSignIn)}
 						className="theme-button gap-0 hover:gap-3 whitespace-nowrap border border-darkHighlight hover:border-white/50 text-base font-medium tracking-wide font-playFD group"
+						onClick={handleSignIn}
 					>
 						Sign In
 						<BsArrowRight className="text-lg w-[0px] group-hover:!w-[18px] transition-all ease-linear" />
-					</Link>
+					</Button>
 				) : (
 					<>
 						{children}

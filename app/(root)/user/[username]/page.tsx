@@ -130,6 +130,35 @@ const User = () => {
 		setReadingList(prev => prev.concat([...data]))
 	}
 
+	const onCollectionDelete = (collId: string, deleteOption: number) => {
+		setCollections(prev => ({
+			...prev,
+			[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== collId)
+		}))
+
+		if (deleteOption === -1)
+			setPosts(prev => ({
+				...prev,
+				[visibilityType]: prev?.[visibilityType]?.filter(i => i.user_collection !== collId)
+			}))
+		else if (deleteOption === 1 && currTab === 0)
+			setPosts(prev => ({
+				...prev,
+				public: prev.public?.filter(i => i.user_collection !== collId),
+				private: prev.private.concat(
+					prev.public?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: true }))
+				)
+			}))
+		else if (deleteOption === 0 && currTab === 1)
+			setPosts(prev => ({
+				...prev,
+				private: prev.private?.filter(i => i.user_collection !== collId),
+				public: prev.public.concat(
+					prev.private?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: false }))
+				)
+			}))
+	}
+
 	const visibilityType = tabs[currTab].value as "public" | "private"
 
 	return (
@@ -213,60 +242,36 @@ const User = () => {
 				</div>
 
 				{/* Content */}
-				{loading ? null : isAutherLoggedIn && currTab === 2 ? (
-					<ReadingList
-						readingList={readingList}
-						loadReadingList={loadReadingList}
-						update={(post_id, status) =>
-							setReadingList((prev: any) => ({
-								...prev,
-								posts: prev.posts.filter((p: { _id: string }) => p._id !== post_id || status)
-							}))
-						}
-					/>
-				) : (
-					<Content
-						isAutherLoggedIn={Boolean(isAutherLoggedIn)}
-						posts={posts[visibilityType]}
-						collections={collections[visibilityType]}
-						loadPosts={loadPosts}
-						loadCollections={loadCollections}
-						deletePost={postId =>
-							setPosts(prev => ({
-								...prev,
-								[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== postId)
-							}))
-						}
-						deleteCollection={(collId, deleteOption) => {
-							setCollections(prev => ({
-								...prev,
-								[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== collId)
-							}))
-
-							if (deleteOption === -1)
+				<div className="min-h-[60vh]">
+					{loading ? null : isAutherLoggedIn && currTab === 2 ? (
+						<ReadingList
+							readingList={readingList}
+							loadReadingList={loadReadingList}
+							update={(post_id, status) =>
+								setReadingList((prev: any) => ({
+									...prev,
+									posts: prev.posts.filter((p: { _id: string }) => p._id !== post_id || status)
+								}))
+							}
+						/>
+					) : (
+						<Content
+							isAutherLoggedIn={Boolean(isAutherLoggedIn)}
+							visibilityType={visibilityType}
+							posts={posts[visibilityType]}
+							collections={collections[visibilityType]}
+							loadPosts={loadPosts}
+							loadCollections={loadCollections}
+							deletePost={postId =>
 								setPosts(prev => ({
 									...prev,
-									[visibilityType]: prev?.[visibilityType]?.filter(i => i.user_collection !== collId)
+									[visibilityType]: prev?.[visibilityType]?.filter(i => i._id !== postId)
 								}))
-							else if (deleteOption === 1 && currTab === 0)
-								setPosts(prev => ({
-									...prev,
-									public: prev.public?.filter(i => i.user_collection !== collId),
-									private: prev.private.concat(
-										prev.public?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: true }))
-									)
-								}))
-							else if (deleteOption === 0 && currTab === 1)
-								setPosts(prev => ({
-									...prev,
-									private: prev.private?.filter(i => i.user_collection !== collId),
-									public: prev.public.concat(
-										prev.private?.filter(i => i.user_collection === collId)?.map(i => ({ ...i, private: false }))
-									)
-								}))
-						}}
-					/>
-				)}
+							}
+							deleteCollection={onCollectionDelete}
+						/>
+					)}
+				</div>
 			</div>
 		</LayoutWrapper>
 	)
@@ -274,6 +279,7 @@ const User = () => {
 
 const Content = ({
 	isAutherLoggedIn,
+	visibilityType,
 	posts,
 	collections,
 	loadPosts,
@@ -282,6 +288,7 @@ const Content = ({
 	deleteCollection
 }: {
 	isAutherLoggedIn: boolean
+	visibilityType: string
 	posts: IPost[]
 	collections: ICollection[]
 	loadPosts: () => Promise<void>
@@ -289,10 +296,14 @@ const Content = ({
 	deletePost: (postId: string) => void
 	deleteCollection: (collId: string, deleteOption: number) => void
 }) => {
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 	const [state, setState] = useState<ValuesStateType>({
 		view: viewOptions[0].type
 	})
+
+	useEffect(() => {
+		setState({ view: viewOptions[0].type })
+	}, [visibilityType])
 
 	useEffect(() => {
 		if (!posts?.length && !collections?.length)

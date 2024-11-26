@@ -34,7 +34,7 @@ export const PUT = async (request: NextRequest) => {
 		const data: any = await request.json()
 
 		const result = await User.findOneAndUpdate(
-			{ username: data?.username },
+			{ username: data?.originalUsername || data?.username },
 			{
 				name: data?.name,
 				username: data?.username,

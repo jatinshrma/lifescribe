@@ -210,3 +210,19 @@
 #editor .ql-editor.ql-blank::before {
 	@apply ss:text-lg text-sm text-whitePrimary opacity-30 not-italic left-0;
 }
+
+.skeleton {
+	border-radius: 5rem;
+	background-color: var(--dark-secondary);
+	background: linear-gradient(100deg, transparent 40%, var(--dark-highlight) 50%, transparent 60%)
+		var(--dark-secondary);
+	background-size: 200% 100%;
+	background-position-x: 180%;
+	animation: 1.5s loading ease-in-out infinite;
+}
+
+@keyframes loading {
+	to {
+		background-position-x: -20%;
+	}
+}

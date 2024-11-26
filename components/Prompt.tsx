@@ -20,6 +20,7 @@ const Prompt = ({ isOpen, warning, description, actions, onClose, children }: IP
 						<div className="mt-6 flex justify-end">
 							{actions.map(action => (
 								<Button
+									key={`prompt-action:${action.label}`}
 									className={
 										"theme-button primary gap-2 rounded-md ss:text-base/7 text-sm font-semibold shadow-inner focus:outline-none " +
 										"!bg-red-900/10 text-red-600"

@@ -8,12 +8,15 @@ import { MdUpload } from "react-icons/md"
 import axios from "axios"
 import { useSession } from "next-auth/react"
 import { IProfilePictureComponent } from "@types"
+import Button from "./Button"
 
 const ImageCrop = ({
+	loading,
 	src,
 	close,
 	handleUpload
 }: {
+	loading: boolean
 	src: string
 	close: () => void
 	handleUpload: (blob: Blob) => Promise<void>
@@ -105,16 +108,18 @@ const ImageCrop = ({
 						}}
 					/>
 				</div>
-				<button
+				<Button
+					loading={loading}
+					Icon={MdUpload}
+					iconsClassName={"text-2xl group-hover:fill-darkPrimary"}
 					className="theme-button primary w-[50%] my-3 mx-auto group bg-darkHighlight hover:!bg-whitePrimary text-opacity-100 flex items-center justify-center gap-2"
 					onClick={async () => {
 						const result = await getCroppedImg()
 						console.log({ result })
 					}}
 				>
-					<MdUpload className="text-2xl group-hover:fill-darkPrimary" />
-					<span className="font-medium group-hover:text-darkPrimary">Upload Image</span>
-				</button>
+					<span className="font-medium group-hover:text-darkPrimary">Save Image</span>
+				</Button>
 			</div>
 		</Overlay>
 	)
@@ -123,6 +128,7 @@ const ImageCrop = ({
 export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureComponent) => React.ReactNode }) => {
 	const { data: session } = useSession()
 	const ref = createRef<HTMLInputElement>()
+	const [loading, setLoading] = useState(false)
 	const [state, setState] = useState<{
 		cropImage?: boolean
 		dataUrl?: string
@@ -135,7 +141,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 
 	const onFileChange: React.ChangeEventHandler<HTMLInputElement> = async e => {
 		const file = e.target.files?.[0]
-
+		if (!file) return
 		const imageDataUrl = await new Promise(resolve => {
 			const reader = new FileReader()
 			reader.addEventListener("load", () => resolve(reader.result), false)
@@ -146,21 +152,27 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 	}
 
 	const handleUpload = async (blob: Blob) => {
-		const file = new File([blob], `image.${blob.type.split("/")[1]}`, {
-			type: blob.type
-		})
+		setLoading(true)
+		try {
+			const file = new File([blob], `image.${blob.type.split("/")[1]}`, {
+				type: blob.type
+			})
 
-		const formData = new FormData()
-		formData.append("type", "profile_picture")
-		formData.append("file", file)
+			const formData = new FormData()
+			formData.append("type", "profile_picture")
+			formData.append("file", file)
 
-		const response = await axios.post("/api/upload", formData, {
-			headers: {
-				"Content-Type": "multipart/form-data"
-			}
-		})
+			const response = await axios.post("/api/upload", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data"
+				}
+			})
 
-		setState({ fileUrl: response.data.filePath })
+			setState({ fileUrl: response.data.filePath })
+		} catch (error) {
+			console.log(error)
+		}
+		setLoading(false)
 	}
 
 	const handleDelete = async () => {}
@@ -175,6 +187,7 @@ export const ImageCropWrapper = ({ children }: { children: (x: IProfilePictureCo
 			})}
 			{state?.cropImage && (
 				<ImageCrop
+					loading={loading}
 					src={state?.dataUrl || state?.fileUrl || ""}
 					close={() => setState(prev => ({ ...prev, cropImage: false }))}
 					handleUpload={handleUpload}
