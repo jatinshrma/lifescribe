@@ -140,7 +140,7 @@ const EditorComponent = () => {
 						onClick={() => setFlags(prev => ({ state: +Boolean(!prev.state) }))}
 					>
 						<TbUpload />
-						<span className="text-sm">Publish</span>
+						<span className="text-sm">Save</span>
 					</button>
 				)
 			}

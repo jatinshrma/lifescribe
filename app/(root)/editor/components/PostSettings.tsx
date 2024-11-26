@@ -242,7 +242,7 @@ const PostSettings = ({
 					<Field>
 						<Label className="text-sm font-medium">Post's Visibility</Label>
 						<Description className="text-sm text-white/50">
-							Post's visibility is inhereted from collection. In the absence of collection, post's visibility can
+							Post's visibility is inherited from collection. In the absence of collection, post's visibility can
 							be set independently.
 						</Description>
 						<RadioGroup
