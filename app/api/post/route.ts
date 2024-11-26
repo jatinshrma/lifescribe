@@ -105,6 +105,12 @@ export const POST = async (request: Request) => {
 
 			data.user_collection = newCollection?._id
 			data.private = data.newCollection.private
+		} else if (data?.user_collection) {
+			const coll = await CollectionModel.findById(new mongoose.Types.ObjectId(data.user_collection), {
+				private: 1
+			})
+
+			data.private = coll?.private
 		}
 
 		const post = await Post.create(data)
